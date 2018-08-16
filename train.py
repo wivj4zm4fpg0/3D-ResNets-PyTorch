@@ -1,8 +1,8 @@
+import os
+import time
+
 import torch
 from torch.autograd import Variable
-import time
-import os
-import sys
 
 from utils import AverageMeter, calculate_accuracy
 
@@ -54,19 +54,20 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
               'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
               'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
               'Acc {acc.val:.3f} ({acc.avg:.3f})'.format(
-                  epoch,
-                  i + 1,
-                  len(data_loader),
-                  batch_time=batch_time,
-                  data_time=data_time,
-                  loss=losses,
-                  acc=accuracies))
+            epoch,
+            i + 1,
+            len(data_loader),
+            batch_time=batch_time,
+            data_time=data_time,
+            loss=losses,
+            acc=accuracies))
 
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
         'acc': accuracies.avg,
-        'lr': optimizer.param_groups[0]['lr']
+        'lr': optimizer.param_groups[0]['lr'],
+        'batch': opt.batch_size
     })
 
     if epoch % opt.checkpoint == 0:

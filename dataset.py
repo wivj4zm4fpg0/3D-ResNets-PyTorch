@@ -2,11 +2,15 @@ from datasets.kinetics import Kinetics
 from datasets.activitynet import ActivityNet
 from datasets.ucf101 import UCF101
 from datasets.hmdb51 import HMDB51
+from datasets.something_something_v2 import SSV2
+from datasets.something_something_v1 import SSV1
 
 
 def get_training_set(opt, spatial_transform, temporal_transform,
                      target_transform):
-    assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51']
+    global training_data
+    assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51', 'something-something-v2',
+                           'something-something-v1']
 
     if opt.dataset == 'kinetics':
         training_data = Kinetics(
@@ -41,13 +45,32 @@ def get_training_set(opt, spatial_transform, temporal_transform,
             spatial_transform=spatial_transform,
             temporal_transform=temporal_transform,
             target_transform=target_transform)
-
+    elif opt.dataset == 'something-something-v2':
+        training_data = SSV2(
+            opt.video_path,
+            opt.something_train_path,
+            'training',
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            labels_path=opt.something_label_path)
+    elif opt.dataset == 'something-something-v1':
+        training_data = SSV1(
+            opt.video_path,
+            opt.something_train_path,
+            'training',
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            labels_path=opt.something_label_path)
     return training_data
 
 
 def get_validation_set(opt, spatial_transform, temporal_transform,
                        target_transform):
-    assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51']
+    global validation_data
+    assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51', 'something-something-v2',
+                           'something-something-v1']
 
     if opt.dataset == 'kinetics':
         validation_data = Kinetics(
@@ -90,11 +113,35 @@ def get_validation_set(opt, spatial_transform, temporal_transform,
             temporal_transform,
             target_transform,
             sample_duration=opt.sample_duration)
+    elif opt.dataset == 'something-something-v2':
+        validation_data = SSV2(
+            opt.video_path,
+            opt.something_val_path,
+            'validation',
+            opt.n_val_samples,
+            spatial_transform,
+            temporal_transform,
+            target_transform,
+            sample_duration=opt.sample_duration,
+            labels_path=opt.something_label_path)
+    elif opt.dataset == 'something-something-v1':
+        validation_data = SSV1(
+            opt.video_path,
+            opt.something_val_path,
+            'validation',
+            opt.n_val_samples,
+            spatial_transform,
+            temporal_transform,
+            target_transform,
+            sample_duration=opt.sample_duration,
+            labels_path=opt.something_label_path)
     return validation_data
 
 
 def get_test_set(opt, spatial_transform, temporal_transform, target_transform):
-    assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51']
+    global subset
+    assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51', 'something-something-v2',
+                           'something-something-v1']
     assert opt.test_subset in ['val', 'test']
 
     if opt.test_subset == 'val':
@@ -142,5 +189,27 @@ def get_test_set(opt, spatial_transform, temporal_transform, target_transform):
             temporal_transform,
             target_transform,
             sample_duration=opt.sample_duration)
+    elif opt.dataset == 'something-something-v2':
+        test_data = SSV2(
+            opt.video_path,
+            opt.something_test_path,
+            subset,
+            0,
+            spatial_transform,
+            temporal_transform,
+            target_transform,
+            sample_duration=opt.sample_duration,
+            labels_path=opt.something_label_path)
+    elif opt.dataset == 'something-somehting-v1':
+        test_data = SSV1(
+            opt.video_path,
+            opt.something_test_path,
+            subset,
+            0,
+            spatial_transform,
+            temporal_transform,
+            target_transform,
+            sample_duration=opt.sample_duration,
+            labels_path=opt.something_label_path)
 
     return test_data

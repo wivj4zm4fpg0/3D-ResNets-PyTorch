@@ -20,14 +20,14 @@ def parse_opts():
         help='Annotation file path')
     parser.add_argument(
         '--result_path',
-        default='results',
+        default='results_ucf101',
         type=str,
         help='Result directory path')
     parser.add_argument(
         '--dataset',
         default='kinetics',
         type=str,
-        help='Used dataset (activitynet | kinetics | ucf101 | hmdb51)')
+        help='Used dataset (activitynet | kinetics | ucf101 | hmdb51 | something-something-v2 | something-something-v1)')
     parser.add_argument(
         '--n_classes',
         default=400,
@@ -40,7 +40,7 @@ def parse_opts():
         default=400,
         type=int,
         help=
-        'Number of classes for fine-tuning. n_classes is set to the number when pretraining.'
+        'Number of classes for fine-tuning. n_classes is set to the number when pretraining. v1=174,v2=174'
     )
     parser.add_argument(
         '--sample_size',
@@ -227,6 +227,24 @@ def parse_opts():
         help='ResNeXt cardinality')
     parser.add_argument(
         '--manual_seed', default=1, type=int, help='Manually set random seed')
+    parser.add_argument(
+        '--transfer_learning', default=False, type=bool, help='transfer learning by something-something'
+    )
+    parser.add_argument(
+        '--something_label_path', default='', type=str, help='path of something-something-v*-labels.json'
+    )
+    parser.add_argument(
+        '--something_train_path', default='', type=str, help='train path of something-something-v*'
+    )
+    parser.add_argument(
+        '--something_val_path', default='', type=str, help='validation path of something-something-v*'
+    )
+    parser.add_argument(
+        '--something_test_path', default='', type=str, help='test path of something-something-v*'
+    )
+    parser.add_argument(
+        '--board_path', default='board', type=str, help='tensorboard path'
+    )
 
     args = parser.parse_args()
 

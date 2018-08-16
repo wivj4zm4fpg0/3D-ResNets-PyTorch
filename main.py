@@ -1,7 +1,5 @@
 import os
-import sys
 import json
-import numpy as np
 import torch
 from torch import nn
 from torch import optim
@@ -15,7 +13,6 @@ from spatial_transforms import (
     MultiScaleRandomCrop, RandomHorizontalFlip, ToTensor)
 from temporal_transforms import LoopPadding, TemporalRandomCrop
 from target_transforms import ClassLabel, VideoID
-from target_transforms import Compose as TargetCompose
 from dataset import get_training_set, get_validation_set, get_test_set
 from utils import Logger
 from train import train_epoch
@@ -57,8 +54,16 @@ if __name__ == '__main__':
     else:
         norm_method = Normalize(opt.mean, opt.std)
 
+    optimizer = None
+    scheduler = None
+    train_loader = None
+    train_logger = None
+    train_batch_logger = None
+    val_loader = None
+    val_logger = None
     if not opt.no_train:
         assert opt.train_crop in ['random', 'corner', 'center']
+        crop_method = None
         if opt.train_crop == 'random':
             crop_method = MultiScaleRandomCrop(opt.scales, opt.sample_size)
         elif opt.train_crop == 'corner':
@@ -83,7 +88,7 @@ if __name__ == '__main__':
             pin_memory=True)
         train_logger = Logger(
             os.path.join(opt.result_path, 'train.log'),
-            ['epoch', 'loss', 'acc', 'lr'])
+            ['epoch', 'loss', 'acc', 'lr', 'batch'])
         train_batch_logger = Logger(
             os.path.join(opt.result_path, 'train_batch.log'),
             ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
@@ -122,26 +127,26 @@ if __name__ == '__main__':
 
     if opt.resume_path:
         print('loading checkpoint {}'.format(opt.resume_path))
-        checkpoint = torch.load(opt.resume_path)
+        checkpoint = torch.load(opt.resume_path, map_location=lambda storage, loc: storage)
         assert opt.arch == checkpoint['arch']
 
         opt.begin_epoch = checkpoint['epoch']
         model.load_state_dict(checkpoint['state_dict'])
         if not opt.no_train:
             optimizer.load_state_dict(checkpoint['optimizer'])
+            optimizer.param_groups[0]['lr'] = opt.learning_rate
 
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
+        validation_loss = None
         if not opt.no_train:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,
                         train_logger, train_batch_logger)
         if not opt.no_val:
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)
-
         if not opt.no_train and not opt.no_val:
             scheduler.step(validation_loss)
-
     if opt.test:
         spatial_transform = Compose([
             Scale(int(opt.sample_size / opt.scale_in_test)),

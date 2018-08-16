@@ -1,10 +1,11 @@
-import random
-import math
-import numbers
 import collections
+import numbers
+import random
+
 import numpy as np
 import torch
-from PIL import Image, ImageOps
+from PIL import Image
+
 try:
     import accimage
 except ImportError:

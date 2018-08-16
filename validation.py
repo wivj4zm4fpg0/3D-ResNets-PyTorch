@@ -1,7 +1,6 @@
-import torch
-from torch.autograd import Variable
 import time
-import sys
+
+from torch.autograd import Variable
 
 from utils import AverageMeter, calculate_accuracy
 
@@ -39,13 +38,13 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
               'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
               'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
               'Acc {acc.val:.3f} ({acc.avg:.3f})'.format(
-                  epoch,
-                  i + 1,
-                  len(data_loader),
-                  batch_time=batch_time,
-                  data_time=data_time,
-                  loss=losses,
-                  acc=accuracies))
+            epoch,
+            i + 1,
+            len(data_loader),
+            batch_time=batch_time,
+            data_time=data_time,
+            loss=losses,
+            acc=accuracies))
 
     logger.log({'epoch': epoch, 'loss': losses.avg, 'acc': accuracies.avg})
 

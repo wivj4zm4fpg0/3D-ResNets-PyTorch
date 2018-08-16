@@ -5,6 +5,7 @@ from models import resnet, pre_act_resnet, wide_resnet, resnext, densenet
 
 
 def generate_model(opt):
+    global get_fine_tuning_parameters, model
     assert opt.model in [
         'resnet', 'preresnet', 'wideresnet', 'resnext', 'densenet'
     ]
@@ -177,11 +178,17 @@ def generate_model(opt):
                     model.module.classifier.in_features, opt.n_finetune_classes)
                 model.module.classifier = model.module.classifier.cuda()
             else:
+                if opt.transfer_learning == True:
+                    for p in model.parameters():
+                        p.requires_grad = False
                 model.module.fc = nn.Linear(model.module.fc.in_features,
                                             opt.n_finetune_classes)
                 model.module.fc = model.module.fc.cuda()
 
-            parameters = get_fine_tuning_parameters(model, opt.ft_begin_index)
+            if opt.transfer_learning == True:
+                parameters = model.module.fc.parameters()
+            else:
+                parameters = get_fine_tuning_parameters(model, opt.ft_begin_index)
             return model, parameters
     else:
         if opt.pretrain_path:
