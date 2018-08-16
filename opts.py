@@ -95,7 +95,7 @@ def parse_opts():
         '--no_mean_norm',
         action='store_true',
         help='If true, inputs are not normalized by mean.')
-    parser.set_defaults(no_mean_norm=False)
+    parser.set_defaults(no_mean_norm=True) # change from False to True
     parser.add_argument(
         '--std_norm',
         action='store_true',

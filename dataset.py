@@ -2,8 +2,8 @@ from datasets.kinetics import Kinetics
 from datasets.activitynet import ActivityNet
 from datasets.ucf101 import UCF101
 from datasets.hmdb51 import HMDB51
-from datasets.something_something_v2 import SSV2
-from datasets.something_something_v1 import SSV1
+from datasets.ssv2 import SSV2
+from datasets.ssv1 import SSV1
 
 
 def get_training_set(opt, spatial_transform, temporal_transform,
@@ -139,7 +139,7 @@ def get_validation_set(opt, spatial_transform, temporal_transform,
 
 
 def get_test_set(opt, spatial_transform, temporal_transform, target_transform):
-    global subset
+    global subset, test_data
     assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51', 'something-something-v2',
                            'something-something-v1']
     assert opt.test_subset in ['val', 'test']

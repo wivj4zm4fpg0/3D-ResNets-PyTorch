@@ -29,9 +29,9 @@ if __name__ == '__main__':
             opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
         if opt.pretrain_path:
             opt.pretrain_path = os.path.join(opt.root_path, opt.pretrain_path)
-    opt.scales = [opt.initial_scale]
-    for i in range(1, opt.n_scales):
-        opt.scales.append(opt.scales[-1] * opt.scale_step)
+    opt.scales = [opt.initial_scale] # initial_scale = 1.0
+    for i in range(1, opt.n_scales): # n_scales = 5
+        opt.scales.append(opt.scales[-1] * opt.scale_step) # scale_step = 0.84089641525
     opt.arch = '{}-{}'.format(opt.model, opt.model_depth)
     opt.mean = get_mean(opt.norm_value, dataset=opt.mean_dataset)
     opt.std = get_std(opt.norm_value)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
     if not opt.no_cuda:
         criterion = criterion.cuda()
 
-    if opt.no_mean_norm and not opt.std_norm:
+    if opt.no_mean_norm and not opt.std_norm: # no_mean_norm = False, std_norm = False
         norm_method = Normalize([0, 0, 0], [1, 1, 1])
     elif not opt.std_norm:
         norm_method = Normalize(opt.mean, [1, 1, 1])
@@ -74,7 +74,7 @@ if __name__ == '__main__':
         spatial_transform = Compose([
             crop_method,
             RandomHorizontalFlip(),
-            ToTensor(opt.norm_value), norm_method
+            ToTensor(opt.norm_value), norm_method # norm_value = 1
         ])
         temporal_transform = TemporalRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
