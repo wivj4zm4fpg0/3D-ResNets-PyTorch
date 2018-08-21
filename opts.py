@@ -95,7 +95,7 @@ def parse_opts():
         '--no_mean_norm',
         action='store_true',
         help='If true, inputs are not normalized by mean.')
-    parser.set_defaults(no_mean_norm=True) # change from False to True
+    parser.set_defaults(no_mean_norm=True)  # change from False to True
     parser.add_argument(
         '--std_norm',
         action='store_true',
@@ -117,6 +117,9 @@ def parse_opts():
     )
     parser.add_argument(
         '--batch_size', default=128, type=int, help='Batch Size')
+    parser.add_argument(
+        '--val_batch_size', default=64, type=int, help='Validation Batch Size'
+    )
     parser.add_argument(
         '--n_epochs',
         default=200,
@@ -243,7 +246,13 @@ def parse_opts():
         '--something_test_path', default='', type=str, help='test path of something-something-v*'
     )
     parser.add_argument(
-        '--board_path', default='board', type=str, help='tensorboard path'
+        '--flow_x_path', default='', type=str, help='flow x path'
+    )
+    parser.add_argument(
+        '--flow_y_path', default='', type=str, help='flow y path'
+    )
+    parser.add_argument(
+        '--lr_rate_schedule', default={}, type=dict, help='setting learning rate per epoch. example:{"10":0.0001, "17":0.00001} ({epoch number:learning rate})'
     )
 
     args = parser.parse_args()

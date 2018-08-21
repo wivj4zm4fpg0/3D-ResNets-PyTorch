@@ -144,24 +144,27 @@ class Scale(object):
     def __call__(self, img):
         """
         Args:
-            img (PIL.Image): Image to be scaled.
+            img (list): Image to be scaled.
         Returns:
-            PIL.Image: Rescaled image.
+            list: Rescaled image.
         """
         if isinstance(self.size, int):
-            w, h = img.size
+            w, h = img[0].size
             if (w <= h and w == self.size) or (h <= w and h == self.size):
                 return img
             if w < h:
                 ow = self.size
                 oh = int(self.size * h / w)
-                return img.resize((ow, oh), self.interpolation)
             else:
                 oh = self.size
                 ow = int(self.size * w / h)
-                return img.resize((ow, oh), self.interpolation)
+            for i in len(img):
+                img[i] = img[i].resize((ow, oh), self.interpolation)
+            return img
         else:
-            return img.resize(self.size, self.interpolation)
+            for i in len(img):
+                img[i] = img[i].resize(self.size, self.interpolation)
+            return img
 
     def randomize_parameters(self):
         pass
@@ -184,15 +187,19 @@ class CenterCrop(object):
     def __call__(self, img):
         """
         Args:
-            img (PIL.Image): Image to be cropped.
+            img (list): Image to be cropped.
         Returns:
             PIL.Image: Cropped image.
         """
-        w, h = img.size
+        w, h = img[0].size
         th, tw = self.size
         x1 = int(round((w - tw) / 2.))
         y1 = int(round((h - th) / 2.))
-        return img.crop((x1, y1, x1 + tw, y1 + th))
+        img[0] = img[0].crop((x1, y1, x1 + tw, y1 + th))
+        img[1] = img[1].crop((x1, y1, x1 + tw, y1 + th))
+        img[2] = img[2].crop((x1, y1, x1 + tw, y1 + th))
+
+        return img
 
     def randomize_parameters(self):
         pass
@@ -210,8 +217,8 @@ class CornerCrop(object):
         self.crop_positions = ['c', 'tl', 'tr', 'bl', 'br']
 
     def __call__(self, img):
-        image_width = img.size[0]
-        image_height = img.size[1]
+        image_width = img[0].size[0]
+        image_height = img[0].size[1]
 
         if self.crop_position == 'c':
             th, tw = (self.size, self.size)
@@ -240,7 +247,9 @@ class CornerCrop(object):
             x2 = image_width
             y2 = image_height
 
-        img = img.crop((x1, y1, x2, y2))
+        img[0] = img[0].crop((x1, y1, x2, y2))
+        img[1] = img[1].crop((x1, y1, x2, y2))
+        img[2] = img[2].crop((x1, y1, x2, y2))
 
         return img
 
@@ -262,7 +271,8 @@ class RandomHorizontalFlip(object):
             PIL.Image: Randomly flipped image.
         """
         if self.p < 0.5:
-            return img.transpose(Image.FLIP_LEFT_RIGHT)
+            for i in range(3):
+                img[i] = img[i].transpose(Image.FLIP_LEFT_RIGHT)
         return img
 
     def randomize_parameters(self):
@@ -294,11 +304,11 @@ class MultiScaleCornerCrop(object):
         self.crop_positions = crop_positions
 
     def __call__(self, img):
-        min_length = min(img.size[0], img.size[1])
+        min_length = min(img[0].size[0], img[0].size[1])
         crop_size = int(min_length * self.scale)
 
-        image_width = img.size[0]
-        image_height = img.size[1]
+        image_width = img[0].size[0]
+        image_height = img[0].size[1]
 
         if self.crop_position == 'c':
             center_x = image_width // 2
@@ -329,9 +339,15 @@ class MultiScaleCornerCrop(object):
             x2 = image_width
             y2 = image_height
 
-        img = img.crop((x1, y1, x2, y2))
+        img[0] = img[0].crop((x1, y1, x2, y2))
+        img[1] = img[1].crop((x1, y1, x2, y2))
+        img[2] = img[2].crop((x1, y1, x2, y2))
 
-        return img.resize((self.size, self.size), self.interpolation)
+        img[0] = img[0].resize((self.size, self.size), self.interpolation)
+        img[1] = img[1].resize((self.size, self.size), self.interpolation)
+        img[2] = img[2].resize((self.size, self.size), self.interpolation)
+
+        return img
 
     def randomize_parameters(self):
         self.scale = self.scales[random.randint(0, len(self.scales) - 1)]

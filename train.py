@@ -11,6 +11,9 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
                 epoch_logger, batch_logger):
     print('train at epoch {}'.format(epoch))
 
+    if str(epoch) in opt.lr_rate_schedule:
+        optimizer.param_groups[0]['lr'] = opt.lr_rate_schedule[str(epoch)]
+
     model.train()
 
     batch_time = AverageMeter()

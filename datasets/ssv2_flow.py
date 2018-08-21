@@ -12,9 +12,15 @@ from utils import load_value_file
 
 def pil_loader(path):
     # open path as file to avoid ResourceWarning (https://github.com/python-pillow/Pillow/issues/835)
-    with open(path, 'rb') as f:
-        with Image.open(f) as img:
-            return img.convert('RGB')
+    images = []
+    for i in range(3):
+        with open(path[i], 'rb') as f:
+            with Image.open(f) as img:
+                if i == 0:
+                    images.append(img.convert('RGB'))
+                else:
+                    images.append(img.convert('GRAY'))
+    return images
 
 
 def accimage_loader(path):
@@ -37,9 +43,12 @@ def get_default_image_loader():
 def video_loader(video_dir_path, frame_indices, image_loader):
     video = []
     for i in frame_indices:
-        image_path = os.path.join(video_dir_path, 'image_{:05d}.jpg'.format(i))
+        image_path = os.path.join(video_dir_path[0], '_{:05d}.jpg'.format(i))
+        flow_x_path = os.path.join(video_dir_path[1], '_{:05d}.jpg'.format(i))
+        flow_y_path = os.path.join(video_dir_path[2], '_{:05d}.jpg'.format(i))
+        assert os.path.exists(image_path) and os.path.exists(flow_x_path) and os.path.exists(flow_y_path)
         if os.path.exists(image_path):
-            video.append(image_loader(image_path))
+            video.append(image_loader([image_path, flow_x_path, flow_y_path]))
         else:
             return video
 
@@ -56,12 +65,11 @@ def load_annotation_data(data_file_path):
         return json.load(data_file)
 
 
-def get_class_labels(data):
+def get_class_labels(labels_path):
+    data = load_annotation_data(labels_path)
     class_labels_map = {}
-    index = 0
-    for class_label in data['labels']:
-        class_labels_map[class_label] = index
-        index += 1
+    for entry in data.items():
+        class_labels_map[entry[0]] = int(entry[1])
     return class_labels_map
 
 
@@ -69,21 +77,20 @@ def get_video_names_and_annotations(data, subset):
     video_names = []
     annotations = []
 
-    for key, value in data['database'].items():
-        this_subset = value['subset']
-        if this_subset == subset:
-            label = value['annotations']['label']
-            video_names.append('{}/{}'.format(label, key))
-            annotations.append(value['annotations'])
+    for entry in data:
+        video_names.append(entry['id'])
+        if not subset == 'test':
+            label = {'label': entry['template']}
+            annotations.append(label)
 
     return video_names, annotations
 
 
 def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
-                 sample_duration):
+                 sample_duration, labels_path, flow_x_path, flow_y_path):
     data = load_annotation_data(annotation_path)
     video_names, annotations = get_video_names_and_annotations(data, subset)
-    class_to_idx = get_class_labels(data)
+    class_to_idx = get_class_labels(labels_path)
     idx_to_class = {}
     for name, label in class_to_idx.items():
         idx_to_class[label] = name
@@ -93,27 +100,29 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
 
-        video_path = os.path.join(root_path, video_names[i])
-        if not os.path.exists(video_path):
+        video_path = os.path.join(root_path, video_names[i]) # root_pathとvideo_names[i]を連結してビデオファイルのパスを完成させる
+        flow_x = os.path.join(flow_x_path, video_names[i])
+        flow_y = os.path.join(flow_y_path, video_names[i])
+        assert os.path.exists(video_path) # ファイルが存在するか確かめる
+
+        n_frames_file_path = os.path.join(video_path, 'n_frames') # 動画のフレーム数が記録されているn_framesのパスを完成させる
+        assert os.path.exists(n_frames_file_path) # ファイルが存在するか確かめる
+        n_frames = int(load_value_file(n_frames_file_path)) # n_framesを読み込みフレーム数を入力する
+        if n_frames <= 0:
             continue
 
-        n_frames_file_path = os.path.join(video_path, 'n_frames')
-        n_frames = int(load_value_file(n_frames_file_path))
-        if not os.path.exists(video_path):
-            continue
-
-        begin_t = 1
-        end_t = n_frames
-        sample = {
+        begin_t = 1 # フレームの始まり
+        end_t = n_frames # フレームの終わり
+        sample = { # 動画のメタ情報を持つ辞書変数
             'video': video_path,
+            'flow_x': flow_x,
+            'flow_y': flow_y,
             'segment': [begin_t, end_t],
             'n_frames': n_frames,
-            'video_id': video_names[i].split('/')[1]
+            'video_id': video_names[i]
         }
-        if len(annotations) != 0:
-            sample['label'] = class_to_idx[annotations[i]['label']]
-        else:
-            sample['label'] = -1
+        assert len(annotations) != 0
+        sample['label'] = class_to_idx[annotations[i]['label']]
 
         if n_samples_for_each_video == 1:
             sample['frame_indices'] = list(range(1, n_frames + 1))
@@ -134,7 +143,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
     return dataset, idx_to_class
 
 
-class UCF101(data.Dataset):
+class SSV2(data.Dataset):
     """
     Args:
         root (string): Root directory path.
@@ -160,10 +169,13 @@ class UCF101(data.Dataset):
                  temporal_transform=None,
                  target_transform=None,
                  sample_duration=16,
-                 get_loader=get_default_video_loader):
+                 get_loader=get_default_video_loader,
+                 labels_path="",
+                 flow_x_path="",
+                 flow_y_path=""):
         self.data, self.class_names = make_dataset(
             root_path, annotation_path, subset, n_samples_for_each_video,
-            sample_duration)
+            sample_duration, labels_path=labels_path, flow_x_path=flow_x_path, flow_y_path=flow_y_path)
 
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
@@ -177,7 +189,7 @@ class UCF101(data.Dataset):
         Returns:
             tuple: (image, target) where target is class_index of the target class.
         """
-        path = self.data[index]['video']
+        path = [self.data[index]['video'], self.data[index]['flow_x'], self.data[index]['flow_y']]
 
         frame_indices = self.data[index]['frame_indices']
         if self.temporal_transform is not None:

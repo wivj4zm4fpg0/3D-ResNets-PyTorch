@@ -95,8 +95,8 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         assert os.path.exists(video_path)
 
         n_frames_file_path = os.path.join(video_path, 'n_frames')
+        assert os.path.exists(n_frames_file_path)
         n_frames = int(load_value_file(n_frames_file_path))
-        assert n_frames <= 0
 
         begin_t = 1
         end_t = n_frames
