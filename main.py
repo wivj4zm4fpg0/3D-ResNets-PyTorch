@@ -1,3 +1,4 @@
+import copy
 import os
 import json
 import torch
@@ -21,14 +22,14 @@ import test
 
 if __name__ == '__main__':
     opt = parse_opts()
-    if opt.root_path != '':
-        opt.video_path = os.path.join(opt.root_path, opt.video_path)
-        opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
-        opt.result_path = os.path.join(opt.root_path, opt.result_path)
-        if opt.resume_path:
-            opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
-        if opt.pretrain_path:
-            opt.pretrain_path = os.path.join(opt.root_path, opt.pretrain_path)
+#    if opt.root_path != '':
+#        opt.video_path = os.path.join(opt.root_path, opt.video_path)
+#        opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
+#        opt.result_path = os.path.join(opt.root_path, opt.result_path)
+#        if opt.resume_path:
+#            opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
+#        if opt.pretrain_path:
+#            opt.pretrain_path = os.path.join(opt.root_path, opt.pretrain_path)
     opt.scales = [opt.initial_scale]  # initial_scale = 1.0
     for i in range(1, opt.n_scales):  # n_scales = 5
         opt.scales.append(opt.scales[-1] * opt.scale_step)  # scale_step = 0.84089641525
@@ -82,7 +83,7 @@ if __name__ == '__main__':
                                          temporal_transform, target_transform)
         train_loader = torch.utils.data.DataLoader(
             training_data,
-            batch_size=opt.batch_size,
+            batch_size=opt.train_batch_size,
             shuffle=True,
             num_workers=opt.n_threads,
             pin_memory=True)
@@ -135,6 +136,22 @@ if __name__ == '__main__':
         if not opt.no_train:
             optimizer.load_state_dict(checkpoint['optimizer'])
             optimizer.param_groups[0]['lr'] = opt.learning_rate
+
+    if opt.optical_flow:
+        temp = copy.copy(model.module.conv1)
+        model.module.conv1 = nn.Conv3d(
+            5,
+            64,
+            kernel_size=7,
+            stride=(1, 2, 2),
+            padding=(3, 3, 3),
+            bias=False)
+        for i in range(len(temp.weight.data)):
+            for j in range(len(temp.weight.data[i])):
+                model.module.conv1.weight.data[i][j] = temp.weight.data[i][j]
+            avg = torch.sum(temp.weight.data[i], 0) / 3
+            model.module.conv1.weight.data[i][3] = avg
+            model.module.conv1.weight.data[i][4] = avg
 
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):

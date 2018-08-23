@@ -11,8 +11,8 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
                 epoch_logger, batch_logger):
     print('train at epoch {}'.format(epoch))
 
-    if str(epoch) in opt.lr_rate_schedule:
-        optimizer.param_groups[0]['lr'] = opt.lr_rate_schedule[str(epoch)]
+#   if str(epoch) in opt.lr_rate_schedule and opt.lr_rate_schedule:
+#       optimizer.param_groups[0]['lr'] = opt.lr_rate_schedule[str(epoch)]
 
     model.train()
 
@@ -24,6 +24,8 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     end_time = time.time()
     for i, (inputs, targets) in enumerate(data_loader):
         data_time.update(time.time() - end_time)
+        # input-size([32, 3, 16, 112, 112])
+        # conv1-size([32, 64, 16, 56, 56])
 
         if not opt.no_cuda:
             targets = targets.cuda(async=True)
@@ -33,7 +35,7 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
         loss = criterion(outputs, targets)
         acc = calculate_accuracy(outputs, targets)
 
-        losses.update(loss.data[0], inputs.size(0))
+        losses.update(loss.item(), inputs.size(0))
         accuracies.update(acc, inputs.size(0))
 
         optimizer.zero_grad()
@@ -70,7 +72,7 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
         'loss': losses.avg,
         'acc': accuracies.avg,
         'lr': optimizer.param_groups[0]['lr'],
-        'batch': opt.batch_size
+        'batch': opt.train_batch_size
     })
 
     if epoch % opt.checkpoint == 0:

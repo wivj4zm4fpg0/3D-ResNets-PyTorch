@@ -1,5 +1,5 @@
 def get_mean(norm_value=255, dataset='activitynet'):
-    assert dataset in ['activitynet', 'kinetics']
+    #    assert dataset in ['activitynet', 'kinetics']
 
     if dataset == 'activitynet':
         return [
@@ -11,6 +11,8 @@ def get_mean(norm_value=255, dataset='activitynet'):
             110.63666788 / norm_value, 103.16065604 / norm_value,
             96.29023126 / norm_value
         ]
+    else:
+        return [0, 0, 0]
 
 
 def get_std(norm_value=255):

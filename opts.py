@@ -2,45 +2,46 @@ import argparse
 
 
 def parse_opts():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='this is train and test program by 3D-CNN model')
     parser.add_argument(
         '--root_path',
-        default='/root/data/ActivityNet',
+        default='.',
         type=str,
         help='Root directory path of data')
     parser.add_argument(
         '--video_path',
-        default='video_kinetics_jpg',
+        default=None,
         type=str,
         help='Directory path of Videos')
     parser.add_argument(
         '--annotation_path',
-        default='kinetics.json',
+        default=None,
         type=str,
         help='Annotation file path')
     parser.add_argument(
         '--result_path',
-        default='results_ucf101',
+        default='results',
         type=str,
         help='Result directory path')
     parser.add_argument(
         '--dataset',
-        default='kinetics',
+        default=None,
         type=str,
-        help='Used dataset (activitynet | kinetics | ucf101 | hmdb51 | something-something-v2 | something-something-v1)')
+        choices=['activitynet', 'kinetics', 'ucf101', 'hmdb51', 'ssv1', 'ssv2', 'ssv2flow'],
+        help='Used dataset (activitynet | kinetics | ucf101 | hmdb51 | something-something-v1 | something-something-v2)')
     parser.add_argument(
         '--n_classes',
-        default=400,
+        default=None,
         type=int,
         help=
-        'Number of classes (activitynet: 200, kinetics: 400, ucf101: 101, hmdb51: 51)'
+        'Number of classes (activitynet: 200, kinetics: 400, ucf101: 101, hmdb51: 51, ssv1-2: 174)'
     )
     parser.add_argument(
         '--n_finetune_classes',
-        default=400,
+        default=None,
         type=int,
         help=
-        'Number of classes for fine-tuning. n_classes is set to the number when pretraining. v1=174,v2=174'
+        'Number of classes for fine-tuning. n_classes is set to the number when pretraining.'
     )
     parser.add_argument(
         '--sample_size',
@@ -80,6 +81,10 @@ def parse_opts():
         type=float,
         help=
         'Initial learning rate (divided by 10 while training by lr scheduler)')
+    parser.add_argument(
+        '--lr_rate_schedule', default=None, type=dict,
+        help='setting learning rate per epoch. example:{"10":0.0001, "17":0.00001} ({epoch number:learning rate})'
+    )
     parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
     parser.add_argument(
         '--dampening', default=0.9, type=float, help='dampening of SGD')
@@ -87,8 +92,9 @@ def parse_opts():
         '--weight_decay', default=1e-3, type=float, help='Weight Decay')
     parser.add_argument(
         '--mean_dataset',
-        default='activitynet',
+        default=None,
         type=str,
+        choices=['activitynet', 'kinetics'],
         help=
         'dataset for mean values of mean subtraction (activitynet | kinetics)')
     parser.add_argument(
@@ -116,7 +122,7 @@ def parse_opts():
         help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.'
     )
     parser.add_argument(
-        '--batch_size', default=128, type=int, help='Batch Size')
+        '--train_batch_size', default=128, type=int, help='Batch Size')
     parser.add_argument(
         '--val_batch_size', default=64, type=int, help='Validation Batch Size'
     )
@@ -139,11 +145,11 @@ def parse_opts():
         help='Number of validation samples for each activity')
     parser.add_argument(
         '--resume_path',
-        default='',
+        default=None,
         type=str,
         help='Save data (.pth) of previous training')
     parser.add_argument(
-        '--pretrain_path', default='', type=str, help='Pretrained model (.pth)')
+        '--pretrain_path', default=None, type=str, help='Pretrained model (.pth)')
     parser.add_argument(
         '--ft_begin_index',
         default=0,
@@ -187,12 +193,12 @@ def parse_opts():
     parser.set_defaults(no_cuda=False)
     parser.add_argument(
         '--n_threads',
-        default=4,
+        default=1,
         type=int,
         help='Number of threads for multi-thread loading')
     parser.add_argument(
         '--checkpoint',
-        default=10,
+        default=1,
         type=int,
         help='Trained model is saved at every this epochs.')
     parser.add_argument(
@@ -208,31 +214,35 @@ def parse_opts():
         'If 1, range of inputs is [0-255]. If 255, range of inputs is [0-1].')
     parser.add_argument(
         '--model',
-        default='resnet',
+        default=None,
         type=str,
+        choices=['resnet', 'preresnet', 'wideresnet', 'resnext', 'densenet'],
         help='(resnet | preresnet | wideresnet | resnext | densenet | ')
     parser.add_argument(
         '--model_depth',
-        default=18,
+        default=None,
         type=int,
+        choices=[10, 18, 34, 50, 101],
         help='Depth of resnet (10 | 18 | 34 | 50 | 101)')
     parser.add_argument(
         '--resnet_shortcut',
-        default='B',
+        default=None,
         type=str,
+        choices=['A', 'B'],
         help='Shortcut type of resnet (A | B)')
     parser.add_argument(
         '--wide_resnet_k', default=2, type=int, help='Wide resnet k')
     parser.add_argument(
         '--resnext_cardinality',
-        default=32,
+        default=None,
         type=int,
         help='ResNeXt cardinality')
     parser.add_argument(
         '--manual_seed', default=1, type=int, help='Manually set random seed')
     parser.add_argument(
-        '--transfer_learning', default=False, type=bool, help='transfer learning by something-something'
+        '--transfer_learning', action='store_true', help='transfer learning by something-something'
     )
+    parser.set_defaults(transfer_learning=False)
     parser.add_argument(
         '--something_label_path', default='', type=str, help='path of something-something-v*-labels.json'
     )
@@ -252,8 +262,9 @@ def parse_opts():
         '--flow_y_path', default='', type=str, help='flow y path'
     )
     parser.add_argument(
-        '--lr_rate_schedule', default={}, type=dict, help='setting learning rate per epoch. example:{"10":0.0001, "17":0.00001} ({epoch number:learning rate})'
+        '--optical_flow', action='store_true', help='use optical flow'
     )
+    parser.set_defaults(optical_flow=False)
 
     args = parser.parse_args()
 

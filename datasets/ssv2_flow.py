@@ -19,7 +19,7 @@ def pil_loader(path):
                 if i == 0:
                     images.append(img.convert('RGB'))
                 else:
-                    images.append(img.convert('GRAY'))
+                    images.append(img.convert('L'))
     return images
 
 
@@ -48,7 +48,10 @@ def video_loader(video_dir_path, frame_indices, image_loader):
         flow_y_path = os.path.join(video_dir_path[2], '_{:05d}.jpg'.format(i))
         assert os.path.exists(image_path) and os.path.exists(flow_x_path) and os.path.exists(flow_y_path)
         if os.path.exists(image_path):
-            video.append(image_loader([image_path, flow_x_path, flow_y_path]))
+            images = image_loader([image_path, flow_x_path, flow_y_path])
+            video.append(images[0])
+            video.append(images[1])
+            video.append(images[2])
         else:
             return video
 
@@ -86,8 +89,8 @@ def get_video_names_and_annotations(data, subset):
     return video_names, annotations
 
 
-def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
-                 sample_duration, labels_path, flow_x_path, flow_y_path):
+def make_dataset(rgb_images_path, annotation_path, subset, n_samples_for_each_video,
+                 sample_duration, labels_path, flow_x_images_path, flow_y_images_path):
     data = load_annotation_data(annotation_path)
     video_names, annotations = get_video_names_and_annotations(data, subset)
     class_to_idx = get_class_labels(labels_path)
@@ -100,23 +103,24 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
 
-        video_path = os.path.join(root_path, video_names[i]) # root_pathとvideo_names[i]を連結してビデオファイルのパスを完成させる
-        flow_x = os.path.join(flow_x_path, video_names[i])
-        flow_y = os.path.join(flow_y_path, video_names[i])
-        assert os.path.exists(video_path) # ファイルが存在するか確かめる
+        video_path = os.path.join(rgb_images_path, video_names[i])  # root_pathとvideo_names[i]を連結してビデオファイルのパスを完成させる
+        flow_x_path = os.path.join(flow_x_images_path, video_names[i])
+        flow_y_path = os.path.join(flow_y_images_path, video_names[i])
+        assert os.path.exists(video_path) and os.path.exists(flow_x_path) and os.path.exists(
+            flow_y_path)  # ファイルが存在するか確かめる
 
-        n_frames_file_path = os.path.join(video_path, 'n_frames') # 動画のフレーム数が記録されているn_framesのパスを完成させる
-        assert os.path.exists(n_frames_file_path) # ファイルが存在するか確かめる
-        n_frames = int(load_value_file(n_frames_file_path)) # n_framesを読み込みフレーム数を入力する
+        n_frames_file_path = os.path.join(video_path, 'n_frames')  # 動画のフレーム数が記録されているn_framesのパスを完成させる
+        assert os.path.exists(n_frames_file_path)  # ファイルが存在するか確かめる
+        n_frames = int(load_value_file(n_frames_file_path))  # n_framesを読み込みフレーム数を入力する
         if n_frames <= 0:
             continue
 
-        begin_t = 1 # フレームの始まり
-        end_t = n_frames # フレームの終わり
-        sample = { # 動画のメタ情報を持つ辞書変数
+        begin_t = 1  # フレームの始まり
+        end_t = n_frames  # フレームの終わり
+        sample = {  # 動画のメタ情報を持つ辞書変数
             'video': video_path,
-            'flow_x': flow_x,
-            'flow_y': flow_y,
+            'flow_x': flow_x_path,
+            'flow_y': flow_y_path,
             'segment': [begin_t, end_t],
             'n_frames': n_frames,
             'video_id': video_names[i]
@@ -143,7 +147,7 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
     return dataset, idx_to_class
 
 
-class SSV2(data.Dataset):
+class SSV2FLOW(data.Dataset):
     """
     Args:
         root (string): Root directory path.
@@ -161,7 +165,7 @@ class SSV2(data.Dataset):
     """
 
     def __init__(self,
-                 root_path,
+                 rgb_images_path,
                  annotation_path,
                  subset,
                  n_samples_for_each_video=1,
@@ -171,11 +175,12 @@ class SSV2(data.Dataset):
                  sample_duration=16,
                  get_loader=get_default_video_loader,
                  labels_path="",
-                 flow_x_path="",
-                 flow_y_path=""):
+                 flow_x_images_path="",
+                 flow_y_images_path=""):
         self.data, self.class_names = make_dataset(
-            root_path, annotation_path, subset, n_samples_for_each_video,
-            sample_duration, labels_path=labels_path, flow_x_path=flow_x_path, flow_y_path=flow_y_path)
+            rgb_images_path, annotation_path, subset, n_samples_for_each_video,
+            sample_duration, labels_path=labels_path, flow_x_images_path=flow_x_images_path,
+            flow_y_images_path=flow_y_images_path)
 
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
@@ -198,6 +203,7 @@ class SSV2(data.Dataset):
         if self.spatial_transform is not None:
             self.spatial_transform.randomize_parameters()
             clip = [self.spatial_transform(img) for img in clip]
+        clip = concate_channels(clip)
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
         target = self.data[index]
@@ -208,3 +214,9 @@ class SSV2(data.Dataset):
 
     def __len__(self):
         return len(self.data)
+
+def concate_channels(tensors):
+    clip = []
+    for i in range(0, len(tensors), 3):
+        clip.append(torch.cat([tensors[i], tensors[i + 1], tensors[i + 2]], 0))
+    return clip
