@@ -27,7 +27,7 @@ def parse_opts():
         '--dataset',
         default=None,
         type=str,
-        choices=['activitynet', 'kinetics', 'ucf101', 'hmdb51', 'ssv1', 'ssv2', 'ssv2flow'],
+        choices=['activitynet', 'kinetics', 'ucf101', 'hmdb51', 'ssv1', 'ssv2', 'ssv2flow', 'ucf101flow'],
         help='Used dataset (activitynet | kinetics | ucf101 | hmdb51 | something-something-v1 | something-something-v2)')
     parser.add_argument(
         '--n_classes',

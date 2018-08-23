@@ -21,6 +21,7 @@ from validation import val_epoch
 import test
 
 if __name__ == '__main__':
+    torch.backends.cudnn.enabled = False
     opt = parse_opts()
 #    if opt.root_path != '':
 #        opt.video_path = os.path.join(opt.root_path, opt.video_path)
@@ -152,6 +153,7 @@ if __name__ == '__main__':
             avg = torch.sum(temp.weight.data[i], 0) / 3
             model.module.conv1.weight.data[i][3] = avg
             model.module.conv1.weight.data[i][4] = avg
+        model.cuda()
 
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
