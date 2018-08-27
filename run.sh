@@ -23,7 +23,7 @@ A \
 --train_batch_size \
 8 \
 --n_threads \
-8 \
+12 \
 --checkpoint \
 1 \
 --learning_rate \

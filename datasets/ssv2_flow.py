@@ -215,8 +215,8 @@ class SSV2FLOW(data.Dataset):
     def __len__(self):
         return len(self.data)
 
-def concate_channels(tensors):
-    clip = []
-    for i in range(0, len(tensors), 3):
-        clip.append(torch.cat([tensors[i], tensors[i + 1], tensors[i + 2]], 0))
-    return clip
+def concate_channels(clip):
+    new_clip = []
+    for i in range(0, len(clip), 3):
+        new_clip.append(torch.cat([clip[i], clip[i + 1], clip[i + 2]], 0))
+    return new_clip

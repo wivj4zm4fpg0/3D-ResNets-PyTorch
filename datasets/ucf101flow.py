@@ -106,6 +106,8 @@ def make_dataset(images_path, annotation_path, subset, n_samples_for_each_video,
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
 
         video_path = os.path.join(images_path, video_names[i])
+        flow_x_path = os.path.join(flow_x_images_path, video_names[i])
+        flow_y_path = os.path.join(flow_y_images_path, video_names[i])
         if not os.path.exists(video_path):
             continue
 
@@ -118,6 +120,8 @@ def make_dataset(images_path, annotation_path, subset, n_samples_for_each_video,
         end_t = n_frames
         sample = {
             'video': video_path,
+            'flow_x': flow_x_path,
+            'flow_y': flow_y_path,
             'segment': [begin_t, end_t],
             'n_frames': n_frames,
             'video_id': video_names[i].split('/')[1]

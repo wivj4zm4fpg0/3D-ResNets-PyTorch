@@ -21,7 +21,6 @@ from validation import val_epoch
 import test
 
 if __name__ == '__main__':
-    torch.backends.cudnn.enabled = False
     opt = parse_opts()
 #    if opt.root_path != '':
 #        opt.video_path = os.path.join(opt.root_path, opt.video_path)
@@ -91,9 +90,10 @@ if __name__ == '__main__':
         train_logger = Logger(
             os.path.join(opt.result_path, 'train.log'),
             ['epoch', 'loss', 'acc', 'lr', 'batch'])
-        train_batch_logger = Logger(
-            os.path.join(opt.result_path, 'train_batch.log'),
-            ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
+#        train_batch_logger = Logger(
+#            os.path.join(opt.result_path, 'train_batch.log'),
+#            ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
+        train_batch_logger = None
 
         if opt.nesterov:
             dampening = 0
@@ -127,17 +127,6 @@ if __name__ == '__main__':
         val_logger = Logger(
             os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
 
-    if opt.resume_path:
-        print('loading checkpoint {}'.format(opt.resume_path))
-        checkpoint = torch.load(opt.resume_path, map_location=lambda storage, loc: storage)
-        assert opt.arch == checkpoint['arch']
-
-        opt.begin_epoch = checkpoint['epoch']
-        model.load_state_dict(checkpoint['state_dict'])
-        if not opt.no_train:
-            optimizer.load_state_dict(checkpoint['optimizer'])
-            optimizer.param_groups[0]['lr'] = opt.learning_rate
-
     if opt.optical_flow:
         temp = copy.copy(model.module.conv1)
         model.module.conv1 = nn.Conv3d(
@@ -154,6 +143,17 @@ if __name__ == '__main__':
             model.module.conv1.weight.data[i][3] = avg
             model.module.conv1.weight.data[i][4] = avg
         model.cuda()
+
+    if opt.resume_path:
+        print('loading checkpoint {}'.format(opt.resume_path))
+        checkpoint = torch.load(opt.resume_path, map_location=lambda storage, loc: storage)
+        assert opt.arch == checkpoint['arch']
+
+        opt.begin_epoch = checkpoint['epoch']
+        model.load_state_dict(checkpoint['state_dict'])
+        if not opt.no_train:
+            optimizer.load_state_dict(checkpoint['optimizer'])
+            optimizer.param_groups[0]['lr'] = opt.learning_rate
 
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
