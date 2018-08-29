@@ -37,7 +37,7 @@ def get_default_image_loader():
 def video_loader(video_dir_path, frame_indices, image_loader):
     video = []
     for i in frame_indices:
-        image_path = os.path.join(video_dir_path, 'image_{:05d}.jpg'.format(i))
+        image_path = os.path.join(video_dir_path, '_{0:05d}.jpg'.format(i))
         if os.path.exists(image_path):
             video.append(image_loader(image_path))
         else:
@@ -79,7 +79,7 @@ def get_video_names_and_annotations(data, subset):
     return video_names, annotations
 
 
-def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
+def make_dataset(images_path, annotation_path, subset, n_samples_for_each_video,
                  sample_duration):
     data = load_annotation_data(annotation_path)
     video_names, annotations = get_video_names_and_annotations(data, subset)
@@ -93,14 +93,12 @@ def make_dataset(root_path, annotation_path, subset, n_samples_for_each_video,
         if i % 1000 == 0:
             print('dataset loading [{}/{}]'.format(i, len(video_names)))
 
-        video_path = os.path.join(root_path, video_names[i])
-        if not os.path.exists(video_path):
-            continue
+        video_path = os.path.join(images_path, video_names[i])
+        #assert os.path.exists(video_path)
 
         n_frames_file_path = os.path.join(video_path, 'n_frames')
         n_frames = int(load_value_file(n_frames_file_path))
-        if not os.path.exists(video_path):
-            continue
+        assert os.path.exists(n_frames_file_path)
 
         begin_t = 1
         end_t = n_frames

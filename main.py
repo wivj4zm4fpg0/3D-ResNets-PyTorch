@@ -22,14 +22,6 @@ import test
 
 if __name__ == '__main__':
     opt = parse_opts()
-#    if opt.root_path != '':
-#        opt.video_path = os.path.join(opt.root_path, opt.video_path)
-#        opt.annotation_path = os.path.join(opt.root_path, opt.annotation_path)
-#        opt.result_path = os.path.join(opt.root_path, opt.result_path)
-#        if opt.resume_path:
-#            opt.resume_path = os.path.join(opt.root_path, opt.resume_path)
-#        if opt.pretrain_path:
-#            opt.pretrain_path = os.path.join(opt.root_path, opt.pretrain_path)
     opt.scales = [opt.initial_scale]  # initial_scale = 1.0
     for i in range(1, opt.n_scales):  # n_scales = 5
         opt.scales.append(opt.scales[-1] * opt.scale_step)  # scale_step = 0.84089641525
@@ -160,7 +152,7 @@ if __name__ == '__main__':
         validation_loss = None
         if not opt.no_train:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,
-                        train_logger, train_batch_logger)
+                        train_logger)
         if not opt.no_val:
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)

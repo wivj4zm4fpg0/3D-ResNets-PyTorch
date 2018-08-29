@@ -4,11 +4,6 @@ import argparse
 def parse_opts():
     parser = argparse.ArgumentParser(description='this is train and test program by 3D-CNN model')
     parser.add_argument(
-        '--root_path',
-        default='.',
-        type=str,
-        help='Root directory path of data')
-    parser.add_argument(
         '--video_path',
         default=None,
         type=str,

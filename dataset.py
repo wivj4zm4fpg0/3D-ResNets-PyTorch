@@ -5,18 +5,25 @@ from datasets.hmdb51 import HMDB51
 from datasets.ssv2 import SSV2
 from datasets.ssv1 import SSV1
 from datasets.ssv2_flow import SSV2FLOW
+from datasets.ucf101flow import UCF101FLOW
+from enum import Enum
+
+
+class Subset(Enum):
+    training = 'training'
+    validation = 'validation'
+    test = 'test'
 
 
 def get_training_set(opt, spatial_transform, temporal_transform,
                      target_transform):
     global training_data
-    assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51', 'ssv1', 'ssv2', 'ssv2flow']
 
     if opt.dataset == 'kinetics':
         training_data = Kinetics(
             opt.video_path,
             opt.annotation_path,
-            'training',
+            Subset.training.value,
             spatial_transform=spatial_transform,
             temporal_transform=temporal_transform,
             target_transform=target_transform)
@@ -37,6 +44,17 @@ def get_training_set(opt, spatial_transform, temporal_transform,
             spatial_transform=spatial_transform,
             temporal_transform=temporal_transform,
             target_transform=target_transform)
+    elif opt.dataset == 'ucf101flow':
+        training_data = UCF101FLOW(
+            opt.video_path,
+            opt.annotation_path,
+            subset='training',
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            flow_x_images_path=opt.flow_x_path,
+            flow_y_images_path=opt.flow_y_path
+        )
     elif opt.dataset == 'hmdb51':
         training_data = HMDB51(
             opt.video_path,
@@ -81,7 +99,6 @@ def get_training_set(opt, spatial_transform, temporal_transform,
 def get_validation_set(opt, spatial_transform, temporal_transform,
                        target_transform):
     global validation_data
-    assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51', 'ssv1', 'ssv2', 'ssv2flow']
 
     if opt.dataset == 'kinetics':
         validation_data = Kinetics(
@@ -114,6 +131,18 @@ def get_validation_set(opt, spatial_transform, temporal_transform,
             temporal_transform,
             target_transform,
             sample_duration=opt.sample_duration)
+    elif opt.dataset == 'ucf101flow':
+        validation_data = UCF101FLOW(
+            opt.video_path,
+            opt.annotation_path,
+            'validation',
+            opt.n_val_samples,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            flow_x_images_path=opt.flow_x_path,
+            flow_y_images_path=opt.flow_y_path
+        )
     elif opt.dataset == 'hmdb51':
         validation_data = HMDB51(
             opt.video_path,
@@ -164,8 +193,6 @@ def get_validation_set(opt, spatial_transform, temporal_transform,
 
 def get_test_set(opt, spatial_transform, temporal_transform, target_transform):
     global subset, test_data
-    assert opt.dataset in ['kinetics', 'activitynet', 'ucf101', 'hmdb51', 'ssv2',
-                           'ssv1', 'ssv2flow']
     assert opt.test_subset in ['val', 'test']
 
     if opt.test_subset == 'val':
@@ -203,6 +230,18 @@ def get_test_set(opt, spatial_transform, temporal_transform, target_transform):
             temporal_transform,
             target_transform,
             sample_duration=opt.sample_duration)
+    elif opt.dataset == 'ucf101flow':
+        test_data = UCF101FLOW(
+            opt.video_path,
+            opt.annotation_path,
+            subset,
+            0,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+            flow_x_images_path=opt.flow_x_path,
+            flow_y_images_path=opt.flow_y_path
+        )
     elif opt.dataset == 'hmdb51':
         test_data = HMDB51(
             opt.video_path,

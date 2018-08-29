@@ -8,7 +8,7 @@ from utils import AverageMeter, calculate_accuracy
 
 
 def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
-                epoch_logger, batch_logger):
+                epoch_logger):
     print('train at epoch {}'.format(epoch))
 
 #   if str(epoch) in opt.lr_rate_schedule and opt.lr_rate_schedule:

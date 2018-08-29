@@ -87,7 +87,6 @@ def get_video_names_and_annotations(data, subset):
             label = value['annotations']['label']
             video_names.append('{}/{}'.format(label, key))
             annotations.append(value['annotations'])
-
     return video_names, annotations
 
 
@@ -108,13 +107,12 @@ def make_dataset(images_path, annotation_path, subset, n_samples_for_each_video,
         video_path = os.path.join(images_path, video_names[i])
         flow_x_path = os.path.join(flow_x_images_path, video_names[i])
         flow_y_path = os.path.join(flow_y_images_path, video_names[i])
-        if not os.path.exists(video_path):
-            continue
-
+        assert os.path.exists(video_path) and os.path.exists(flow_x_path) and os.path.exists(flow_y_path)
         n_frames_file_path = os.path.join(video_path, 'n_frames')
+        assert os.path.exists(n_frames_file_path)
         n_frames = int(load_value_file(n_frames_file_path))
-        if not os.path.exists(video_path):
-            continue
+        # if n_frames <= 0# :
+        #     continue
 
         begin_t = 1
         end_t = n_frames
@@ -150,7 +148,7 @@ def make_dataset(images_path, annotation_path, subset, n_samples_for_each_video,
     return dataset, idx_to_class
 
 
-class UCF101(data.Dataset):
+class UCF101FLOW(data.Dataset):
     """
     Args:
         root (string): Root directory path.
@@ -181,7 +179,7 @@ class UCF101(data.Dataset):
                  flow_y_images_path=None):
         self.data, self.class_names = make_dataset(
             images_path, annotation_path, subset, n_samples_for_each_video,
-            sample_duration, flow_x_images_path, flow_y_images_path)
+            sample_duration, flow_x_images_path=flow_x_images_path, flow_y_images_path=flow_y_images_path)
 
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
@@ -195,7 +193,7 @@ class UCF101(data.Dataset):
         Returns:
             tuple: (image, target) where target is class_index of the target class.
         """
-        path = self.data[index]['video']
+        path = [self.data[index]['video'], self.data[index]['flow_x'], self.data[index]['flow_y']]
 
         frame_indices = self.data[index]['frame_indices']
         if self.temporal_transform is not None:
@@ -216,8 +214,9 @@ class UCF101(data.Dataset):
     def __len__(self):
         return len(self.data)
 
-def concate_channels(tensors):
-    clip = []
-    for i in range(0, len(tensors), 3):
-        clip.append(torch.cat([tensors[i], tensors[i + 1], tensors[i + 2]], 0))
-    return clip
+
+def concate_channels(clip):
+    new_clip = []
+    for i in range(0, len(clip), 3):
+        new_clip.append(torch.cat([clip[i], clip[i + 1], clip[i + 2]], 0))
+    return new_clip
