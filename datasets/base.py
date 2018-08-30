@@ -116,7 +116,7 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
                  target_transform=None,
                  sample_duration=16,
                  get_loader=None,
-                 image_format='_{0:05d}',
+                 image_format='_{0:05d}.jpg',
                  n_channel=3):
         if get_loader is None:
             get_loader = self.video_loader

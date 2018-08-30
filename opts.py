@@ -118,10 +118,7 @@ def parse_opts():
         help='Patience of LR scheduler. See documentation of ReduceLROnPlateau.'
     )
     parser.add_argument(
-        '--train_batch_size', default=128, type=int, help='Batch Size')
-    parser.add_argument(
-        '--val_batch_size', default=64, type=int, help='Validation Batch Size'
-    )
+        '--batch_size', default=128, type=int, help='Batch Size')
     parser.add_argument(
         '--n_epochs',
         default=200,
@@ -242,27 +239,11 @@ def parse_opts():
     )
     parser.set_defaults(transfer_learning=False)
     parser.add_argument(
-        '--something_label_path', default='', type=str, help='path of something-something-v*-labels.json'
+        '--flow_x_path', default=None, type=str, help='flow x path'
     )
     parser.add_argument(
-        '--something_train_path', default='', type=str, help='train path of something-something-v*'
+        '--flow_y_path', default=None, type=str, help='flow y path'
     )
-    parser.add_argument(
-        '--something_val_path', default='', type=str, help='validation path of something-something-v*'
-    )
-    parser.add_argument(
-        '--something_test_path', default='', type=str, help='test path of something-something-v*'
-    )
-    parser.add_argument(
-        '--flow_x_path', default='', type=str, help='flow x path'
-    )
-    parser.add_argument(
-        '--flow_y_path', default='', type=str, help='flow y path'
-    )
-    parser.add_argument(
-        '--optical_flow', action='store_true', help='use optical flow'
-    )
-    parser.set_defaults(optical_flow=False)
 
     args = parser.parse_args()
 

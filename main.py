@@ -24,13 +24,16 @@ from validation import val_epoch
 if __name__ == '__main__':
     opt = parse_opts()
     n_channel = 3
-    if opt.optical_flow:
+    use_optical_flow = opt.flow_x_path and opt.flow_y_path
+    if use_optical_flow:
         n_channel = n_channel + 2
     result_dir_name = '{}-{}-{}-{}ch'.format(opt.dataset, opt.model, opt.model_depth, n_channel)
     if opt.transfer_learning:
         result_dir_name = result_dir_name + '-transfer-learning'
     elif opt.n_finetune_classes:
         result_dir_name = result_dir_name + '-pretrain'
+    else:
+        result_dir_name = result_dir_name + '-no-pretrain'
     result_dir_name = os.path.join(opt.result_path, result_dir_name)
     os.makedirs(result_dir_name, exist_ok=True)
     opt.scales = [opt.initial_scale]  # initial_scale = 1.0
@@ -64,10 +67,12 @@ if __name__ == '__main__':
     train_logger = None
     val_loader = None
     val_logger = None
+
     paths = [opt.video_path]
-    if opt.optical_flow:
+    if use_optical_flow:
         paths.append(opt.flow_x_path)
         paths.append(opt.flow_y_path)
+
     if not opt.no_train:
         crop_method = None
         if opt.train_crop == 'random':
@@ -90,7 +95,7 @@ if __name__ == '__main__':
                                               n_channel=n_channel)
         train_loader = torch.utils.data.DataLoader(
             training_data,
-            batch_size=opt.train_batch_size,
+            batch_size=opt.batch_size,
             shuffle=True,
             num_workers=opt.n_threads,
             pin_memory=True)
@@ -119,22 +124,22 @@ if __name__ == '__main__':
         ])
         temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = ClassLabel()
-        validation_data = datasets[opt.dataset](paths, opt.annotation.path, 'validation',
+        validation_data = datasets[opt.dataset](paths, opt.annotation_path, 'validation',
                                                 opt.n_val_samples,
-                                                sapatial_transform=spatial_transform,
+                                                spatial_transform=spatial_transform,
                                                 temporal_transform=temporal_transform,
                                                 target_transform=target_transform,
                                                 n_channel=n_channel)
         val_loader = torch.utils.data.DataLoader(
             validation_data,
-            batch_size=opt.val_batch_size,
+            batch_size=opt.batch_size,
             shuffle=False,
             num_workers=opt.n_threads,
             pin_memory=True)
         val_logger = Logger(
             os.path.join(result_dir_name, 'val.log'), ['epoch', 'loss', 'acc'])
 
-    if opt.optical_flow:
+    if use_optical_flow and opt.n_finetune_classes:
         temp = copy.copy(model.module.conv1)
         model.module.conv1 = nn.Conv3d(
             n_channel,
@@ -155,6 +160,7 @@ if __name__ == '__main__':
         model.cuda()
 
     if opt.resume_path:
+        opt.resume_path = os.path.join(result_dir_name, opt.resume_path)
         print('loading checkpoint {}'.format(opt.resume_path))
         checkpoint = torch.load(opt.resume_path, map_location=lambda storage, loc: storage)
         assert opt.arch == checkpoint['arch']
@@ -186,11 +192,11 @@ if __name__ == '__main__':
         target_transform = VideoID()
 
         test_data = datasets[opt.dataset](paths, opt.annotation.path, 'test',
-                                                0,
-                                                sapatial_transform=spatial_transform,
-                                                temporal_transform=temporal_transform,
-                                                target_transform=target_transform,
-                                                n_channel=n_channel)
+                                          0,
+                                          sapatial_transform=spatial_transform,
+                                          temporal_transform=temporal_transform,
+                                          target_transform=target_transform,
+                                          n_channel=n_channel)
 
         test_loader = torch.utils.data.DataLoader(
             test_data,
