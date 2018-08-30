@@ -8,7 +8,7 @@ from utils import AverageMeter, calculate_accuracy
 
 
 def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
-                epoch_logger):
+                epoch_logger, result_dir_name):
     print('train at epoch {}'.format(epoch))
 
 #   if str(epoch) in opt.lr_rate_schedule and opt.lr_rate_schedule:
@@ -24,8 +24,6 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     end_time = time.time()
     for i, (inputs, targets) in enumerate(data_loader):
         data_time.update(time.time() - end_time)
-        # input-size([32, 3, 16, 112, 112])
-        # conv1-size([32, 64, 16, 56, 56])
 
         if not opt.no_cuda:
             targets = targets.cuda(async=True)
@@ -44,15 +42,6 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
 
         batch_time.update(time.time() - end_time)
         end_time = time.time()
-
-        # batch_logger.log({
-        #     'epoch': epoch,
-        #     'batch': i + 1,
-        #     'iter': (epoch - 1) * len(data_loader) + (i + 1),
-        #     'loss': losses.val,
-        #     'acc': accuracies.val,
-        #     'lr': optimizer.param_groups[0]['lr']
-        # })
 
         print('Epoch: [{0}][{1}/{2}]\t'
               'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
@@ -76,7 +65,7 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     })
 
     if epoch % opt.checkpoint == 0:
-        save_file_path = os.path.join(opt.result_path,
+        save_file_path = os.path.join(result_dir_name,
                                       'save_{}.pth'.format(epoch))
         states = {
             'epoch': epoch + 1,

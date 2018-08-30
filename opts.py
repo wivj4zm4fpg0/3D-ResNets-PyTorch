@@ -67,6 +67,7 @@ def parse_opts():
         '--train_crop',
         default='corner',
         type=str,
+        choices=['random', 'corner', 'center'],
         help=
         'Spatial cropping method in training. random is uniform. corner is selection from 4 corners and 1 center.  (random | corner | center)'
     )
@@ -78,7 +79,7 @@ def parse_opts():
         'Initial learning rate (divided by 10 while training by lr scheduler)')
     parser.add_argument(
         '--lr_rate_schedule', default=None, type=dict,
-        help='setting learning rate per epoch. example:{"10":0.0001, "17":0.00001} ({epoch number:learning rate})'
+        help='setting learning rate per epoch. example:{1:0.001, 15:0.0001} ({epoch number:learning rate})'
     )
     parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
     parser.add_argument(
@@ -167,6 +168,7 @@ def parse_opts():
         '--test_subset',
         default='val',
         type=str,
+        choices=['val', 'test'],
         help='Used subset in test (val | test)')
     parser.add_argument(
         '--scale_in_test',
@@ -177,6 +179,7 @@ def parse_opts():
         '--crop_position_in_test',
         default='c',
         type=str,
+        choices=['c', 'tl', 'tr', 'bl', 'br'],
         help='Cropping method (c | tl | tr | bl | br) in test')
     parser.add_argument(
         '--no_softmax_in_test',

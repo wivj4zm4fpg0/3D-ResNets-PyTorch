@@ -1,27 +1,38 @@
 import copy
-import os
 import json
+import os
+
 import torch
 from torch import nn
 from torch import optim
 from torch.optim import lr_scheduler
 
-from opts import parse_opts
-from model import generate_model
+import test
+from dataset import datasets
 from mean import get_mean, get_std
+from model import generate_model
+from opts import parse_opts
 from spatial_transforms import (
     Compose, Normalize, Scale, CenterCrop, CornerCrop, MultiScaleCornerCrop,
     MultiScaleRandomCrop, RandomHorizontalFlip, ToTensor)
-from temporal_transforms import LoopPadding, TemporalRandomCrop
 from target_transforms import ClassLabel, VideoID
-from dataset import get_training_set, get_validation_set, get_test_set
-from utils import Logger
+from temporal_transforms import LoopPadding, TemporalRandomCrop
 from train import train_epoch
+from utils import Logger
 from validation import val_epoch
-import test
 
 if __name__ == '__main__':
     opt = parse_opts()
+    n_channel = 3
+    if opt.optical_flow:
+        n_channel = n_channel + 2
+    result_dir_name = '{}-{}-{}-{}ch'.format(opt.dataset, opt.model, opt.model_depth, n_channel)
+    if opt.transfer_learning:
+        result_dir_name = result_dir_name + '-transfer-learning'
+    elif opt.n_finetune_classes:
+        result_dir_name = result_dir_name + '-pretrain'
+    result_dir_name = os.path.join(opt.result_path, result_dir_name)
+    os.makedirs(result_dir_name, exist_ok=True)
     opt.scales = [opt.initial_scale]  # initial_scale = 1.0
     for i in range(1, opt.n_scales):  # n_scales = 5
         opt.scales.append(opt.scales[-1] * opt.scale_step)  # scale_step = 0.84089641525
@@ -29,7 +40,7 @@ if __name__ == '__main__':
     opt.mean = get_mean(opt.norm_value, dataset=opt.mean_dataset)
     opt.std = get_std(opt.norm_value)
     print(opt)
-    with open(os.path.join(opt.result_path, 'opts.json'), 'w') as opt_file:
+    with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
         json.dump(vars(opt), opt_file)
 
     torch.manual_seed(opt.manual_seed)
@@ -51,11 +62,13 @@ if __name__ == '__main__':
     scheduler = None
     train_loader = None
     train_logger = None
-    train_batch_logger = None
     val_loader = None
     val_logger = None
+    paths = [opt.video_path]
+    if opt.optical_flow:
+        paths.append(opt.flow_x_path)
+        paths.append(opt.flow_y_path)
     if not opt.no_train:
-        assert opt.train_crop in ['random', 'corner', 'center']
         crop_method = None
         if opt.train_crop == 'random':
             crop_method = MultiScaleRandomCrop(opt.scales, opt.sample_size)
@@ -71,8 +84,10 @@ if __name__ == '__main__':
         ])
         temporal_transform = TemporalRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
-        training_data = get_training_set(opt, spatial_transform,
-                                         temporal_transform, target_transform)
+        training_data = datasets[opt.dataset](paths, opt.annotation_path, 'training',
+                                              spatial_transform=spatial_transform,
+                                              temporal_transform=temporal_transform, target_transform=target_transform,
+                                              n_channel=n_channel)
         train_loader = torch.utils.data.DataLoader(
             training_data,
             batch_size=opt.train_batch_size,
@@ -80,12 +95,8 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True)
         train_logger = Logger(
-            os.path.join(opt.result_path, 'train.log'),
+            os.path.join(result_dir_name, 'train.log'),
             ['epoch', 'loss', 'acc', 'lr', 'batch'])
-#        train_batch_logger = Logger(
-#            os.path.join(opt.result_path, 'train_batch.log'),
-#            ['epoch', 'batch', 'iter', 'loss', 'acc', 'lr'])
-        train_batch_logger = None
 
         if opt.nesterov:
             dampening = 0
@@ -101,15 +112,19 @@ if __name__ == '__main__':
         scheduler = lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', patience=opt.lr_patience)
     if not opt.no_val:
-        spatial_transform = Compose([ # sample_size = 112
+        spatial_transform = Compose([  # sample_size = 112
             Scale(opt.sample_size),
             CenterCrop(opt.sample_size),
             ToTensor(opt.norm_value), norm_method
         ])
         temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = ClassLabel()
-        validation_data = get_validation_set(
-            opt, spatial_transform, temporal_transform, target_transform)
+        validation_data = datasets[opt.dataset](paths, opt.annotation.path, 'validation',
+                                                opt.n_val_samples,
+                                                sapatial_transform=spatial_transform,
+                                                temporal_transform=temporal_transform,
+                                                target_transform=target_transform,
+                                                n_channel=n_channel)
         val_loader = torch.utils.data.DataLoader(
             validation_data,
             batch_size=opt.val_batch_size,
@@ -117,23 +132,26 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True)
         val_logger = Logger(
-            os.path.join(opt.result_path, 'val.log'), ['epoch', 'loss', 'acc'])
+            os.path.join(result_dir_name, 'val.log'), ['epoch', 'loss', 'acc'])
 
     if opt.optical_flow:
         temp = copy.copy(model.module.conv1)
         model.module.conv1 = nn.Conv3d(
-            5,
+            n_channel,
             64,
             kernel_size=7,
             stride=(1, 2, 2),
             padding=(3, 3, 3),
             bias=False)
+        temp_len = len(temp.weight.data[0])
+        out_len = len(model.module.conv1.weight.data[0])
+        sub_len = out_len - temp_len
         for i in range(len(temp.weight.data)):
-            for j in range(len(temp.weight.data[i])):
+            for j in range(temp_len):
                 model.module.conv1.weight.data[i][j] = temp.weight.data[i][j]
             avg = torch.sum(temp.weight.data[i], 0) / 3
-            model.module.conv1.weight.data[i][3] = avg
-            model.module.conv1.weight.data[i][4] = avg
+            for j in range(sub_len):
+                model.module.conv1.weight.data[i][temp_len + j] = avg
         model.cuda()
 
     if opt.resume_path:
@@ -152,7 +170,7 @@ if __name__ == '__main__':
         validation_loss = None
         if not opt.no_train:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,
-                        train_logger)
+                        train_logger, result_dir_name)
         if not opt.no_val:
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)
@@ -167,8 +185,13 @@ if __name__ == '__main__':
         temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = VideoID()
 
-        test_data = get_test_set(opt, spatial_transform, temporal_transform,
-                                 target_transform)
+        test_data = datasets[opt.dataset](paths, opt.annotation.path, 'test',
+                                                0,
+                                                sapatial_transform=spatial_transform,
+                                                temporal_transform=temporal_transform,
+                                                target_transform=target_transform,
+                                                n_channel=n_channel)
+
         test_loader = torch.utils.data.DataLoader(
             test_data,
             batch_size=opt.batch_size,
