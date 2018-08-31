@@ -47,8 +47,8 @@ acc_sub_list2 = []
 epoch_length = len(train1['acc'])  # epoch数
 
 for i in range(epoch_length):  # epoch数繰り返す
-    acc_sub_list1.append(abs(train1['acc'][i] - train2['acc'][i]) * 100)  # accの列から少数を抜き出しfloat型に変換して100を掛けてリストに追加
-    acc_sub_list2.append(abs(val1['acc'][i] - val2['acc'][i]) * 100)
+    acc_sub_list1.append(abs(train1['acc'][i] - val1['acc'][i]) * 100)  # accの列から少数を抜き出しfloat型に変換して100を掛けてリストに追加
+    acc_sub_list2.append(abs(train2['acc'][i] - val2['acc'][i]) * 100)
 
 x = list(range(1, epoch_length + 1))  # グラフのx軸の設定
 

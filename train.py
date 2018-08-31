@@ -61,7 +61,7 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
         'loss': losses.avg,
         'acc': accuracies.avg,
         'lr': optimizer.param_groups[0]['lr'],
-        'batch': opt.train_batch_size
+        'batch': opt.batch_size
     })
 
     if epoch % opt.checkpoint == 0:

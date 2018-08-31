@@ -25,6 +25,7 @@ if __name__ == '__main__':
     opt = parse_opts()
     n_channel = 3
     use_optical_flow = opt.flow_x_path and opt.flow_y_path
+    use_fine_tune = opt.n_finetune_classes and opt.pretrain_path
     if use_optical_flow:
         n_channel = n_channel + 2
     result_dir_name = '{}-{}-{}-{}ch'.format(opt.dataset, opt.model, opt.model_depth, n_channel)
@@ -139,7 +140,7 @@ if __name__ == '__main__':
         val_logger = Logger(
             os.path.join(result_dir_name, 'val.log'), ['epoch', 'loss', 'acc'])
 
-    if use_optical_flow and opt.n_finetune_classes:
+    if use_optical_flow:
         temp = copy.copy(model.module.conv1)
         model.module.conv1 = nn.Conv3d(
             n_channel,
@@ -148,15 +149,16 @@ if __name__ == '__main__':
             stride=(1, 2, 2),
             padding=(3, 3, 3),
             bias=False)
-        temp_len = len(temp.weight.data[0])
-        out_len = len(model.module.conv1.weight.data[0])
-        sub_len = out_len - temp_len
-        for i in range(len(temp.weight.data)):
-            for j in range(temp_len):
-                model.module.conv1.weight.data[i][j] = temp.weight.data[i][j]
-            avg = torch.sum(temp.weight.data[i], 0) / 3
-            for j in range(sub_len):
-                model.module.conv1.weight.data[i][temp_len + j] = avg
+        if not opt.resume_path and use_fine_tune:
+            temp_len = len(temp.weight.data[0])
+            out_len = len(model.module.conv1.weight.data[0])
+            sub_len = out_len - temp_len
+            for i in range(len(temp.weight.data)):
+                for j in range(temp_len):
+                    model.module.conv1.weight.data[i][j] = temp.weight.data[i][j]
+                avg = torch.sum(temp.weight.data[i], 0) / 3
+                for j in range(sub_len):
+                    model.module.conv1.weight.data[i][temp_len + j] = avg
         model.cuda()
 
     if opt.resume_path:
