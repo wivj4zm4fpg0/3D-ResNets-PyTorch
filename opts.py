@@ -244,6 +244,9 @@ def parse_opts():
     parser.add_argument(
         '--flow_y_path', default=None, type=str, help='flow y path'
     )
+    parser.add_argument(
+        '--suffix', default=None, type=str, help='suffix in maked output directry'
+    )
 
     args = parser.parse_args()
 

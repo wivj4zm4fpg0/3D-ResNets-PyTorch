@@ -11,8 +11,8 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
                 epoch_logger, result_dir_name):
     print('train at epoch {}'.format(epoch))
 
-#   if str(epoch) in opt.lr_rate_schedule and opt.lr_rate_schedule:
-#       optimizer.param_groups[0]['lr'] = opt.lr_rate_schedule[str(epoch)]
+    #   if str(epoch) in opt.lr_rate_schedule and opt.lr_rate_schedule:
+    #       optimizer.param_groups[0]['lr'] = opt.lr_rate_schedule[str(epoch)]
 
     model.train()
 
@@ -20,6 +20,7 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     data_time = AverageMeter()
     losses = AverageMeter()
     accuracies = AverageMeter()
+    accuracies5 = AverageMeter()
 
     end_time = time.time()
     for i, (inputs, targets) in enumerate(data_loader):
@@ -31,10 +32,11 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
         targets = Variable(targets)
         outputs = model(inputs)
         loss = criterion(outputs, targets)
-        acc = calculate_accuracy(outputs, targets)
+        acc1, acc5 = calculate_accuracy(outputs, targets)
 
         losses.update(loss.item(), inputs.size(0))
-        accuracies.update(acc, inputs.size(0))
+        accuracies.update(acc1, inputs.size(0))
+        accuracies5.update(acc5, inputs.size(0))
 
         optimizer.zero_grad()
         loss.backward()
@@ -47,19 +49,22 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
               'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
               'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
               'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-              'Acc {acc.val:.3f} ({acc.avg:.3f})'.format(
+              'Acc-Top1 {acc.val:.3f} ({acc.avg:.3f})\t'
+              'Acc-Top5 {acc5.val:.3f} ({acc5.avg:.3f})'.format(
             epoch,
             i + 1,
             len(data_loader),
             batch_time=batch_time,
             data_time=data_time,
             loss=losses,
-            acc=accuracies))
+            acc=accuracies,
+            acc5=accuracies5))
 
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
-        'acc': accuracies.avg,
+        'acc-top1': accuracies.avg,
+        'acc-top5': accuracies5.avg,
         'lr': optimizer.param_groups[0]['lr'],
         'batch': opt.batch_size
     })

@@ -32,9 +32,11 @@ if __name__ == '__main__':
     if opt.transfer_learning:
         result_dir_name = result_dir_name + '-transfer-learning'
     elif opt.n_finetune_classes:
-        result_dir_name = result_dir_name + '-pretrain'
+        result_dir_name = result_dir_name + '-finetune-pretrain'
     else:
         result_dir_name = result_dir_name + '-no-pretrain'
+    if opt.suffix:
+        result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
     result_dir_name = os.path.join(opt.result_path, result_dir_name)
     os.makedirs(result_dir_name, exist_ok=True)
     opt.scales = [opt.initial_scale]  # initial_scale = 1.0
@@ -102,7 +104,7 @@ if __name__ == '__main__':
             pin_memory=True)
         train_logger = Logger(
             os.path.join(result_dir_name, 'train.log'),
-            ['epoch', 'loss', 'acc', 'lr', 'batch'])
+            ['epoch', 'loss', 'acc-top1', 'acc-top5', 'lr', 'batch'])
 
         if opt.nesterov:
             dampening = 0
@@ -138,7 +140,7 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True)
         val_logger = Logger(
-            os.path.join(result_dir_name, 'val.log'), ['epoch', 'loss', 'acc'])
+            os.path.join(result_dir_name, 'val.log'), ['epoch', 'loss', 'acc-top1', 'acc-top5'])
 
     if use_optical_flow:
         temp = copy.copy(model.module.conv1)
