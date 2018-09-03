@@ -18,11 +18,16 @@ parser.add_argument(
 parser.add_argument(
     '--name2', default='validation', type=str, help='second graph name'
 )
-args=parser.parse_args()
-
+parser.add_argument(
+    '--parameter_name', default='acc-top1', type=str, help='a parameter to be compared'
+)
+parser.add_argument(
+    '--delimiter', default=5, type=int, help='units to break graphs'
+)
+args = parser.parse_args()
 
 y_axis_max = 0  # グラフの縦軸の最大値
-delimiter = 5  # グラフの横軸の区切る数字
+delimiter = args.delimiter  # グラフの横軸の区切る数字
 
 file1_name = args.input_file1  # 訓練データの結果のファイル名
 file2_name = args.input_file2  # 検証データの結果のファイル名
@@ -30,19 +35,21 @@ file2_name = args.input_file2  # 検証データの結果のファイル名
 file1 = pd.read_table(file1_name)  # 訓練データの精度のログファイルの読み込み
 file2 = pd.read_table(file2_name)  # 検証データの精度のログファイルの読み込み
 
+param = args.parameter_name  # 比較するパラメータ
+
 file1_acc_list = []  # 訓練データの精度を入れるリスト変数
 file2_acc_list = []  # 検証データの精度を入れるリスト変数
 
-epoch_length = min(len(file1['acc']), len(file2['acc']))  # epoch数
+epoch_length = min(len(file1[param]), len(file2[param]))  # epoch数 少ない方を優先する
 
 for i in range(epoch_length):  # epoch数繰り返す
-    file1_acc_list.append(file1['acc'][i] * 100)  # accの列から少数を抜き出しfloat型に変換して100を掛けてリストに追加
-    file2_acc_list.append(file2['acc'][i] * 100)
+    file1_acc_list.append(file1[param][i] * 100)  # accの列から少数を抜き出しfloat型に変換して100を掛けてリストに追加
+    file2_acc_list.append(file2[param][i] * 100)
 
 x = list(range(1, epoch_length + 1))  # グラフのx軸の設定
 
-max_value = max(max(file1_acc_list), max(file2_acc_list)) # ２つのリストの最大値を取得
-y_axis_max = ((int('{0:02d}'.format(int(max_value))[0]) + 1) * 10) # ２桁の数値の２の位に１を足して１０を掛けることによりy軸の最大値を決定する
+max_value = max(max(file1_acc_list), max(file2_acc_list))  # ２つのリストの最大値を取得
+y_axis_max = ((int('{0:02d}'.format(int(max_value))[0]) + 1) * 10)  # ２桁の数値の２の位に１を足して１０を掛けることによりy軸の最大値を決定する
 print(max_value)
 
 plt.plot(x, file1_acc_list, label=args.name1)  # 訓練データの精度の推移のグラフを、ラベル名「train」にして割り当てる

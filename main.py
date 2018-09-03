@@ -177,15 +177,15 @@ if __name__ == '__main__':
 
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
-        validation_loss = None
+        # validation_loss = None
         if not opt.no_train:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,
                         train_logger, result_dir_name)
         if not opt.no_val:
             validation_loss = val_epoch(i, val_loader, model, criterion, opt,
                                         val_logger)
-        if not opt.no_train and not opt.no_val:
-            scheduler.step(validation_loss)
+        # if not opt.no_train and not opt.no_val:
+        #    scheduler.step(validation_loss)
     if opt.test:
         spatial_transform = Compose([
             Scale(int(opt.sample_size / opt.scale_in_test)),

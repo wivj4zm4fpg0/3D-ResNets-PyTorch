@@ -5,9 +5,6 @@ import argparse
 import matplotlib.pyplot as plt  # グラフ描画ライブラリ
 import pandas as pd  # csvファイルを扱うライブラリ
 
-y_axis_max = 0  # グラフの縦軸の最大値
-delimiter = 5  # グラフの横軸の区切る数字
-
 parser = argparse.ArgumentParser()
 parser.add_argument(
     'input1_train', default=None, type=str, help='input train file'
@@ -27,7 +24,16 @@ parser.add_argument(
 parser.add_argument(
     '--name2', default='validation', type=str, help='second graph name'
 )
+parser.add_argument(
+    '--parameter_name', default='acc-top1', type=str, help='a parameter to be compared'
+)
+parser.add_argument(
+    '--delimiter', default=5, type=int, help='units to break graphs'
+)
 args = parser.parse_args()
+
+y_axis_max = 0  # グラフの縦軸の最大値
+delimiter = args.delimiter  # グラフの横軸の区切る数字
 
 train_name1 = args.input1_train
 val_name1 = args.input1_val
@@ -41,14 +47,17 @@ val1 = pd.read_table(val_name1)
 train2 = pd.read_table(train_name2)
 val2 = pd.read_table(val_name2)
 
+param = args.parameter_name  # 比較するパラメータ
+
 acc_sub_list1 = []
 acc_sub_list2 = []
 
-epoch_length = len(train1['acc'])  # epoch数
+epoch_length = min(len(train1[param]), len(val1[param]), len(train2[param]), len(val2[param]))  # epoch数
 
 for i in range(epoch_length):  # epoch数繰り返す
-    acc_sub_list1.append(abs(train1['acc'][i] - val1['acc'][i]) * 100)  # accの列から少数を抜き出しfloat型に変換して100を掛けてリストに追加
-    acc_sub_list2.append(abs(train2['acc'][i] - val2['acc'][i]) * 100)
+    acc_sub_list1.append(
+        abs(train1[param][i] - val1[param][i]) * 100)  # accの列から少数を抜き出しfloat型に変換して100を掛けてリストに追加
+    acc_sub_list2.append(abs(train2[param][i] - val2[param][i]) * 100)
 
 x = list(range(1, epoch_length + 1))  # グラフのx軸の設定
 
