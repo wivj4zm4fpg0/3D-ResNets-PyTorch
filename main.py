@@ -24,10 +24,9 @@ from validation import val_epoch
 if __name__ == '__main__':
     opt = parse_opts()
     n_channel = 3
-    use_optical_flow = opt.flow_x_path and opt.flow_y_path
     use_fine_tune = opt.n_finetune_classes and opt.pretrain_path
-    if use_optical_flow:
-        n_channel = n_channel + 2
+    if opt.add_image_paths:
+        n_channel = n_channel + len(opt.add_iamge_paths)
     result_dir_name = '{}-{}-{}-{}ch'.format(opt.dataset, opt.model, opt.model_depth, n_channel)
     if opt.transfer_learning:
         result_dir_name = result_dir_name + '-transfer-learning'
@@ -72,9 +71,8 @@ if __name__ == '__main__':
     val_logger = None
 
     paths = [opt.video_path]
-    if use_optical_flow:
-        paths.append(opt.flow_x_path)
-        paths.append(opt.flow_y_path)
+    if opt.add_image_paths:
+        paths.extend(opt.add_image_paths)
 
     if not opt.no_train:
         crop_method = None
@@ -142,7 +140,7 @@ if __name__ == '__main__':
         val_logger = Logger(
             os.path.join(result_dir_name, 'val.log'), ['epoch', 'loss', 'acc-top1', 'acc-top5'])
 
-    if use_optical_flow:
+    if opt.add_image_paths:
         temp = copy.copy(model.module.conv1)
         model.module.conv1 = nn.Conv3d(
             n_channel,

@@ -239,13 +239,10 @@ def parse_opts():
     )
     parser.set_defaults(transfer_learning=False)
     parser.add_argument(
-        '--flow_x_path', default=None, type=str, help='flow x path'
-    )
-    parser.add_argument(
-        '--flow_y_path', default=None, type=str, help='flow y path'
-    )
-    parser.add_argument(
         '--suffix', default=None, type=str, help='suffix in maked output directry'
+    )
+    parser.add_argument(
+        '--add_image_paths', default=None, type=list, help='chanenl image to add to RGB image'
     )
 
     args = parser.parse_args()
