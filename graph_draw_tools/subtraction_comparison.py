@@ -19,7 +19,7 @@ parser.add_argument(
     'input2_val', default=None, type=str, help='input input validation file'
 )
 parser.add_argument(
-    '--name1', default='train', type=str, help='first graph name'
+    '--name1', default='train', type=str, help='first g raph name'
 )
 parser.add_argument(
     '--name2', default='validation', type=str, help='second graph name'
