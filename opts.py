@@ -242,7 +242,7 @@ def parse_opts():
         '--suffix', default=None, type=str, help='suffix in maked output directry'
     )
     parser.add_argument(
-        '--add_image_paths', default=None, type=list, help='chanenl image to add to RGB image'
+        '--add_image_paths', default=None,  nargs='*', help='chanenl image to add to RGB image'
     )
 
     args = parser.parse_args()

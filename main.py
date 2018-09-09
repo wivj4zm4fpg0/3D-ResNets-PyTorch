@@ -26,7 +26,7 @@ if __name__ == '__main__':
     n_channel = 3
     use_fine_tune = opt.n_finetune_classes and opt.pretrain_path
     if opt.add_image_paths:
-        n_channel = n_channel + len(opt.add_iamge_paths)
+        n_channel = n_channel + len(opt.add_image_paths)
     result_dir_name = '{}-{}-{}-{}ch'.format(opt.dataset, opt.model, opt.model_depth, n_channel)
     if opt.transfer_learning:
         result_dir_name = result_dir_name + '-transfer-learning'
