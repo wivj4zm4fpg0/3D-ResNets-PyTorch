@@ -24,6 +24,9 @@ parser.add_argument(
 parser.add_argument(
     '--delimiter', default=5, type=int, help='units to break graphs'
 )
+parser.add_argument(
+    '--y_axis_max', default=None, type=int, help='y axis max size'
+)
 args = parser.parse_args()
 
 y_axis_max = 0  # グラフの縦軸の最大値
@@ -49,8 +52,10 @@ for i in range(epoch_length):  # epoch数繰り返す
 x = list(range(1, epoch_length + 1))  # グラフのx軸の設定
 
 max_value = max(max(file1_acc_list), max(file2_acc_list))  # ２つのリストの最大値を取得
-y_axis_max = ((int('{0:02d}'.format(int(max_value))[0]) + 1) * 10)  # ２桁の数値の２の位に１を足して１０を掛けることによりy軸の最大値を決定する
-print(max_value)
+if (args.y_axis_max):
+    y_axis_max = args.y_axis_max
+else:
+    y_axis_max = ((int('{0:02d}'.format(int(max_value))[0]) + 1) * 10)  # ２桁の数値の２の位に１を足して１０を掛けることによりy軸の最大値を決定する
 
 plt.plot(x, file1_acc_list, label=args.name1)  # 訓練データの精度の推移のグラフを、ラベル名「train」にして割り当てる
 plt.plot(x, file2_acc_list, linestyle='--', label=args.name2)  # 検証データの精度の推移のグラフを、ラベル名「validation」にして割り当てる
