@@ -114,11 +114,12 @@ class ResNet(nn.Module):
                  sample_size,
                  sample_duration,
                  shortcut_type='B',
-                 num_classes=400):
+                 num_classes=400,
+                 n_channel=3):
         self.inplanes = 64
         super(ResNet, self).__init__()
         self.conv1 = nn.Conv3d(
-            3,
+            n_channel,
             64,
             kernel_size=7,
             stride=(1, 2, 2),

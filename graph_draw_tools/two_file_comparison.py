@@ -22,7 +22,7 @@ parser.add_argument(
     '--parameter_name', default='acc-top1', type=str, help='a parameter to be compared'
 )
 parser.add_argument(
-    '--delimiter', default=5, type=int, help='units to break graphs'
+    '--delimiter', default=10, type=int, help='units to break graphs'
 )
 parser.add_argument(
     '--y_axis_max', default=None, type=int, help='y axis max size'

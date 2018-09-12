@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a20e722-db78-4118-bd5f-9f594ba30542" name="Default Changelist" comment="">
+    <list default="true" id="5a20e722-db78-4118-bd5f-9f594ba30542" name="Default Changelist" comment="refactor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/graph_draw_tools/two_file_comparison.py" beforeDir="false" afterPath="$PROJECT_DIR$/graph_draw_tools/two_file_comparison.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/opts.py" beforeDir="false" afterPath="$PROJECT_DIR$/opts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/resnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/resnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,10 +16,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_no_pretrain_RGB.coverage" NAME="main-ucf101-resnet18-no-pretrain-RGB Coverage Results" MODIFIED="1536519680909" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$two_file_comparison_train_validation.coverage" NAME="two-file-comparison train validation Coverage Results" MODIFIED="1536525605714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/graph_draw_tools" />
+    <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_no_pretrain_RGB.coverage" NAME="main-ucf101-resnet18-no-pretrain-RGB Coverage Results" MODIFIED="1536590648545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$two_file_comparison_train_validation.coverage" NAME="two-file-comparison train validation Coverage Results" MODIFIED="1536789691973" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/graph_draw_tools" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ssv2_resnet18_nopretrain.coverage" NAME="main-ssv2-resnet18-nopretrain Coverage Results" MODIFIED="1534614787514" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ssv2_resnet18_kinetics_pretrain.coverage" NAME="main-ssv2-resnet18-kinetics-pretrain Coverage Results" MODIFIED="1535356365021" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_no_pretrain_RGB_size224.coverage" NAME="main-ucf101-resnet18-no-pretrain-RGB size224 Coverage Results" MODIFIED="1536790490141" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$comparison.coverage" NAME="comparison Coverage Results" MODIFIED="1535950135069" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/graph_draw_tools" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_no_pretrain_RGB_tvl1_flow_canny.coverage" NAME="main-ucf101-resnet18-no-pretrain-RGB-tvl1-flow-canny Coverage Results" MODIFIED="1536472988723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnext101_no_pretrain_RGB_tvl1_flow.coverage" NAME="main-ucf101-resnext101-no-pretrain-RGB-tvl1-flow Coverage Results" MODIFIED="1535809515659" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -29,7 +33,7 @@
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_kinetics_pretrain_10ep_lr0_001.coverage" NAME="main-ucf101-resnet18-kinetics-pretrain-10ep-lr0.001 Coverage Results" MODIFIED="1534836840881" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$ssv2.coverage" NAME="ssv2 Coverage Results" MODIFIED="1534961282687" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/datasets" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$evalution.coverage" NAME="evalution Coverage Results" MODIFIED="1535348659957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_no_pretrain_RGB_tvl1_flow.coverage" NAME="main-ucf101-resnet18-no-pretrain-RGB-tvl1-flow Coverage Results" MODIFIED="1536383359834" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_no_pretrain_RGB_tvl1_flow.coverage" NAME="main-ucf101-resnet18-no-pretrain-RGB-tvl1-flow Coverage Results" MODIFIED="1536781168304" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ssv2_resnext101_kinetics_pretrain.coverage" NAME="main-ssv2-resnext101-kinetics-pretrain Coverage Results" MODIFIED="1534448062744" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_kinetics_pretrain.coverage" NAME="main-ucf101-resnet18-kinetics-pretrain Coverage Results" MODIFIED="1535351537905" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet34_kinetics_pretrain.coverage" NAME="main-ucf101-resnet34-kinetics-pretrain Coverage Results" MODIFIED="1534440021321" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -116,33 +120,36 @@
     <session id="-1732039770">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="2" />
+          <entry key="project.closed" value="4" />
           <entry key="project.open.time.24" value="1" />
-          <entry key="project.open.time.4" value="1" />
-          <entry key="project.open.time.5" value="1" />
-          <entry key="project.opened" value="3" />
+          <entry key="project.open.time.4" value="2" />
+          <entry key="project.open.time.5" value="2" />
+          <entry key="project.opened" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="437" />
-          <entry key="txt" value="72" />
+          <entry key="py" value="1204" />
+          <entry key="sh" value="107" />
+          <entry key="txt" value="80" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="72" />
-          <entry key="Python" value="437" />
+          <entry key="PLAIN_TEXT" value="187" />
+          <entry key="Python" value="1204" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="1" />
+          <entry key="py" value="8" />
+          <entry key="sh" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="1" />
+          <entry key="PLAIN_TEXT" value="1" />
+          <entry key="Python" value="8" />
         </counts>
       </usages-collector>
     </session>
@@ -154,10 +161,40 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/main.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="348">
-                  <caret line="185" column="44" lean-forward="true" selection-start-line="185" selection-start-column="44" selection-end-line="185" selection-end-column="44" />
+                <state relative-caret-position="449">
+                  <caret line="174" column="12" selection-start-line="174" selection-start-column="12" selection-end-line="174" selection-end-column="12" />
                   <folding>
                     <element signature="e#0#11#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/shell/test.sh">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="34">
+                  <caret line="2" column="5" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/models/resnet.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-1186">
+                  <caret line="120" selection-start-line="120" selection-end-line="120" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dataset.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="153">
+                  <caret line="9" selection-start-line="9" selection-end-line="9" />
+                  <folding>
+                    <element signature="e#0#44#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -166,7 +203,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/model.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-1">
+                <state relative-caret-position="-1356">
+                  <caret line="24" selection-start-line="24" selection-end-line="24" />
                   <folding>
                     <element signature="e#0#12#0" expanded="true" />
                   </folding>
@@ -177,17 +215,29 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/opts.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="3876">
-                  <caret line="228" column="69" selection-start-line="228" selection-start-column="69" selection-end-line="228" selection-end-column="69" />
+                <state relative-caret-position="2533">
+                  <caret line="149" column="39" selection-start-line="149" selection-start-column="35" selection-end-line="149" selection-end-column="39" />
                 </state>
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/datasets/base.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="106">
+                  <caret line="119" column="28" lean-forward="true" selection-start-line="119" selection-start-column="28" selection-end-line="119" selection-end-column="28" />
+                  <folding>
+                    <element signature="e#0#44#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/graph_draw_tools/two_file_comparison.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="986">
-                  <caret line="58" lean-forward="true" selection-start-line="58" selection-end-line="58" />
+                <state relative-caret-position="17">
+                  <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
                   <folding>
                     <element signature="e#18#33#0" expanded="true" />
                   </folding>
@@ -199,10 +249,10 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/graph_draw_tools/subtraction_comparison.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="289">
+                <state relative-caret-position="238">
                   <caret line="17" column="20" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
                   <folding>
                     <element signature="e#18#33#0" expanded="true" />
@@ -211,13 +261,37 @@
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="false">
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/train.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1173">
-                  <caret line="69" column="6" selection-start-line="69" selection-start-column="6" selection-end-line="69" selection-end-column="6" />
+                <state relative-caret-position="276">
+                  <caret line="71" lean-forward="true" selection-start-line="71" selection-end-line="71" />
                   <folding>
                     <element signature="e#0#9#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/datasets/ucf101.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="459">
+                  <caret line="27" column="39" lean-forward="true" selection-start-line="27" selection-start-column="39" selection-end-line="27" selection-end-column="39" />
+                  <folding>
+                    <element signature="e#0#20#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/datasets/base.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="544">
+                  <caret line="32" column="12" selection-start-line="32" selection-start-column="12" selection-end-line="32" selection-end-column="12" />
+                  <folding>
+                    <element signature="e#0#44#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -236,7 +310,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>path</find>
       <find>lr</find>
       <find>std</find>
       <find>manual</find>
@@ -245,6 +318,8 @@
       <find>batch</find>
       <find>pre</find>
       <find>use_optic</find>
+      <find>path</find>
+      <find>fine</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -267,9 +342,7 @@
         <option value="$PROJECT_DIR$/opencv_test/hoge.py" />
         <option value="$USER_HOME$/Downloads/cifar10_tutorial.py" />
         <option value="$PROJECT_DIR$/mean.py" />
-        <option value="$PROJECT_DIR$/models/resnet.py" />
         <option value="$PROJECT_DIR$/test.py" />
-        <option value="$PROJECT_DIR$/model.py" />
         <option value="$PROJECT_DIR$/datasets/ssv2.py" />
         <option value="$PROJECT_DIR$/datasets/ssv2_flow.py" />
         <option value="$PROJECT_DIR$/comparison.py" />
@@ -279,20 +352,23 @@
         <option value="$PROJECT_DIR$/datasets/ucf101flow.py" />
         <option value="$PROJECT_DIR$/datasets/ucf101_test.py" />
         <option value="$PROJECT_DIR$/dataset.py" />
-        <option value="$PROJECT_DIR$/datasets/ucf101.py" />
-        <option value="$PROJECT_DIR$/datasets/base.py" />
         <option value="$PROJECT_DIR$/graph_draw_tools/comparison.py" />
         <option value="$PROJECT_DIR$/graph_draw_tools/evaluation.py" />
         <option value="$PROJECT_DIR$/utils.py" />
-        <option value="$PROJECT_DIR$/train.py" />
         <option value="$PROJECT_DIR$/validation.py" />
         <option value="$PROJECT_DIR$/shell/ucf101_resnet18_5ch_no_pretrain.sh" />
         <option value="$PROJECT_DIR$/graph_draw_tools/2file_comparison.py" />
         <option value="$PROJECT_DIR$/graph_draw_tools/substraction_comparison.py" />
-        <option value="$PROJECT_DIR$/opts.py" />
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/graph_draw_tools/subtraction_comparison.py" />
         <option value="$PROJECT_DIR$/graph_draw_tools/two_file_comparison.py" />
+        <option value="$PROJECT_DIR$/opts.py" />
+        <option value="$PROJECT_DIR$/datasets/base.py" />
+        <option value="$PROJECT_DIR$/datasets/ucf101.py" />
+        <option value="$PROJECT_DIR$/train.py" />
+        <option value="$PROJECT_DIR$/model.py" />
+        <option value="$PROJECT_DIR$/models/resnet.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/shell/test.sh" />
       </list>
     </option>
   </component>
@@ -336,14 +412,42 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="3D-ResNets-PyTorch" type="b2602c69:ProjectViewProjectNode" />
+              <item name="3D-ResNets-PyTorch" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="3D-ResNets-PyTorch" type="b2602c69:ProjectViewProjectNode" />
+              <item name="3D-ResNets-PyTorch" type="462c0819:PsiDirectoryNode" />
+              <item name="datasets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="3D-ResNets-PyTorch" type="b2602c69:ProjectViewProjectNode" />
+              <item name="3D-ResNets-PyTorch" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="3D-ResNets-PyTorch" type="b2602c69:ProjectViewProjectNode" />
+              <item name="3D-ResNets-PyTorch" type="462c0819:PsiDirectoryNode" />
+              <item name="pretrain_models" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -368,7 +472,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.two-file-comparison train validation">
+  <component name="RunManager" selected="Python.main-ucf101-resnet18-no-pretrain-RGB size224">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="3D-ResNets-PyTorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -385,6 +489,29 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main-ucf101-resnet18-no-pretrain-RGB size224" type="PythonConfigurationType" factoryName="Python">
+      <module name="3D-ResNets-PyTorch" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="LD_LIBRARY_PATH" value="/usr/local/cuda/lib64" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/anaconda3/envs/pytorch/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="--video_path $USER_HOME$/dataset/UCF-101/resize/images --annotation_path $USER_HOME$/dataset/UCF-101/ucfTrainTestlist/ucf101_01.json --result_path $USER_HOME$/1tb/deep-learning-log --dataset ucf101 --n_classes 101 --ft_begin_index 0 --model resnet --model_depth 18 --resnet_shortcut A --batch_size 8 --n_threads 4 --checkpoint 5 --learning_rate 0.01 --n_epochs 100 --suffix size224 --sample_size 224" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -430,7 +557,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="--video_path $USER_HOME$/dataset/UCF-101/resize/images --annotation_path $USER_HOME$/dataset/UCF-101/ucfTrainTestlist/ucf101_01.json --result_path $USER_HOME$/1tb/deep-learning-log --dataset ucf101 --n_classes 101 --ft_begin_index 0 --model resnet --model_depth 18 --resnet_shortcut A --batch_size 32 --n_threads 4 --checkpoint 1 --learning_rate 0.01 --add_image_paths $USER_HOME$/dataset/UCF-101/resize/flow/tvl1/flow_x $USER_HOME$/dataset/UCF-101/resize/flow/tvl1/flow_y --n_epochs 80 --suffix backup3 --resume_path save_70.pth" />
+      <option name="PARAMETERS" value="--video_path $USER_HOME$/dataset/UCF-101/resize/images --annotation_path $USER_HOME$/dataset/UCF-101/ucfTrainTestlist/ucf101_01.json --result_path $USER_HOME$/1tb/deep-learning-log --dataset ucf101 --n_classes 101 --ft_begin_index 0 --model resnet --model_depth 18 --resnet_shortcut A --batch_size 32 --n_threads 4 --checkpoint 5 --learning_rate 0.001 --add_image_paths $USER_HOME$/dataset/UCF-101/resize/flow/tvl1/flow_x $USER_HOME$/dataset/UCF-101/resize/flow/tvl1/flow_y --n_epochs 150 --suffix backup9 --resume_path save_90.pth" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -453,7 +580,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="--video_path $USER_HOME$/dataset/UCF-101/resize/images --annotation_path $USER_HOME$/dataset/UCF-101/ucfTrainTestlist/ucf101_01.json --result_path $USER_HOME$/1tb/deep-learning-log --dataset ucf101 --n_classes 101 --ft_begin_index 0 --model resnet --model_depth 18 --resnet_shortcut A --batch_size 32 --n_threads 4 --checkpoint 1 --learning_rate 0.01 --n_epochs 80 --suffix 0909 --resume_path save_50.pth" />
+      <option name="PARAMETERS" value="--video_path $USER_HOME$/dataset/UCF-101/resize/images --annotation_path $USER_HOME$/dataset/UCF-101/ucfTrainTestlist/ucf101_01.json --result_path $USER_HOME$/1tb/deep-learning-log --dataset ucf101 --n_classes 101 --ft_begin_index 0 --model resnet --model_depth 18 --resnet_shortcut A --batch_size 32 --n_threads 4 --checkpoint 1 --learning_rate 0.01 --n_epochs 100 --n_add_RGB 2 --suffix RGBx2" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -545,7 +672,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/graph_draw_tools/two_file_comparison.py" />
-      <option name="PARAMETERS" value="$USER_HOME$/1tb/deep-learning-log/ucf101-resnet-18-3ch-no-pretrain-0909/train.log $USER_HOME$/1tb/deep-learning-log/ucf101-resnet-18-3ch-no-pretrain-0909/val.log --name1 train --name2 validation --y_axis_max 100" />
+      <option name="PARAMETERS" value="$USER_HOME$/1tb/deep-learning-log/ucf101-resnet-18-5ch-no-pretrain-backup9/train.log $USER_HOME$/1tb/deep-learning-log/ucf101-resnet-18-5ch-no-pretrain-backup9/val.log --name1 train --name2 val" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -581,6 +708,7 @@
       <item itemvalue="Python.two-file-comparison" />
       <item itemvalue="Python.two-file-comparison train validation" />
       <item itemvalue="Python.main-ucf101-resnet18-no-pretrain-RGB" />
+      <item itemvalue="Python.main-ucf101-resnet18-no-pretrain-RGB size224" />
       <item itemvalue="Python.main-ucf101-resnet18-no-pretrain-RGB-tvl1-flow" />
       <item itemvalue="Python.main-ucf101-resnet18-no-pretrain-RGB-tvl1-flow-canny" />
       <item itemvalue="Python.main-ucf101-resnext101-no-pretrain-RGB" />
@@ -710,7 +838,14 @@
       <option name="project" value="LOCAL" />
       <updated>1536524649594</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="refactor">
+      <created>1536526048809</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1536526048809</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TodoView">
@@ -723,15 +858,15 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="41" width="1920" height="1039" extended-state="6" />
+    <frame x="0" y="27" width="1920" height="1053" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.14483494" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14483494" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32979852" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49519745" visible="true" weight="0.33406115" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49519745" visible="true" weight="0.33188722" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49946752" weight="0.3991323" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -747,7 +882,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" x="0" y="97" width="1727" height="878" id="SciView" order="3" weight="0.32924226" />
+      <window_info anchor="right" x="0" y="97" width="1727" height="878" id="SciView" order="3" weight="0.328541" />
       <window_info anchor="right" id="R Graphics" order="4" />
       <window_info anchor="right" id="R Packages" order="5" />
       <window_info anchor="right" id="Database" order="6" weight="0.32977587" />
@@ -763,12 +898,12 @@
     <MESSAGE value="correspond to TwentyBN-something-something-v1 and v2 dataset" />
     <MESSAGE value="add .idea" />
     <MESSAGE value="correspond ssv2-optical-flow" />
-    <MESSAGE value="refactor" />
     <MESSAGE value="refactor graph_draw_tools" />
     <MESSAGE value="refactor new line type in graph_draw_tools" />
     <MESSAGE value="correspond multi channels" />
     <MESSAGE value="enable decide y axis max value" />
-    <option name="LAST_COMMIT_MESSAGE" value="enable decide y axis max value" />
+    <MESSAGE value="refactor" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$APPLICATION_CONFIG_DIR$/pycharm64.vmoptions" />
@@ -863,13 +998,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/resnet.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="110" column="20" selection-start-line="110" selection-start-column="20" selection-end-line="110" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/utils/ucf101_json.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-190">
@@ -885,31 +1013,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" lean-forward="true" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/spatial_transforms.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="286">
           <caret line="162" column="13" lean-forward="true" selection-start-line="162" selection-start-column="13" selection-end-line="162" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/datasets/ucf101.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="12" selection-start-line="4" selection-start-column="12" selection-end-line="4" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/datasets/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1445">
-          <caret line="85" column="17" lean-forward="true" selection-start-line="85" selection-start-column="17" selection-end-line="85" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -941,35 +1048,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/train.py">
+    <entry file="file://$PROJECT_DIR$/graph_draw_tools/two_file_comparison.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1173">
-          <caret line="69" column="6" selection-start-line="69" selection-start-column="6" selection-end-line="69" selection-end-column="6" />
+        <state relative-caret-position="17">
+          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#18#33#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1">
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/opts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3876">
-          <caret line="228" column="69" selection-start-line="228" selection-start-column="69" selection-end-line="228" selection-end-column="69" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/graph_draw_tools/subtraction_comparison.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
+        <state relative-caret-position="238">
           <caret line="17" column="20" selection-start-line="17" selection-start-column="20" selection-end-line="17" selection-end-column="20" />
           <folding>
             <element signature="e#18#33#0" expanded="true" />
@@ -977,23 +1068,84 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/datasets/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="106">
+          <caret line="119" column="28" lean-forward="true" selection-start-line="119" selection-start-column="28" selection-end-line="119" selection-end-column="28" />
+          <folding>
+            <element signature="e#0#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/datasets/ucf101.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="27" column="39" lean-forward="true" selection-start-line="27" selection-start-column="39" selection-end-line="27" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#20#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+          <folding>
+            <element signature="e#0#44#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1356">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/resnet.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1186">
+          <caret line="120" selection-start-line="120" selection-end-line="120" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="71" lean-forward="true" selection-start-line="71" selection-end-line="71" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="185" column="44" lean-forward="true" selection-start-line="185" selection-start-column="44" selection-end-line="185" selection-end-column="44" />
+        <state relative-caret-position="449">
+          <caret line="174" column="12" selection-start-line="174" selection-start-column="12" selection-end-line="174" selection-end-column="12" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graph_draw_tools/two_file_comparison.py">
+    <entry file="file://$PROJECT_DIR$/opts.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="986">
-          <caret line="58" lean-forward="true" selection-start-line="58" selection-end-line="58" />
-          <folding>
-            <element signature="e#18#33#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="2533">
+          <caret line="149" column="39" selection-start-line="149" selection-start-column="35" selection-end-line="149" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shell/test.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="5" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="5" />
         </state>
       </provider>
     </entry>
