@@ -1,3 +1,5 @@
+import copy
+
 import torch
 from torch import nn
 
@@ -6,9 +8,6 @@ from models import resnet, pre_act_resnet, wide_resnet, resnext, densenet
 
 def generate_model(opt):
     global get_fine_tuning_parameters, model
-    assert opt.model in [
-        'resnet', 'preresnet', 'wideresnet', 'resnext', 'densenet'
-    ]
 
     if opt.model == 'resnet':
         assert opt.model_depth in [10, 18, 34, 50, 101, 152, 200]
@@ -165,12 +164,32 @@ def generate_model(opt):
 
     if not opt.no_cuda:
         model = model.cuda()
-        model = nn.DataParallel(model, device_ids=None)
+        model = nn.DataParallel(model)
 
         if opt.pretrain_path:
             print('loading pretrained model {}'.format(opt.pretrain_path))
             pretrain = torch.load(opt.pretrain_path)
-            assert opt.arch == pretrain['arch']
+
+            temp = copy.copy(pretrain['state_dict'].module.conv1)
+            pretrain['state_dict'].module.conv1 = nn.Conv3d(
+                opt.n_channel,
+                64,
+                kernel_size=7,
+                stride=(1, 2, 2),
+                padding=(3, 3, 3),
+                bias=False
+            )
+            temp_len = len(temp.weight.data[0])
+            pre_data = pretrain['state_dict'].module.conv1.weight.data
+            out_len = len(pre_data[0])
+            sub_len = out_len - temp_len
+            for i in range(len(temp.weight.data)):
+                for j in range(temp_len):
+                    pre_data[i][j] = temp.weight.data[i][j]
+                avg = torch.sum(temp.weight.data[i], 0) / 3
+                for j in range(sub_len):
+                    pre_data[i][temp_len + j] = avg
+            pretrain['state_dict'].cuda()
 
             model.load_state_dict(pretrain['state_dict'])
 
@@ -182,8 +201,7 @@ def generate_model(opt):
                 if opt.transfer_learning == True:
                     for p in model.parameters():
                         p.requires_grad = False
-                model.module.fc = nn.Linear(model.module.fc.in_features,
-                                            opt.n_finetune_classes)
+                model.module.fc = nn.Linear(model.module.fc.in_features, opt.n_finetune_classes)
                 model.module.fc = model.module.fc.cuda()
 
             if opt.transfer_learning == True:
@@ -204,7 +222,7 @@ def generate_model(opt):
                     model.classifier.in_features, opt.n_finetune_classes)
             else:
                 model.fc = nn.Linear(model.fc.in_features,
-                                            opt.n_finetune_classes)
+                                     opt.n_finetune_classes)
 
             parameters = get_fine_tuning_parameters(model, opt.ft_begin_index)
             return model, parameters

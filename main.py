@@ -138,27 +138,6 @@ if __name__ == '__main__':
         val_logger = Logger(
             os.path.join(result_dir_name, 'val.log'), ['epoch', 'loss', 'acc-top1', 'acc-top5', 'time'])
 
-    if opt.add_image_paths:
-        temp = copy.copy(model.module.conv1)
-        model.module.conv1 = nn.Conv3d(
-            n_channel,
-            64,
-            kernel_size=7,
-            stride=(1, 2, 2),
-            padding=(3, 3, 3),
-            bias=False)
-        if not opt.resume_path and use_fine_tune:
-            temp_len = len(temp.weight.data[0])
-            out_len = len(model.module.conv1.weight.data[0])
-            sub_len = out_len - temp_len
-            for i in range(len(temp.weight.data)):
-                for j in range(temp_len):
-                    model.module.conv1.weight.data[i][j] = temp.weight.data[i][j]
-                avg = torch.sum(temp.weight.data[i], 0) / 3
-                for j in range(sub_len):
-                    model.module.conv1.weight.data[i][temp_len + j] = avg
-        model.cuda()
-
     if opt.resume_path:
         opt.resume_path = os.path.join(result_dir_name, opt.resume_path)
         print('loading checkpoint {}'.format(opt.resume_path))

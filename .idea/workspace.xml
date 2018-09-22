@@ -4,6 +4,7 @@
     <list default="true" id="5a20e722-db78-4118-bd5f-9f594ba30542" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -128,28 +129,28 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="gitignore" value="10" />
-          <entry key="py" value="1358" />
+          <entry key="py" value="1912" />
           <entry key="sh" value="107" />
-          <entry key="txt" value="121" />
+          <entry key="txt" value="151" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="238" />
-          <entry key="Python" value="1358" />
+          <entry key="PLAIN_TEXT" value="268" />
+          <entry key="Python" value="1912" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="gitignore" value="1" />
-          <entry key="py" value="21" />
+          <entry key="py" value="23" />
           <entry key="sh" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="21" />
+          <entry key="Python" value="23" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -165,11 +166,11 @@
     <splitter split-orientation="horizontal" split-proportion="0.5">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/main.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="782">
-                  <caret line="67" selection-start-line="67" selection-end-line="67" />
+                <state relative-caret-position="121">
+                  <caret line="140" selection-start-line="140" selection-end-line="140" />
                   <folding>
                     <element signature="e#0#11#0" expanded="true" />
                   </folding>
@@ -201,6 +202,15 @@
               </provider>
             </entry>
           </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/opts.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-731">
+                  <caret line="156" column="19" selection-start-line="156" selection-start-column="18" selection-end-line="156" selection-end-column="19" />
+                </state>
+              </provider>
+            </entry>
+          </file>
         </leaf>
       </split-first>
       <split-second>
@@ -208,8 +218,11 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/model.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-2728">
-                  <caret line="24" selection-start-line="24" selection-end-line="24" />
+                <state relative-caret-position="170">
+                  <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+                  <folding>
+                    <element signature="e#0#11#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -237,6 +250,7 @@
       <find>use_optic</find>
       <find>path</find>
       <find>fine</find>
+      <find>scheduler</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -283,7 +297,6 @@
         <option value="$PROJECT_DIR$/opts.py" />
         <option value="$PROJECT_DIR$/datasets/base.py" />
         <option value="$PROJECT_DIR$/datasets/ucf101.py" />
-        <option value="$PROJECT_DIR$/model.py" />
         <option value="$PROJECT_DIR$/models/resnet.py" />
         <option value="$PROJECT_DIR$/shell/test.sh" />
         <option value="$PROJECT_DIR$/.gitignore" />
@@ -291,6 +304,7 @@
         <option value="$PROJECT_DIR$/train.py" />
         <option value="$PROJECT_DIR$/validation.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/model.py" />
       </list>
     </option>
   </component>
@@ -789,7 +803,14 @@
       <option name="project" value="LOCAL" />
       <updated>1537633311260</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="remove learning rate scheduler">
+      <created>1537634317589</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1537634317589</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TodoView">
@@ -852,7 +873,8 @@
     <MESSAGE value="refactor" />
     <MESSAGE value="update" />
     <MESSAGE value="record learning time per epoch" />
-    <option name="LAST_COMMIT_MESSAGE" value="record learning time per epoch" />
+    <MESSAGE value="remove learning rate scheduler" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove learning rate scheduler" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$APPLICATION_CONFIG_DIR$/pycharm64.vmoptions" />
@@ -991,13 +1013,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/opts.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2533">
-          <caret line="149" column="39" selection-start-line="149" selection-start-column="35" selection-end-line="149" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/graph_draw_tools/two_file_comparison.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
@@ -1055,13 +1070,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2728">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/validation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="383">
@@ -1084,8 +1092,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="782">
-          <caret line="67" selection-start-line="67" selection-end-line="67" />
+        <state relative-caret-position="121">
+          <caret line="140" selection-start-line="140" selection-end-line="140" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/opts.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-731">
+          <caret line="156" column="19" selection-start-line="156" selection-start-column="18" selection-end-line="156" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
