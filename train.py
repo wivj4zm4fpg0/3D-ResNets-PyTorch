@@ -11,9 +11,6 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
                 epoch_logger, result_dir_name):
     print('train at epoch {}'.format(epoch))
 
-    #   if str(epoch) in opt.lr_rate_schedule and opt.lr_rate_schedule:
-    #       optimizer.param_groups[0]['lr'] = opt.lr_rate_schedule[str(epoch)]
-
     model.train()
 
     batch_time = AverageMeter()
@@ -23,9 +20,9 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     accuracies5 = AverageMeter()
 
     end_time = time.time()
+    epoch_time = time.time()
     for i, (inputs, targets) in enumerate(data_loader):
         data_time.update(time.time() - end_time)
-        # print(inputs.shape)
 
         if not opt.no_cuda:
             targets = targets.cuda(async=True)
@@ -61,13 +58,15 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
             acc=accuracies,
             acc5=accuracies5))
 
+    epoch_time = epoch_time - time.time()
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
         'acc-top1': accuracies.avg,
         'acc-top5': accuracies5.avg,
         'lr': optimizer.param_groups[0]['lr'],
-        'batch': opt.batch_size
+        'batch': opt.batch_size,
+        'time': epoch_time
     })
 
     if epoch % opt.checkpoint == 0:

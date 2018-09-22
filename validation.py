@@ -17,6 +17,7 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
     accuracies5 = AverageMeter()
 
     end_time = time.time()
+    epoch_time = time.time()
     with torch.no_grad():
         for i, (inputs, targets) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
@@ -49,6 +50,12 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
                 acc=accuracies,
                 acc5=accuracies5))
 
-    logger.log({'epoch': epoch, 'loss': losses.avg, 'acc-top1': accuracies.avg, 'acc-top5': accuracies5.avg})
+    epoch_time = epoch_time - time.time()
+
+    logger.log({'epoch': epoch,
+                'loss': losses.avg,
+                'acc-top1': accuracies.avg,
+                'acc-top5': accuracies5.avg,
+                'time': epoch_time})
 
     return losses.avg
