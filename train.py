@@ -58,7 +58,8 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
             acc=accuracies,
             acc5=accuracies5))
 
-    epoch_time = epoch_time - time.time()
+    epoch_time = time.time() - epoch_time
+
     epoch_logger.log({
         'epoch': epoch,
         'loss': losses.avg,
