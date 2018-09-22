@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5a20e722-db78-4118-bd5f-9f594ba30542" name="Default Changelist" comment="">
+    <list default="true" id="5a20e722-db78-4118-bd5f-9f594ba30542" name="Default Changelist" comment="corresponding new way to load pre-train parameter">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,6 +38,7 @@
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$canny.coverage" NAME="canny Coverage Results" MODIFIED="1534782104545" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/opencv_test" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_no_pretrain.coverage" NAME="main-ucf101-resnet18-no-pretrain Coverage Results" MODIFIED="1535341113372" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet34_no_pretrain_RGB_tvl1_flow.coverage" NAME="main-ucf101-resnet34-no-pretrain-RGB-tvl1-flow Coverage Results" MODIFIED="1535772462358" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnet18_kinetics_pretrain_RGB_farn_flow.coverage" NAME="main-ucf101-resnet18-kinetics-pretrain-RGB-farn-flow Coverage Results" MODIFIED="1537638691011" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ucf101_resnext101_kinetics_pretrain_RGB.coverage" NAME="main-ucf101-resnext101-kinetics-pretrain-RGB Coverage Results" MODIFIED="1535436439762" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$main_ssv2_resnet34_kinetics_pretrain.coverage" NAME="main-ssv2-resnet34-kinetics-pretrain Coverage Results" MODIFIED="1534440698419" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/3D_ResNets_PyTorch$evalution__1_.coverage" NAME="evalution (1) Coverage Results" MODIFIED="1535338616226" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -128,29 +129,29 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="gitignore" value="10" />
-          <entry key="py" value="1912" />
+          <entry key="gitignore" value="19" />
+          <entry key="py" value="1977" />
           <entry key="sh" value="107" />
-          <entry key="txt" value="151" />
+          <entry key="txt" value="208" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="PLAIN_TEXT" value="268" />
-          <entry key="Python" value="1912" />
+          <entry key="PLAIN_TEXT" value="334" />
+          <entry key="Python" value="1977" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="gitignore" value="1" />
-          <entry key="py" value="23" />
+          <entry key="gitignore" value="2" />
+          <entry key="py" value="24" />
           <entry key="sh" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="23" />
+          <entry key="PLAIN_TEXT" value="4" />
+          <entry key="Python" value="24" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages">
@@ -205,8 +206,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/opts.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-731">
-                  <caret line="156" column="19" selection-start-line="156" selection-start-column="18" selection-end-line="156" selection-end-column="19" />
+                <state relative-caret-position="181">
+                  <caret line="27" column="16" selection-start-line="27" selection-start-column="11" selection-end-line="27" selection-end-column="16" />
                 </state>
               </provider>
             </entry>
@@ -215,14 +216,23 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/model.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="170">
-                  <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+                <state relative-caret-position="240">
+                  <caret line="192" lean-forward="true" selection-start-line="192" selection-end-line="192" />
                   <folding>
                     <element signature="e#0#11#0" expanded="true" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/.gitignore">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="506">
+                  <caret line="110" column="5" selection-start-line="110" selection-start-column="5" selection-end-line="110" selection-end-column="5" />
                 </state>
               </provider>
             </entry>
@@ -299,12 +309,12 @@
         <option value="$PROJECT_DIR$/datasets/ucf101.py" />
         <option value="$PROJECT_DIR$/models/resnet.py" />
         <option value="$PROJECT_DIR$/shell/test.sh" />
-        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/utils.py" />
         <option value="$PROJECT_DIR$/train.py" />
         <option value="$PROJECT_DIR$/validation.py" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/model.py" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -416,7 +426,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.two-file-comparison">
+  <component name="RunManager" selected="Python.main-ucf101-resnet18-kinetics-pretrain-RGB-farn-flow">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="3D-ResNets-PyTorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -433,6 +443,29 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="" />
       <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main-ucf101-resnet18-kinetics-pretrain-RGB-farn-flow" type="PythonConfigurationType" factoryName="Python">
+      <module name="3D-ResNets-PyTorch" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="LD_LIBRARY_PATH" value="/usr/local/cuda/lib64" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/anaconda3/envs/pytorch/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="--video_path $USER_HOME$/dataset/UCF-101/resize/images --annotation_path $USER_HOME$/dataset/UCF-101/ucfTrainTestlist/ucf101_01.json --result_path $USER_HOME$/1tb/deep-learning-log --dataset ucf101 --n_classes 400 --ft_begin_index 0 --model resnet --model_depth 18 --resnet_shortcut A --batch_size 32 --n_threads 4 --checkpoint 5 --learning_rate 0.01 --add_image_paths $USER_HOME$/dataset/UCF-101/resize/flow/farn/flow_x $USER_HOME$/dataset/UCF-101/resize/flow/farn/flow_y --n_epochs 50 --suffix farn --n_finetune_classes 101 --pretrain_path $PROJECT_DIR$/pretrain_models/resnet-18-kinetics.pth" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -463,6 +496,29 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="main-ucf101-resnet18-no-pretrain-RGB-farn-flow" type="PythonConfigurationType" factoryName="Python">
+      <module name="3D-ResNets-PyTorch" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="LD_LIBRARY_PATH" value="/usr/local/cuda/lib64" />
+      </envs>
+      <option name="SDK_HOME" value="$USER_HOME$/anaconda3/envs/pytorch/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="--video_path $USER_HOME$/dataset/UCF-101/resize/images --annotation_path $USER_HOME$/dataset/UCF-101/ucfTrainTestlist/ucf101_01.json --result_path $USER_HOME$/1tb/deep-learning-log --dataset ucf101 --n_classes 101 --ft_begin_index 0 --model resnet --model_depth 18 --resnet_shortcut A --batch_size 32 --n_threads 4 --checkpoint 5 --learning_rate 0.01 --add_image_paths $USER_HOME$/dataset/UCF-101/resize/flow/farn/flow_x $USER_HOME$/dataset/UCF-101/resize/flow/farn/flow_y --n_epochs 50 --suffix farn" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main-ucf101-resnet18-no-pretrain-RGB-tvl1-flow-canny" type="PythonConfigurationType" factoryName="Python">
       <module name="3D-ResNets-PyTorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -479,29 +535,6 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="--video_path $USER_HOME$/dataset/UCF-101/resize/images --annotation_path $USER_HOME$/dataset/UCF-101/ucfTrainTestlist/ucf101_01.json --result_path $USER_HOME$/1tb/deep-learning-log --dataset ucf101 --n_classes 101 --ft_begin_index 0 --model resnet --model_depth 18 --resnet_shortcut A --batch_size 32 --n_threads 4 --checkpoint 1 --learning_rate 0.01 --add_image_paths $USER_HOME$/dataset/UCF-101/resize/flow/tvl1/flow_x $USER_HOME$/dataset/UCF-101/resize/flow/tvl1/flow_y $USER_HOME$/dataset/UCF-101/resize/canny --n_epochs 100 --suffix 0913" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main-ucf101-resnet18-no-pretrain-RGB-tvl1-flow" type="PythonConfigurationType" factoryName="Python">
-      <module name="3D-ResNets-PyTorch" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-        <env name="LD_LIBRARY_PATH" value="/usr/local/cuda/lib64" />
-      </envs>
-      <option name="SDK_HOME" value="$USER_HOME$/anaconda3/envs/pytorch/bin/python" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="--video_path $USER_HOME$/dataset/UCF-101/resize/images --annotation_path $USER_HOME$/dataset/UCF-101/ucfTrainTestlist/ucf101_01.json --result_path $USER_HOME$/1tb/deep-learning-log --dataset ucf101 --n_classes 101 --ft_begin_index 0 --model resnet --model_depth 18 --resnet_shortcut A --batch_size 32 --n_threads 4 --checkpoint 5 --learning_rate 0.001 --add_image_paths $USER_HOME$/dataset/UCF-101/resize/flow/tvl1/flow_x $USER_HOME$/dataset/UCF-101/resize/flow/tvl1/flow_y --n_epochs 150 --suffix backup9 --resume_path save_90.pth" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -653,7 +686,8 @@
       <item itemvalue="Python.two-file-comparison train validation" />
       <item itemvalue="Python.main-ucf101-resnet18-no-pretrain-RGB" />
       <item itemvalue="Python.main-ucf101-resnet18-no-pretrain-RGB size224" />
-      <item itemvalue="Python.main-ucf101-resnet18-no-pretrain-RGB-tvl1-flow" />
+      <item itemvalue="Python.main-ucf101-resnet18-no-pretrain-RGB-farn-flow" />
+      <item itemvalue="Python.main-ucf101-resnet18-kinetics-pretrain-RGB-farn-flow" />
       <item itemvalue="Python.main-ucf101-resnet18-no-pretrain-RGB-tvl1-flow-canny" />
       <item itemvalue="Python.main-ucf101-resnext101-no-pretrain-RGB" />
       <item itemvalue="Python.main-ucf101-resnext101-no-pretrain-RGB-tvl1-flow" />
@@ -810,7 +844,14 @@
       <option name="project" value="LOCAL" />
       <updated>1537634317589</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="corresponding new way to load pre-train parameter">
+      <created>1537636989059</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1537636989059</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TodoView">
@@ -826,18 +867,18 @@
     <frame x="0" y="27" width="1920" height="1053" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.15282215" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15282215" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32979852" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4946752" weight="0.33188722" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4946752" visible="true" weight="0.33188722" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49946752" weight="0.3991323" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.329718" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.4968051" visible="true" weight="0.329718" />
+      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.4968051" weight="0.329718" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50319487" side_tool="true" weight="0.329718" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.32969433" />
@@ -874,7 +915,8 @@
     <MESSAGE value="update" />
     <MESSAGE value="record learning time per epoch" />
     <MESSAGE value="remove learning rate scheduler" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove learning rate scheduler" />
+    <MESSAGE value="corresponding new way to load pre-train parameter" />
+    <option name="LAST_COMMIT_MESSAGE" value="corresponding new way to load pre-train parameter" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$APPLICATION_CONFIG_DIR$/pycharm64.vmoptions" />
@@ -992,24 +1034,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" selection-start-line="9" selection-end-line="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/resnet.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1186">
           <caret line="120" selection-start-line="120" selection-end-line="120" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="108" column="7" selection-start-line="108" selection-start-column="7" selection-end-line="108" selection-end-column="7" />
         </state>
       </provider>
     </entry>
@@ -1102,18 +1130,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/opts.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-731">
-          <caret line="156" column="19" selection-start-line="156" selection-start-column="18" selection-end-line="156" selection-end-column="19" />
+        <state relative-caret-position="181">
+          <caret line="27" column="16" selection-start-line="27" selection-start-column="11" selection-end-line="27" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+          <folding>
+            <element signature="e#0#44#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" lean-forward="true" selection-start-line="10" selection-end-line="10" />
+        <state relative-caret-position="240">
+          <caret line="192" lean-forward="true" selection-start-line="192" selection-end-line="192" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="110" column="5" selection-start-line="110" selection-start-column="5" selection-end-line="110" selection-end-column="5" />
         </state>
       </provider>
     </entry>

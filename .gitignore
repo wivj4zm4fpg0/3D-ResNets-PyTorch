@@ -107,3 +107,5 @@ ENV/
 results/*
 pretrain_models/*
 shell/*
+
+.idea
