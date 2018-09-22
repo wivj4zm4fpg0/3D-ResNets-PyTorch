@@ -65,7 +65,6 @@ if __name__ == '__main__':
         norm_method = Normalize(opt.mean, opt.std)
 
     optimizer = None
-    scheduler = None
     train_loader = None
     train_logger = None
     val_loader = None
@@ -116,8 +115,6 @@ if __name__ == '__main__':
             dampening=dampening,
             weight_decay=opt.weight_decay,
             nesterov=opt.nesterov)
-        scheduler = lr_scheduler.ReduceLROnPlateau(
-            optimizer, 'min', patience=opt.lr_patience)
     if not opt.no_val:
         spatial_transform = Compose([  # sample_size = 112
             Scale(opt.sample_size),
@@ -176,15 +173,11 @@ if __name__ == '__main__':
 
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
-        # validation_loss = None
         if not opt.no_train:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,
                         train_logger, result_dir_name)
         if not opt.no_val:
-            validation_loss = val_epoch(i, val_loader, model, criterion, opt,
-                                        val_logger)
-        # if not opt.no_train and not opt.no_val:
-        #    scheduler.step(validation_loss)
+            val_epoch(i, val_loader, model, criterion, opt, val_logger)
     if opt.test:
         spatial_transform = Compose([
             Scale(int(opt.sample_size / opt.scale_in_test)),
