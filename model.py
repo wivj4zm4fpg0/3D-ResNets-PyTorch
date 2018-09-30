@@ -2,6 +2,7 @@ import copy
 
 import torch
 from torch import nn
+from torch.nn import init
 
 from models import resnet, pre_act_resnet, wide_resnet, resnext, densenet
 
@@ -166,30 +167,40 @@ def generate_model(opt):
         model = model.cuda()
         model = nn.DataParallel(model)
 
+        for module in model.modules():
+            if hasattr(module, 'weight'):
+                if not ('BatchNorm' in module.__class__.__name__):
+                    init.kaiming_uniform_(module.weight)
+                else:
+                    init.constant_(module.weight, 1)
+            if hasattr(module, 'bias'):
+                if module.bias is not None:
+                    init.constant_(module.bias, 0)
+
         if opt.pretrain_path:
             print('loading pretrained model {}'.format(opt.pretrain_path))
             pretrain = torch.load(opt.pretrain_path)
 
-            temp = copy.copy(pretrain['state_dict'].module.conv1)
-            pretrain['state_dict'].module.conv1 = nn.Conv3d(
+
+            temp = copy.copy(pretrain['state_dict']['module.conv1.weight'])
+            pretrain['state_dict']['module.conv1.weight'] = nn.Conv3d(
                 opt.n_channel,
                 64,
                 kernel_size=7,
                 stride=(1, 2, 2),
                 padding=(3, 3, 3),
                 bias=False
-            )
-            temp_len = len(temp.weight.data[0])
-            pre_data = pretrain['state_dict'].module.conv1.weight.data
+            ).weight
+            temp_len = len(temp.data[0])
+            pre_data = temp.data
             out_len = len(pre_data[0])
             sub_len = out_len - temp_len
-            for i in range(len(temp.weight.data)):
+            for i in range(len(temp.data)):
                 for j in range(temp_len):
-                    pre_data[i][j] = temp.weight.data[i][j]
-                avg = torch.sum(temp.weight.data[i], 0) / 3
+                    pre_data[i][j] = temp.data[i][j]
+                avg = torch.sum(temp.data[i], 0) / 3
                 for j in range(sub_len):
                     pre_data[i][temp_len + j] = avg
-            pretrain['state_dict'].cuda()
 
             model.load_state_dict(pretrain['state_dict'])
 

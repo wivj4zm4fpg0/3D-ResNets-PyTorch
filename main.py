@@ -1,11 +1,9 @@
-import copy
 import json
 import os
 
 import torch
 from torch import nn
 from torch import optim
-from torch.optim import lr_scheduler
 
 import test
 from dataset import datasets

@@ -56,6 +56,7 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
                 'loss': losses.avg,
                 'acc-top1': accuracies.avg,
                 'acc-top5': accuracies5.avg,
-                'time': epoch_time})
+                'batch-time': batch_time.avg,
+                'epoch-time': epoch_time})
 
     return losses.avg

@@ -67,7 +67,8 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
         'acc-top5': accuracies5.avg,
         'lr': optimizer.param_groups[0]['lr'],
         'batch': opt.batch_size,
-        'time': epoch_time
+        'batch-time': batch_time.avg,
+        'epoch-time': epoch_time
     })
 
     if epoch % opt.checkpoint == 0:
