@@ -167,6 +167,7 @@ def generate_model(opt):
         model = model.cuda()
         model = nn.DataParallel(model)
 
+        # Heの初期値で初期化
         for module in model.modules():
             if hasattr(module, 'weight'):
                 if not ('BatchNorm' in module.__class__.__name__):
@@ -181,7 +182,7 @@ def generate_model(opt):
             print('loading pretrained model {}'.format(opt.pretrain_path))
             pretrain = torch.load(opt.pretrain_path)
 
-
+            # RGB画像のみで学習済みのモデルを転用するとき4チャンネル以降をRGBの平均にする（最初のCNNのみ）
             temp = copy.copy(pretrain['state_dict']['module.conv1.weight'])
             pretrain['state_dict']['module.conv1.weight'] = nn.Conv3d(
                 opt.n_channel,
@@ -209,9 +210,11 @@ def generate_model(opt):
                     model.module.classifier.in_features, opt.n_finetune_classes)
                 model.module.classifier = model.module.classifier.cuda()
             else:
+                # 転移学習をするときは全結合層以外のパラメータを更新しないようにする
                 if opt.transfer_learning == True:
                     for p in model.parameters():
                         p.requires_grad = False
+
                 model.module.fc = nn.Linear(model.module.fc.in_features, opt.n_finetune_classes)
                 model.module.fc = model.module.fc.cuda()
 
