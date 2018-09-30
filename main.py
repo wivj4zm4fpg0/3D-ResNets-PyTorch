@@ -21,12 +21,16 @@ from validation import val_epoch
 
 if __name__ == '__main__':
     opt = parse_opts()
-    n_channel = 3
+
     use_fine_tune = opt.n_finetune_classes and opt.pretrain_path
+
+    opt.n_channel = 3
     if opt.add_image_paths:
-        n_channel = n_channel + len(opt.add_image_paths)
-    opt.n_channel = n_channel
-    result_dir_name = '{}-{}-{}-{}ch'.format(opt.dataset, opt.model, opt.model_depth, n_channel)
+        opt.n_channel += len(opt.add_image_paths)
+    if opt.add_RGB_image_paths:
+        opt.n_channel += len(opt.add_RGB_image_paths) * 3
+
+    result_dir_name = '{}-{}-{}-{}ch'.format(opt.dataset, opt.model, opt.model_depth, opt.n_channel)
     if opt.transfer_learning:
         result_dir_name = result_dir_name + '-transfer-learning'
     elif opt.n_finetune_classes:
@@ -37,6 +41,7 @@ if __name__ == '__main__':
         result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
     result_dir_name = os.path.join(opt.result_path, result_dir_name)
     os.makedirs(result_dir_name, exist_ok=True)
+
     opt.scales = [opt.initial_scale]  # initial_scale = 1.0
     for i in range(1, opt.n_scales):  # n_scales = 5
         opt.scales.append(opt.scales[-1] * opt.scale_step)  # scale_step = 0.84089641525
@@ -91,7 +96,7 @@ if __name__ == '__main__':
         training_data = datasets[opt.dataset](paths, opt.annotation_path, 'training',
                                               spatial_transform=spatial_transform,
                                               temporal_transform=temporal_transform, target_transform=target_transform,
-                                              n_channel=n_channel)
+                                              n_channel=opt.n_channel)
         train_loader = torch.utils.data.DataLoader(
             training_data,
             batch_size=opt.batch_size,
@@ -126,7 +131,7 @@ if __name__ == '__main__':
                                                 spatial_transform=spatial_transform,
                                                 temporal_transform=temporal_transform,
                                                 target_transform=target_transform,
-                                                n_channel=n_channel)
+                                                n_channel=opt.n_channel)
         val_loader = torch.utils.data.DataLoader(
             validation_data,
             batch_size=opt.batch_size,
@@ -169,7 +174,7 @@ if __name__ == '__main__':
                                           sapatial_transform=spatial_transform,
                                           temporal_transform=temporal_transform,
                                           target_transform=target_transform,
-                                          n_channel=n_channel)
+                                          n_channel=opt.n_channel)
 
         test_loader = torch.utils.data.DataLoader(
             test_data,

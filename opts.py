@@ -97,7 +97,7 @@ def parse_opts():
         '--no_mean_norm',
         action='store_true',
         help='If true, inputs are not normalized by mean.')
-    parser.set_defaults(no_mean_norm=True)  # change from False to True
+    parser.set_defaults(no_mean_norm=True)
     parser.add_argument(
         '--std_norm',
         action='store_true',
@@ -239,10 +239,13 @@ def parse_opts():
     )
     parser.set_defaults(transfer_learning=False)
     parser.add_argument(
-        '--suffix', default=None, type=str, help='suffix in maked output directry'
+        '--suffix', default=None, type=str, help='suffix in made output directly'
     )
     parser.add_argument(
-        '--add_image_paths', default=None,  nargs='*', help='chanenl image to add to RGB image'
+        '--add_image_paths', default=None, nargs='*', help='channel image to add to RGB image'
+    )
+    parser.add_argument(
+        '--add_RGB_image_paths', default=None, nargs='*', help='channel RGB image to add to RGB image'
     )
 
     args = parser.parse_args()
