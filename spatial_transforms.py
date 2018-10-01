@@ -42,7 +42,7 @@ class ToTensor(object):
     [0, 255] to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0].
     """
 
-    def __init__(self, norm_value=255): # norm_value = 1
+    def __init__(self, norm_value=255):  # norm_value = 1
         self.norm_value = norm_value
 
     def __call__(self, pic):
@@ -175,7 +175,7 @@ class CenterCrop(object):
             made.
     """
 
-    def __init__(self, size): # sample_size = 112
+    def __init__(self, size):  # sample_size = 112
         if isinstance(size, numbers.Number):
             self.size = (int(size), int(size))
         else:
@@ -210,6 +210,7 @@ class CornerCrop(object):
         self.crop_positions = ['c', 'tl', 'tr', 'bl', 'br']
 
     def __call__(self, img):
+        global x1, y1, x2, y2
         image_width = img.size[0]
         image_height = img.size[1]
 
@@ -285,8 +286,10 @@ class MultiScaleCornerCrop(object):
                  # opt.scales = [1.0, 0.84089641525, 0.7071067811803005, 0.5946035574934808, 0.4999999999911653]
                  size,  # opt.sample_size = 112
                  interpolation=Image.BILINEAR,
-                 crop_positions=['c', 'tl', 'tr', 'bl', 'br']):
+                 crop_positions=None):
         # c:center, tl:top left, tr:top right, bl:bottom left, br:bottom right
+        if crop_positions is None:
+            crop_positions = ['c', 'tl', 'tr', 'bl', 'br']
         self.scales = scales
         self.size = size
         self.interpolation = interpolation
@@ -294,6 +297,7 @@ class MultiScaleCornerCrop(object):
         self.crop_positions = crop_positions
 
     def __call__(self, img):
+        global x1, y1, x2, y2
         min_length = min(img.size[0], img.size[1])
         crop_size = int(min_length * self.scale)
 

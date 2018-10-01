@@ -52,7 +52,7 @@ for i in range(epoch_length):  # epoch数繰り返す
 x = list(range(1, epoch_length + 1))  # グラフのx軸の設定
 
 max_value = max(max(file1_acc_list), max(file2_acc_list))  # ２つのリストの最大値を取得
-if (args.y_axis_max):
+if args.y_axis_max:
     y_axis_max = args.y_axis_max
 else:
     y_axis_max = ((int('{0:02d}'.format(int(max_value))[0]) + 1) * 10)  # ２桁の数値の２の位に１を足して１０を掛けることによりy軸の最大値を決定する

@@ -1,5 +1,4 @@
 def get_mean(norm_value=255, dataset='activitynet'):
-    #    assert dataset in ['activitynet', 'kinetics']
 
     if dataset == 'activitynet':
         return [
