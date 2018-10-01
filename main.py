@@ -73,9 +73,13 @@ if __name__ == '__main__':
     val_loader = None
     val_logger = None
 
-    paths = [opt.video_path]
+    paths = {opt.video_path: '3ch'}
     if opt.add_image_paths:
-        paths.extend(opt.add_image_paths)
+        for one_ch in opt.add_image_paths:
+            paths[one_ch] = '1ch'
+    if opt.add_RGB_image_paths:
+        for three_ch in opt.add_RGB_image_paths:
+            paths[three_ch] = '3ch'
 
     if not opt.no_train:
         crop_method = None
@@ -96,7 +100,7 @@ if __name__ == '__main__':
         training_data = datasets[opt.dataset](paths, opt.annotation_path, 'training',
                                               spatial_transform=spatial_transform,
                                               temporal_transform=temporal_transform, target_transform=target_transform,
-                                              n_channel=opt.n_channel)
+                                              )
         train_loader = torch.utils.data.DataLoader(
             training_data,
             batch_size=opt.batch_size,
@@ -105,7 +109,7 @@ if __name__ == '__main__':
             pin_memory=True)
         train_logger = Logger(
             os.path.join(result_dir_name, 'train.log'),
-            ['epoch', 'loss', 'acc-top1', 'acc-top5', 'lr', 'batch', 'time'])
+            ['epoch', 'loss', 'acc-top1', 'acc-top5', 'lr', 'batch', 'batch-time', 'epoch-time'])
 
         if opt.nesterov:
             dampening = 0
@@ -131,7 +135,7 @@ if __name__ == '__main__':
                                                 spatial_transform=spatial_transform,
                                                 temporal_transform=temporal_transform,
                                                 target_transform=target_transform,
-                                                n_channel=opt.n_channel)
+                                                )
         val_loader = torch.utils.data.DataLoader(
             validation_data,
             batch_size=opt.batch_size,
@@ -139,7 +143,8 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True)
         val_logger = Logger(
-            os.path.join(result_dir_name, 'val.log'), ['epoch', 'loss', 'acc-top1', 'acc-top5', 'time'])
+            os.path.join(result_dir_name, 'val.log'),
+            ['epoch', 'loss', 'acc-top1', 'acc-top5', 'batch-time', 'epoch-time'])
 
     if opt.resume_path:
         opt.resume_path = os.path.join(result_dir_name, opt.resume_path)
@@ -174,7 +179,7 @@ if __name__ == '__main__':
                                           sapatial_transform=spatial_transform,
                                           temporal_transform=temporal_transform,
                                           target_transform=target_transform,
-                                          n_channel=opt.n_channel)
+                                          )
 
         test_loader = torch.utils.data.DataLoader(
             test_data,
