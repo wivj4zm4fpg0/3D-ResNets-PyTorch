@@ -37,8 +37,7 @@ class UCF101(datasets.base.BaseLoader):
                  target_transform=None,
                  sample_duration=16,
                  get_loader=None,
-                 image_format='_{0:05d}.jpg',
-                 n_channel=3
+                 image_format='image_{0:05d}.jpg'
                  ):
         super().__init__(paths, annotation_path, subset, n_samples_for_each_video, spatial_transform,
-                         temporal_transform, target_transform, sample_duration, get_loader, image_format, n_channel)
+                         temporal_transform, target_transform, sample_duration, get_loader, image_format)

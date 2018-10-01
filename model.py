@@ -211,14 +211,14 @@ def generate_model(opt):
                 model.module.classifier = model.module.classifier.cuda()
             else:
                 # 転移学習をするときは全結合層以外のパラメータを更新しないようにする
-                if opt.transfer_learning == True:
+                if opt.transfer_learning:
                     for p in model.parameters():
                         p.requires_grad = False
 
                 model.module.fc = nn.Linear(model.module.fc.in_features, opt.n_finetune_classes)
                 model.module.fc = model.module.fc.cuda()
 
-            if opt.transfer_learning == True:
+            if opt.transfer_learning:
                 parameters = model.module.fc.parameters()
             else:
                 parameters = get_fine_tuning_parameters(model, opt.ft_begin_index)

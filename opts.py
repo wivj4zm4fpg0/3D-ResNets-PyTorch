@@ -23,20 +23,19 @@ def parse_opts():
         default=None,
         type=str,
         choices=['activitynet', 'kinetics', 'ucf101', 'hmdb51', 'ssv1', 'ssv2', 'ssv2flow', 'ucf101flow'],
-        help='Used dataset (activitynet | kinetics | ucf101 | hmdb51 | something-something-v1 | something-something-v2)')
+        help='Used dataset (activitynet | kinetics | ucf101 | hmdb51 | something-something-v1 | something-something-v2)'
+    )
     parser.add_argument(
         '--n_classes',
         default=None,
         type=int,
-        help=
-        'Number of classes (activitynet: 200, kinetics: 400, ucf101: 101, hmdb51: 51, ssv1-2: 174)'
+        help='Number of classes (activitynet: 200, kinetics: 400, ucf101: 101, hmdb51: 51, ssv1-2: 174)'
     )
     parser.add_argument(
         '--n_finetune_classes',
         default=None,
         type=int,
-        help=
-        'Number of classes for fine-tuning. n_classes is set to the number when pretraining.'
+        help='Number of classes for fine-tuning. n_classes is set to the number when pretraining.'
     )
     parser.add_argument(
         '--sample_size',
@@ -68,15 +67,14 @@ def parse_opts():
         default='corner',
         type=str,
         choices=['random', 'corner', 'center'],
-        help=
-        'Spatial cropping method in training. random is uniform. corner is selection from 4 corners and 1 center.  (random | corner | center)'
+        help='Spatial cropping method in training. random is uniform. corner is selection from 4 corners and 1 center. '
+             ' (random | corner | center)'
     )
     parser.add_argument(
         '--learning_rate',
         default=0.1,
         type=float,
-        help=
-        'Initial learning rate (divided by 10 while training by lr scheduler)')
+        help='Initial learning rate (divided by 10 while training by lr scheduler)')
     parser.add_argument(
         '--lr_rate_schedule', default=None, type=dict,
         help='setting learning rate per epoch. example:{1:0.001, 15:0.0001} ({epoch number:learning rate})'
@@ -91,8 +89,7 @@ def parse_opts():
         default=None,
         type=str,
         choices=['activitynet', 'kinetics'],
-        help=
-        'dataset for mean values of mean subtraction (activitynet | kinetics)')
+        help='dataset for mean values of mean subtraction (activitynet | kinetics)')
     parser.add_argument(
         '--no_mean_norm',
         action='store_true',
@@ -128,8 +125,7 @@ def parse_opts():
         '--begin_epoch',
         default=1,
         type=int,
-        help=
-        'Training begins at this epoch. Previous trained model indicated by resume_path is loaded.'
+        help='Training begins at this epoch. Previous trained model indicated by resume_path is loaded.'
     )
     parser.add_argument(
         '--n_val_samples',
@@ -205,8 +201,7 @@ def parse_opts():
         '--norm_value',
         default=1,
         type=int,
-        help=
-        'If 1, range of inputs is [0-255]. If 255, range of inputs is [0-1].')
+        help='If 1, range of inputs is [0-255]. If 255, range of inputs is [0-1].')
     parser.add_argument(
         '--model',
         default=None,
