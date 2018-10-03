@@ -74,13 +74,15 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
             if i % 1000 == 0:
                 print('dataset loading [{}/{}]'.format(i, len(video_names)))
             full_paths = {}
+            n_frames = 0
             for path in paths:
                 full_path = os.path.join(path, video_names[i])
                 assert os.path.exists(full_path), 'No such file :{}'.format(full_path)
                 full_paths[full_path] = paths[path]
-            n_frames_file_path = os.path.join(sorted(full_paths)[0], 'n_frames')
-            assert os.path.exists(n_frames_file_path)
-            n_frames = int(load_value_file(n_frames_file_path))
+                n_frames_file_path = os.path.join(full_path, 'n_frames')
+                if os.path.exists(n_frames_file_path):
+                    n_frames = int(load_value_file(n_frames_file_path))
+            assert n_frames > 0
 
             begin_t = 1
             end_t = n_frames
