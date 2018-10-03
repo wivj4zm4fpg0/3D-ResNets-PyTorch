@@ -30,7 +30,8 @@ if __name__ == '__main__':
     if opt.add_RGB_image_paths:
         opt.n_channel += len(opt.add_RGB_image_paths) * 3
 
-    result_dir_name = '{}-{}-{}-{}ch'.format(opt.dataset, opt.model, opt.model_depth, opt.n_channel)
+    result_dir_name = '{}-{}-{}-{}ch-{}frame'.format(opt.dataset, opt.model, opt.model_depth, opt.n_channel,
+                                                     opt.sample_duration)
     if opt.transfer_learning:
         result_dir_name = result_dir_name + '-transfer-learning'
     elif opt.n_finetune_classes:
