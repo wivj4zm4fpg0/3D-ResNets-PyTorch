@@ -20,16 +20,17 @@ from utils import Logger
 from validation import val_epoch
 
 if __name__ == '__main__':
+    # コマンドラインオプションを取得
     opt = parse_opts()
 
-    use_fine_tune = opt.n_finetune_classes and opt.pretrain_path
-
+    # チャンネル数を取得
     opt.n_channel = 3
     if opt.add_image_paths:
         opt.n_channel += len(opt.add_image_paths)
     if opt.add_RGB_image_paths:
         opt.n_channel += len(opt.add_RGB_image_paths) * 3
 
+    # 結果の出力ディレクトリの名前を自動で決める
     result_dir_name = '{}-{}-{}-{}ch-{}frame'.format(opt.dataset, opt.model, opt.model_depth, opt.n_channel,
                                                      opt.sample_duration)
     if opt.transfer_learning:
@@ -41,11 +42,11 @@ if __name__ == '__main__':
     if opt.suffix:
         result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
     result_dir_name = os.path.join(opt.result_path, result_dir_name)
-    os.makedirs(result_dir_name, exist_ok=True)
+    os.makedirs(result_dir_name, exist_ok=True)  # 出力ディレクトリを作成
 
-    opt.scales = [opt.initial_scale]  # initial_scale = 1.0
-    for i in range(1, opt.n_scales):  # n_scales = 5
-        opt.scales.append(opt.scales[-1] * opt.scale_step)  # scale_step = 0.84089641525
+    opt.scales = [opt.initial_scale]
+    for i in range(1, opt.n_scales):
+        opt.scales.append(opt.scales[-1] * opt.scale_step)
     opt.arch = '{}-{}'.format(opt.model, opt.model_depth)
     opt.mean = get_mean(opt.norm_value, dataset=opt.mean_dataset)
     opt.std = get_std(opt.norm_value)
@@ -74,6 +75,7 @@ if __name__ == '__main__':
     val_loader = None
     val_logger = None
 
+    # 画像郡のパスとそのチャンネル数をそれぞれ辞書に登録
     paths = {opt.video_path: '3ch'}
     if opt.add_image_paths:
         for one_ch in opt.add_image_paths:
