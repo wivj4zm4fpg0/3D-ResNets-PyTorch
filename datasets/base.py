@@ -54,25 +54,25 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_class_labels(self, data):
+    def get_class_labels(self, entry):
         pass
 
     @abstractmethod
-    def get_video_names_and_annotations(self, data, subset):
+    def get_video_names_and_annotations(self, entry, subset):
         pass
 
-    def make_dataset(self, paths, annotation_path, subset, n_samples_for_each_video,
-                     sample_duration):
-        data = self.load_annotation_data(annotation_path)
-        video_names, annotations = self.get_video_names_and_annotations(data, subset)
-        class_to_idx = self.get_class_labels(data)
+    def make_data_set(self, paths, annotation_path, subset, n_samples_for_each_video,
+                      sample_duration):
+        entry = self.load_annotation_data(annotation_path)
+        video_names, annotations = self.get_video_names_and_annotations(entry, subset)
+        class_to_idx = self.get_class_labels(entry)
         idx_to_class = {}
         for name, label in class_to_idx.items():
             idx_to_class[label] = name
-        dataset = []
+        data_set = []
         for i in range(len(video_names)):
             if i % 1000 == 0:
-                print('dataset loading [{}/{}]'.format(i, len(video_names)))
+                print('data_set loading [{}/{}]'.format(i, len(video_names)))
             full_paths = {}
             n_frames = 0
             for path in paths:
@@ -99,20 +99,17 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
 
             if n_samples_for_each_video == 1:
                 sample['frame_indices'] = list(range(1, n_frames + 1))
-                dataset.append(sample)
+                data_set.append(sample)
             else:
                 if n_samples_for_each_video > 1:
-                    step = max(1,
-                               math.ceil((n_frames - 1 - sample_duration) /
-                                         (n_samples_for_each_video - 1)))
+                    step = max(1, math.ceil((n_frames - 1 - sample_duration) / (n_samples_for_each_video - 1)))
                 else:
                     step = sample_duration
                 for path in range(1, n_frames, step):
                     sample_j = copy.deepcopy(sample)
-                    sample_j['frame_indices'] = list(
-                        range(path, min(n_frames + 1, path + sample_duration)))
-                    dataset.append(sample_j)
-        return dataset, idx_to_class
+                    sample_j['frame_indices'] = list(range(path, min(n_frames + 1, path + sample_duration)))
+                    data_set.append(sample_j)
+        return data_set, idx_to_class
 
     def __init__(self,
                  paths,
@@ -127,9 +124,8 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
                  image_format='image_{0:05d}.jpg'):
         if get_loader is None:
             get_loader = video_loader
-        self.data, self.class_names = self.make_dataset(
-            paths, annotation_path, subset, n_samples_for_each_video,
-            sample_duration)
+        self.data, self.class_names = self.make_data_set(
+            paths, annotation_path, subset, n_samples_for_each_video, sample_duration)
 
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform

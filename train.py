@@ -68,8 +68,7 @@ def train_epoch(epoch, data_loader, model, criterion, optimizer, opt,
     })
 
     if epoch % opt.checkpoint == 0:
-        save_file_path = os.path.join(result_dir_name,
-                                      'save_{}.pth'.format(epoch))
+        save_file_path = os.path.join(result_dir_name, 'save_{}.pth'.format(epoch))
         states = {
             'epoch': epoch + 1,
             'arch': opt.arch,

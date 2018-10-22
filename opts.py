@@ -78,7 +78,7 @@ def parse_opts():
     parser.add_argument(
         '--lr_rate_schedule', default=None, type=dict,
         help='setting learning rate per epoch. example:{1:0.001, 15:0.0001} ({epoch number:learning rate})'
-    )
+    )  # TODO implement
     parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
     parser.add_argument(
         '--dampening', default=0.9, type=float, help='dampening of SGD')

@@ -1,7 +1,9 @@
 import json
 import os
+import random
 
 import torch
+import torch.backends.cudnn as cudnn
 from torch import nn
 from torch import optim
 
@@ -18,6 +20,11 @@ from temporal_transforms import LoopPadding, TemporalRandomCrop
 from train import train_epoch
 from utils import Logger
 from validation import val_epoch
+
+
+def worker_init_fn(worker_id):
+    random.seed(worker_id)
+
 
 if __name__ == '__main__':
     # コマンドラインオプションを取得
@@ -54,7 +61,9 @@ if __name__ == '__main__':
     with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
         json.dump(vars(opt), opt_file)
 
-    torch.manual_seed(opt.manual_seed)
+    random.seed(1)
+    torch.manual_seed(1)
+    cudnn.deterministic = True
 
     model, parameters = generate_model(opt)
     print(model)
@@ -96,7 +105,7 @@ if __name__ == '__main__':
         spatial_transform = Compose([
             crop_method,
             RandomHorizontalFlip(),
-            ToTensor(opt.norm_value), norm_method  # norm_value = 1
+            ToTensor(opt.norm_value), norm_method
         ])
         temporal_transform = TemporalRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
@@ -109,7 +118,8 @@ if __name__ == '__main__':
             batch_size=opt.batch_size,
             shuffle=True,
             num_workers=opt.n_threads,
-            pin_memory=True)
+            pin_memory=True,
+            worker_init_fn=worker_init_fn)
         train_logger = Logger(
             os.path.join(result_dir_name, 'train.log'),
             ['epoch', 'loss', 'acc-top1', 'acc-top5', 'lr', 'batch', 'batch-time', 'epoch-time'])
@@ -119,14 +129,14 @@ if __name__ == '__main__':
         else:
             dampening = opt.dampening
         optimizer = optim.SGD(
-            parameters,
+            model.parameters(),
             lr=opt.learning_rate,
             momentum=opt.momentum,
             dampening=dampening,
             weight_decay=opt.weight_decay,
             nesterov=opt.nesterov)
     if not opt.no_val:
-        spatial_transform = Compose([  # sample_size = 112
+        spatial_transform = Compose([
             Scale(opt.sample_size),
             CenterCrop(opt.sample_size),
             ToTensor(opt.norm_value), norm_method
@@ -144,7 +154,8 @@ if __name__ == '__main__':
             batch_size=opt.batch_size,
             shuffle=False,
             num_workers=opt.n_threads,
-            pin_memory=True)
+            pin_memory=True,
+            worker_init_fn=worker_init_fn)
         val_logger = Logger(
             os.path.join(result_dir_name, 'val.log'),
             ['epoch', 'loss', 'acc-top1', 'acc-top5', 'batch-time', 'epoch-time'])
@@ -152,7 +163,7 @@ if __name__ == '__main__':
     if opt.resume_path:
         opt.resume_path = os.path.join(result_dir_name, opt.resume_path)
         print('loading checkpoint {}'.format(opt.resume_path))
-        checkpoint = torch.load(opt.resume_path, map_location=lambda storage, loc: storage)
+        checkpoint = torch.load(opt.resume_path)
         assert opt.arch == checkpoint['arch']
 
         opt.begin_epoch = checkpoint['epoch']

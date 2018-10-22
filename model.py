@@ -164,27 +164,28 @@ def generate_model(opt):
                 sample_duration=opt.sample_duration)
 
     if not opt.no_cuda:
+        # Heの初期値で初期化
+        if not opt.resume_path:
+            for module in model.modules():
+                if hasattr(module, 'weight'):
+                    if not ('Norm' in module.__class__.__name__):
+                        init.kaiming_uniform_(module.weight, mode='fan_out')
+                    else:
+                        init.constant_(module.weight, 1)
+                if hasattr(module, 'bias'):
+                    if module.bias is not None:
+                        init.constant_(module.bias, 0)
+
         model = model.cuda()
         model = nn.DataParallel(model)
 
-        # Heの初期値で初期化
-        for module in model.modules():
-            if hasattr(module, 'weight'):
-                if not ('Norm' in module.__class__.__name__):
-                    init.kaiming_uniform_(module.weight)
-                else:
-                    init.constant_(module.weight, 1)
-            if hasattr(module, 'bias'):
-                if module.bias is not None:
-                    init.constant_(module.bias, 0)
-
         if opt.pretrain_path:
             print('loading pretrained model {}'.format(opt.pretrain_path))
-            pretrain = torch.load(opt.pretrain_path)
+            pre_train = torch.load(opt.pretrain_path)
 
-            # RGB画像のみで学習済みのモデルを転用するとき4チャンネル以降をRGBの平均にする（最初のCNNのみ）
-            temp = copy.copy(pretrain['state_dict']['module.conv1.weight'])
-            pretrain['state_dict']['module.conv1.weight'] = nn.Conv3d(
+            # RGB画像のみで学習済みのモデルを転用するとき4チャンネル以降をRGBの平均にする（最初のCNN層のみ）
+            temp = copy.copy(pre_train['state_dict']['module.conv1.weight'])
+            pre_train['state_dict']['module.conv1.weight'] = nn.Conv3d(
                 opt.n_channel,
                 64,
                 kernel_size=7,
@@ -203,7 +204,7 @@ def generate_model(opt):
                 for j in range(sub_len):
                     pre_data[i][temp_len + j] = avg
 
-            model.load_state_dict(pretrain['state_dict'])
+            model.load_state_dict(pre_train['state_dict'])
 
             if opt.model == 'densenet':
                 model.module.classifier = nn.Linear(
@@ -226,10 +227,10 @@ def generate_model(opt):
     else:
         if opt.pretrain_path:
             print('loading pretrained model {}'.format(opt.pretrain_path))
-            pretrain = torch.load(opt.pretrain_path)
-            assert opt.arch == pretrain['arch']
+            pre_train = torch.load(opt.pretrain_path)
+            assert opt.arch == pre_train['arch']
 
-            model.load_state_dict(pretrain['state_dict'])
+            model.load_state_dict(pre_train['state_dict'])
 
             if opt.model == 'densenet':
                 model.classifier = nn.Linear(
