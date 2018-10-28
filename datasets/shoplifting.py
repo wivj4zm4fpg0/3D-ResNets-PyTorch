@@ -18,7 +18,11 @@ class Shoplifting(datasets.base.BaseLoader):
             this_subset = data['subset'][i]
             if this_subset == subset:
                 label = data['class'][i]
-                video_names.append('{}'.format(data['video_name'][i]))
+                if data['class'][i] == 0:
+                    dir_name = 'no_action'
+                else:
+                    dir_name = 'action'
+                video_names.append('{}/{}'.format(dir_name, data['video_name'][i]))
                 annotations.append({'label': label})
         return video_names, annotations
 

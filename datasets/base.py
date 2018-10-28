@@ -144,19 +144,34 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
         """
         paths = self.data[index]['paths']
         frame_indices = self.data[index]['frame_indices']
+
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
+
         clip = self.loader(paths, frame_indices, self.image_format)
+        show_image = []
         if self.spatial_transform is not None:
             self.spatial_transform.randomize_parameters()
-            clip = [self.spatial_transform(img) for img in clip]
+            # clip = [self.spatial_transform(img) for img in clip]
+            temp_clip = []
+            for i in range(len(clip)):
+                temp_img, temp_show_image = self.spatial_transform(clip[i])
+                temp_clip.append(temp_img)
+                show_image.append(temp_show_image)
+            clip = temp_clip
+
         if self.n_image > 1:
             clip = channels_coupling(clip, self.n_image)
+
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 
         target = self.data[index]
         if self.target_transform is not None:
-            target = self.target_transform(target)
+            if self.target_transform.flag == 1:
+                target, target_name = self.target_transform(target)
+                return clip, target, target_name, show_image
+            else:
+                target = self.target_transform(target)
 
         return clip, target
 

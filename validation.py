@@ -14,7 +14,7 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
     data_time = AverageMeter()
     losses = AverageMeter()
     accuracies = AverageMeter()
-    accuracies5 = AverageMeter()
+    # accuracies5 = AverageMeter()
 
     end_time = time.time()
     epoch_time = time.time()
@@ -26,11 +26,11 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
                 targets = targets.cuda(async=True)
             outputs = model(inputs)
             loss = criterion(outputs, targets)
-            acc1, acc5 = calculate_accuracy(outputs, targets)
+            acc1 = calculate_accuracy(outputs, targets)
 
             losses.update(loss.item(), inputs.size(0))
             accuracies.update(acc1, inputs.size(0))
-            accuracies5.update(acc5, inputs.size(0))
+            # accuracies5.update(acc5, inputs.size(0))
 
             batch_time.update(time.time() - end_time)
             end_time = time.time()
@@ -39,20 +39,17 @@ def val_epoch(epoch, data_loader, model, criterion, opt, logger):
                   'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
                   'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
                   'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
-                  'Acc-Top1 {acc.val:.3f} ({acc.avg:.3f})\t'
-                  'Acc-Top5 {acc5.val:.3f} ({acc5.avg:.3f})'.format(epoch, i + 1, len(data_loader),
+                  'Acc-Top1 {acc.val:.3f} ({acc.avg:.3f})\t'.format(epoch, i + 1, len(data_loader),
                                                                     batch_time=batch_time,
                                                                     data_time=data_time,
                                                                     loss=losses,
-                                                                    acc=accuracies,
-                                                                    acc5=accuracies5))
+                                                                    acc=accuracies,))
 
     epoch_time = time.time() - epoch_time
 
     logger.log({'epoch': epoch,
                 'loss': losses.avg,
                 'acc-top1': accuracies.avg,
-                'acc-top5': accuracies5.avg,
                 'batch-time': batch_time.avg,
                 'epoch-time': epoch_time})
 
