@@ -1,21 +1,23 @@
 import collections
+import copy
 import numbers
 import random
 
 import numpy as np
 import torch
 from PIL import Image
+from torchvision.transforms import transforms
 
 try:
-    import accimage
+    import acc_image
 except ImportError:
-    accimage = None
+    acc_image = None
 
 
 class Compose(object):
     """Composes several transforms together.
     Args:
-        transforms (list of ``Transform`` objects): list of transforms to compose.
+        input_transforms (list of ``Transform`` objects): list of transforms to compose.
     Example:
         >>> transforms.Compose([
         >>>     transforms.CenterCrop(10),
@@ -23,13 +25,24 @@ class Compose(object):
         >>> ])
     """
 
-    def __init__(self, transforms):
-        self.transforms = transforms
+    def __init__(self, input_transforms, flag=0):
+        self.transforms = input_transforms
+        self.flag = flag
 
+    # def __call__(self, img):
+    #     for t in self.transforms:
+    #         img = t(img)
+    #     return img
     def __call__(self, img):
-        for t in self.transforms:
-            img = t(img)
-        return img
+        show_img = 0
+        for i in range(len(self.transforms)):
+            if i == 2:
+                img = self.transforms[i](img)
+                if self.flag == 1:
+                    show_img = copy.copy(img)
+            else:
+                img = self.transforms[i](img)
+        return img, show_img
 
     def randomize_parameters(self):
         for t in self.transforms:
@@ -58,7 +71,7 @@ class ToTensor(object):
             # backward compatibility
             return img.float().div(self.norm_value)
 
-        if accimage is not None and isinstance(pic, accimage.Image):
+        if acc_image is not None and isinstance(pic, acc_image.Image):
             nppic = np.zeros(
                 [pic.channels, pic.height, pic.width], dtype=np.float32)
             pic.copyto(nppic)
@@ -73,12 +86,12 @@ class ToTensor(object):
             img = torch.ByteTensor(torch.ByteStorage.from_buffer(pic.tobytes()))
         # PIL image mode: 1, L, P, I, F, RGB, YCbCr, RGBA, CMYK
         if pic.mode == 'YCbCr':
-            nchannel = 3
+            n_channel = 3
         elif pic.mode == 'I;16':
-            nchannel = 1
+            n_channel = 1
         else:
-            nchannel = len(pic.mode)
-        img = img.view(pic.size[1], pic.size[0], nchannel)
+            n_channel = len(pic.mode)
+        img = img.view(pic.size[1], pic.size[0], n_channel)
         # put it from HWC to CHW format
         # yikes, this transpose takes 80% of the loading time/CPU
         img = img.transpose(0, 1).transpose(0, 2).contiguous()
@@ -125,7 +138,7 @@ class Normalize(object):
 class Scale(object):
     """Rescale the input PIL.Image to the given size.
     Args:
-        size (sequence or int): Desired output size. If size is a sequence like
+        size (list or int): Desired output size. If size is a sequence like
             (w, h), output size will be matched to this. If size is an int,
             smaller edge of the image will be matched to this number.
             i.e, if height > width, then image will be rescaled to
@@ -135,9 +148,8 @@ class Scale(object):
     """
 
     def __init__(self, size, interpolation=Image.BILINEAR):
-        assert isinstance(size,
-                          int) or (isinstance(size, collections.Iterable) and
-                                   len(size) == 2)
+        assert isinstance(size, int) or \
+               (isinstance(size, collections.Iterable) and len(size) == 2)
         self.size = size
         self.interpolation = interpolation
 
@@ -170,7 +182,7 @@ class Scale(object):
 class CenterCrop(object):
     """Crops the given PIL.Image at the center.
     Args:
-        size (sequence or int): Desired output size of the crop. If size is an
+        size (int): Desired output size of the crop. If size is an
             int instead of sequence like (h, w), a square crop (size, size) is
             made.
     """
@@ -184,15 +196,17 @@ class CenterCrop(object):
     def __call__(self, img):
         """
         Args:
-            img (PIL.Image): Image to be cropped.
+            img (PIL.Image.Image): Image to be cropped.
         Returns:
-            PIL.Image: Cropped image.
+            PIL.Image.Image: Cropped image.
         """
         w, h = img.size
         th, tw = self.size
-        x1 = int(round((w - tw) / 2.))
-        y1 = int(round((h - th) / 2.))
-        return img.crop((x1, y1, x1 + tw, y1 + th))
+        x_1 = int(round((w - tw) / 2.))
+        y_1 = int(round((h - th) / 2.))
+        img = img.crop((x_1, y_1, x_1 + tw, y_1 + th))
+
+        return img
 
     def randomize_parameters(self):
         pass
@@ -241,9 +255,7 @@ class CornerCrop(object):
             x2 = image_width
             y2 = image_height
 
-        img = img.crop((x1, y1, x2, y2))
-
-        return img
+        return img.crop((x1, y1, x2, y2))
 
     def randomize_parameters(self):
         if self.randomize:
@@ -254,6 +266,9 @@ class CornerCrop(object):
 
 class RandomHorizontalFlip(object):
     """Horizontally flip the given PIL.Image randomly with a probability of 0.5."""
+
+    def __init__(self):
+        self.p = None
 
     def __call__(self, img):
         """
@@ -293,8 +308,10 @@ class MultiScaleCornerCrop(object):
         self.scales = scales
         self.size = size
         self.interpolation = interpolation
-
         self.crop_positions = crop_positions
+
+        self.scale = None
+        self.crop_position = None
 
     def __call__(self, img):
         global x1, y1, x2, y2
@@ -333,9 +350,10 @@ class MultiScaleCornerCrop(object):
             x2 = image_width
             y2 = image_height
 
-        img = img.crop((x1, y1, x2, y2))
+        # img = img.crop((x1, y1, x2, y2))
 
-        return img.resize((self.size, self.size), self.interpolation)
+        # return img.resize((self.size, self.size), self.interpolation)
+        return img
 
     def randomize_parameters(self):
         self.scale = self.scales[random.randint(0, len(self.scales) - 1)]
@@ -351,6 +369,10 @@ class MultiScaleRandomCrop(object):
         self.size = size
         self.interpolation = interpolation
 
+        self.scale = None
+        self.tl_x = None
+        self.tl_y = None
+
     def __call__(self, img):
         min_length = min(img.size[0], img.size[1])
         crop_size = int(min_length * self.scale)
@@ -358,12 +380,12 @@ class MultiScaleRandomCrop(object):
         image_width = img.size[0]
         image_height = img.size[1]
 
-        x1 = self.tl_x * (image_width - crop_size)
-        y1 = self.tl_y * (image_height - crop_size)
-        x2 = x1 + crop_size
-        y2 = y1 + crop_size
+        x_1 = self.tl_x * (image_width - crop_size)
+        y_1 = self.tl_y * (image_height - crop_size)
+        x_2 = x_1 + crop_size
+        y_2 = y_1 + crop_size
 
-        img = img.crop((x1, y1, x2, y2))
+        img = img.crop((x_1, y_1, x_2, y_2))
 
         return img.resize((self.size, self.size), self.interpolation)
 

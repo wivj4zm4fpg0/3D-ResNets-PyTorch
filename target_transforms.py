@@ -12,8 +12,14 @@ class Compose(object):
 
 class ClassLabel(object):
 
+    def __init__(self, flag=0):
+        self.flag = flag
+
     def __call__(self, target):
-        return target['label']
+        if self.flag == 1:
+            return target['label']['video_id']
+        else:
+            return target['label']
 
 
 class VideoID(object):

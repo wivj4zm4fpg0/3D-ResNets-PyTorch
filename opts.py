@@ -22,7 +22,8 @@ def parse_opts():
         '--dataset',
         default=None,
         type=str,
-        choices=['activitynet', 'kinetics', 'ucf101', 'hmdb51', 'ssv1', 'ssv2', 'ssv2flow', 'ucf101flow'],
+        choices=['activitynet', 'kinetics', 'ucf101', 'hmdb51', 'ssv1', 'ssv2', 'ssv2flow', 'ucf101flow',
+                 'shoplifting'],
         help='Used dataset (activitynet | kinetics | ucf101 | hmdb51 | something-something-v1 | something-something-v2)'
     )
     parser.add_argument(
@@ -242,6 +243,14 @@ def parse_opts():
     parser.add_argument(
         '--add_RGB_image_paths', default=None, nargs='*', help='channel RGB image to add to RGB image'
     )
+    parser.add_argument(
+        '--image_show_train', action='store_true'
+    )
+    parser.set_defaults(image_show_train=False)
+    parser.add_argument(
+        '--image_show_validation', action='store_true'
+    )
+    parser.set_defaults(image_show_validation=False)
 
     args = parser.parse_args()
 

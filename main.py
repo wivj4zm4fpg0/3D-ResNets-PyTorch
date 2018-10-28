@@ -20,6 +20,7 @@ from temporal_transforms import LoopPadding, TemporalRandomCrop
 from train import train_epoch
 from utils import Logger
 from validation import val_epoch
+from show_answer import image_show_epoch
 
 
 def worker_init_fn(worker_id):
@@ -29,6 +30,11 @@ def worker_init_fn(worker_id):
 if __name__ == '__main__':
     # コマンドラインオプションを取得
     opt = parse_opts()
+
+    if opt.image_show_validation or opt.image_show_train:
+        image_show_flag = 1
+    else:
+        image_show_flag = 0
 
     # チャンネル数を取得
     opt.n_channel = 3
@@ -41,11 +47,11 @@ if __name__ == '__main__':
     result_dir_name = '{}-{}-{}-{}ch-{}frame'.format(opt.dataset, opt.model, opt.model_depth, opt.n_channel,
                                                      opt.sample_duration)
     if opt.transfer_learning:
-        result_dir_name = result_dir_name + '-transfer-learning'
+        result_dir_name = result_dir_name + '-transfer_learning'
     elif opt.n_finetune_classes:
-        result_dir_name = result_dir_name + '-finetune-pretrain'
+        result_dir_name = result_dir_name + '-fine_tune_pre_train'
     else:
-        result_dir_name = result_dir_name + '-no-pretrain'
+        result_dir_name = result_dir_name + '-no_pre_train'
     if opt.suffix:
         result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
     result_dir_name = os.path.join(opt.result_path, result_dir_name)
@@ -105,10 +111,11 @@ if __name__ == '__main__':
         spatial_transform = Compose([
             crop_method,
             RandomHorizontalFlip(),
-            ToTensor(opt.norm_value), norm_method
-        ])
+            ToTensor(opt.norm_value),
+            norm_method
+        ], image_show_flag)
         temporal_transform = TemporalRandomCrop(opt.sample_duration)
-        target_transform = ClassLabel()
+        target_transform = ClassLabel(image_show_flag)
         training_data = datasets[opt.dataset](paths, opt.annotation_path, 'training',
                                               spatial_transform=spatial_transform,
                                               temporal_transform=temporal_transform, target_transform=target_transform,
@@ -122,7 +129,7 @@ if __name__ == '__main__':
             worker_init_fn=worker_init_fn)
         train_logger = Logger(
             os.path.join(result_dir_name, 'train.log'),
-            ['epoch', 'loss', 'acc-top1', 'acc-top5', 'lr', 'batch', 'batch-time', 'epoch-time'])
+            ['epoch', 'loss', 'acc-top1', 'lr', 'batch', 'batch-time', 'epoch-time'])
 
         if opt.nesterov:
             dampening = 0
@@ -135,14 +142,16 @@ if __name__ == '__main__':
             dampening=dampening,
             weight_decay=opt.weight_decay,
             nesterov=opt.nesterov)
+
     if not opt.no_val:
         spatial_transform = Compose([
             Scale(opt.sample_size),
             CenterCrop(opt.sample_size),
-            ToTensor(opt.norm_value), norm_method
-        ])
+            ToTensor(opt.norm_value),
+            norm_method
+        ], image_show_flag)
         temporal_transform = LoopPadding(opt.sample_duration)
-        target_transform = ClassLabel()
+        target_transform = ClassLabel(image_show_flag)
         validation_data = datasets[opt.dataset](paths, opt.annotation_path, 'validation',
                                                 opt.n_val_samples,
                                                 spatial_transform=spatial_transform,
@@ -158,7 +167,7 @@ if __name__ == '__main__':
             worker_init_fn=worker_init_fn)
         val_logger = Logger(
             os.path.join(result_dir_name, 'val.log'),
-            ['epoch', 'loss', 'acc-top1', 'acc-top5', 'batch-time', 'epoch-time'])
+            ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time'])
 
     if opt.resume_path:
         opt.resume_path = os.path.join(result_dir_name, opt.resume_path)
@@ -179,6 +188,10 @@ if __name__ == '__main__':
                         train_logger, result_dir_name)
         if not opt.no_val:
             val_epoch(i, val_loader, model, criterion, opt, val_logger)
+        if not opt.image_show_train:
+            image_show_epoch(i, train_loader, model, opt)
+        if not opt.image_show_validation:
+            image_show_epoch(i, val_loader, model, opt)
     if opt.test:
         spatial_transform = Compose([
             Scale(int(opt.sample_size / opt.scale_in_test)),
@@ -188,8 +201,7 @@ if __name__ == '__main__':
         temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = VideoID()
 
-        test_data = datasets[opt.dataset](paths, opt.annotation.path, 'test',
-                                          0,
+        test_data = datasets[opt.dataset](paths, opt.annotation.path, 'test', 0,
                                           sapatial_transform=spatial_transform,
                                           temporal_transform=temporal_transform,
                                           target_transform=target_transform,

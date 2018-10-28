@@ -51,10 +51,28 @@ def load_value_file(file_path):
 def calculate_accuracy(outputs, targets):
     batch_size = targets.size(0)
 
-    _, pred = outputs.topk(5, 1, True)
-    pred = pred.t()
-    correct = pred.eq(targets.view(1, -1))
-    n_correct_elems1 = correct[0].float().sum().item()
-    n_correct_elems5 = correct.float().sum().item()
+    # _, prediction = outputs.topk(5, 1, True)
+    # prediction = prediction.t()
+    # correct = prediction.eq(targets.view(1, -1))
+    # n_correct_elems1 = correct[0].float().sum().item()
+    # n_correct_elems5 = correct.float().sum().item()
+    #
+    # return n_correct_elems1 / batch_size, n_correct_elems5 / batch_size
 
-    return n_correct_elems1 / batch_size, n_correct_elems5 / batch_size
+    _, prediction = outputs.topk(1, 1, True)
+    prediction = prediction.t()
+    correct = prediction.eq(targets.view(1, -1))
+    n_correct_elem = correct.sum().item()
+
+    return n_correct_elem / batch_size
+
+
+def image_show_calculate_accuracy(outputs, targets, targets_name, show_image):
+    batch_size = targets.size(0)
+
+    _, prediction = outputs.topk(1, 1, True)
+    prediction = prediction.t()
+    correct = prediction.eq(targets.view(1, -1))
+    n_correct_elem = correct.sum().item()
+
+    return n_correct_elem / batch_size
