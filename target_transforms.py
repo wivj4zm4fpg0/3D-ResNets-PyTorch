@@ -17,7 +17,7 @@ class ClassLabel(object):
 
     def __call__(self, target):
         if self.flag == 1:
-            return target['label']['video_id']
+            return target['label'], target['video_id']
         else:
             return target['label']
 

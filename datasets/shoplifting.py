@@ -36,7 +36,14 @@ class Shoplifting(datasets.base.BaseLoader):
                  target_transform=None,
                  sample_duration=32,
                  get_loader=None,
-                 image_format='image_{0:05d}.jpg'
-                 ):
-        super().__init__(paths, annotation_path, subset, n_samples_for_each_video, spatial_transform,
-                         temporal_transform, target_transform, sample_duration, get_loader, image_format)
+                 image_format='image_{0:05d}.jpg'):
+        super().__init__(paths,
+                         annotation_path,
+                         subset,
+                         n_samples_for_each_video,
+                         spatial_transform,
+                         temporal_transform,
+                         target_transform,
+                         sample_duration,
+                         get_loader,
+                         image_format,)

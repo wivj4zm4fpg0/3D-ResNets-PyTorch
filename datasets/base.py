@@ -61,10 +61,17 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
     def get_video_names_and_annotations(self, entry, subset):
         pass
 
-    def make_data_set(self, paths, annotation_path, subset, n_samples_for_each_video,
-                      sample_duration):
+    def make_data_set(
+            self,
+            paths,
+            annotation_path,
+            subset,
+            n_samples_for_each_video,
+            sample_duration):
+
         entry = self.load_annotation_data(annotation_path)
-        video_names, annotations = self.get_video_names_and_annotations(entry, subset)
+        video_names, annotations = \
+            self.get_video_names_and_annotations(entry, subset)
         class_to_idx = self.get_class_labels(entry)
         idx_to_class = {}
         for name, label in class_to_idx.items():
@@ -77,7 +84,8 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
             n_frames = 0
             for path in paths:
                 full_path = os.path.join(path, video_names[i])
-                assert os.path.exists(full_path), 'No such file :{}'.format(full_path)
+                assert os.path.exists(full_path), \
+                    'No such file :{}'.format(full_path)
                 full_paths[full_path] = paths[path]
                 n_frames_file_path = os.path.join(full_path, 'n_frames')
                 if os.path.exists(n_frames_file_path):
@@ -102,12 +110,16 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
                 data_set.append(sample)
             else:
                 if n_samples_for_each_video > 1:
-                    step = max(1, math.ceil((n_frames - 1 - sample_duration) / (n_samples_for_each_video - 1)))
+                    step = max(1,
+                               math.ceil((n_frames - 1 - sample_duration)
+                                         / (n_samples_for_each_video - 1)))
                 else:
                     step = sample_duration
                 for path in range(1, n_frames, step):
                     sample_j = copy.deepcopy(sample)
-                    sample_j['frame_indices'] = list(range(path, min(n_frames + 1, path + sample_duration)))
+                    sample_j['frame_indices'] = list(range(
+                        path,
+                        min(n_frames + 1, path + sample_duration)))
                     data_set.append(sample_j)
         return data_set, idx_to_class
 
@@ -125,7 +137,10 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
         if get_loader is None:
             get_loader = video_loader
         self.data, self.class_names = self.make_data_set(
-            paths, annotation_path, subset, n_samples_for_each_video, sample_duration)
+            paths,
+            annotation_path,
+            subset, n_samples_for_each_video,
+            sample_duration)
 
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
@@ -149,16 +164,13 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
             frame_indices = self.temporal_transform(frame_indices)
 
         clip = self.loader(paths, frame_indices, self.image_format)
-        show_image = []
         if self.spatial_transform is not None:
             self.spatial_transform.randomize_parameters()
             # clip = [self.spatial_transform(img) for img in clip]
-            temp_clip = []
-            for i in range(len(clip)):
-                temp_img, temp_show_image = self.spatial_transform(clip[i])
-                temp_clip.append(temp_img)
-                show_image.append(temp_show_image)
-            clip = temp_clip
+            temp = [self.spatial_transform(img) for img in clip]
+            clip = [i[0] for i in temp]
+            # if show_images.show_images is not None:
+            #     show_images.show_images.append([i[1] for i in temp])
 
         if self.n_image > 1:
             clip = channels_coupling(clip, self.n_image)
@@ -169,7 +181,7 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
         if self.target_transform is not None:
             if self.target_transform.flag == 1:
                 target, target_name = self.target_transform(target)
-                return clip, target, target_name, show_image
+                return clip, target, target_name
             else:
                 target = self.target_transform(target)
 

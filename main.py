@@ -44,8 +44,12 @@ if __name__ == '__main__':
         opt.n_channel += len(opt.add_RGB_image_paths) * 3
 
     # 結果の出力ディレクトリの名前を自動で決める
-    result_dir_name = '{}-{}-{}-{}ch-{}frame'.format(opt.dataset, opt.model, opt.model_depth, opt.n_channel,
-                                                     opt.sample_duration)
+    result_dir_name = '{}-{}-{}-{}ch-{}frame'.format(
+        opt.dataset,
+        opt.model,
+        opt.model_depth,
+        opt.n_channel,
+        opt.sample_duration)
     if opt.transfer_learning:
         result_dir_name = result_dir_name + '-transfer_learning'
     elif opt.n_finetune_classes:
@@ -55,7 +59,8 @@ if __name__ == '__main__':
     if opt.suffix:
         result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
     result_dir_name = os.path.join(opt.result_path, result_dir_name)
-    os.makedirs(result_dir_name, exist_ok=True)  # 出力ディレクトリを作成
+    if image_show_flag == 0:
+        os.makedirs(result_dir_name, exist_ok=True)  # 出力ディレクトリを作成
 
     opt.scales = [opt.initial_scale]
     for i in range(1, opt.n_scales):
@@ -64,8 +69,9 @@ if __name__ == '__main__':
     opt.mean = get_mean(opt.norm_value, dataset=opt.mean_dataset)
     opt.std = get_std(opt.norm_value)
     print(opt)
-    with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
-        json.dump(vars(opt), opt_file)
+    if image_show_flag == 0:
+        with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
+            json.dump(vars(opt), opt_file)
 
     random.seed(1)
     torch.manual_seed(1)
@@ -116,10 +122,13 @@ if __name__ == '__main__':
         ], image_show_flag)
         temporal_transform = TemporalRandomCrop(opt.sample_duration)
         target_transform = ClassLabel(image_show_flag)
-        training_data = datasets[opt.dataset](paths, opt.annotation_path, 'training',
-                                              spatial_transform=spatial_transform,
-                                              temporal_transform=temporal_transform, target_transform=target_transform,
-                                              )
+        training_data = datasets[opt.dataset](
+            paths, opt.annotation_path,
+            'training',
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+        )
         train_loader = torch.utils.data.DataLoader(
             training_data,
             batch_size=opt.batch_size,
@@ -129,7 +138,14 @@ if __name__ == '__main__':
             worker_init_fn=worker_init_fn)
         train_logger = Logger(
             os.path.join(result_dir_name, 'train.log'),
-            ['epoch', 'loss', 'acc-top1', 'lr', 'batch', 'batch-time', 'epoch-time'])
+            [
+                'epoch',
+                'loss',
+                'acc-top1',
+                'lr', 'batch',
+                'batch-time',
+                'epoch-time'
+            ])
 
         if opt.nesterov:
             dampening = 0
@@ -152,12 +168,14 @@ if __name__ == '__main__':
         ], image_show_flag)
         temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = ClassLabel(image_show_flag)
-        validation_data = datasets[opt.dataset](paths, opt.annotation_path, 'validation',
-                                                opt.n_val_samples,
-                                                spatial_transform=spatial_transform,
-                                                temporal_transform=temporal_transform,
-                                                target_transform=target_transform,
-                                                )
+        validation_data = datasets[opt.dataset](
+            paths, opt.annotation_path,
+            'validation',
+            opt.n_val_samples,
+            spatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+        )
         val_loader = torch.utils.data.DataLoader(
             validation_data,
             batch_size=opt.batch_size,
@@ -183,15 +201,20 @@ if __name__ == '__main__':
 
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
-        if not opt.no_train:
+        # if not opt.no_train:
+        #     train_epoch(i, train_loader, model, criterion, optimizer, opt,
+        #                 train_logger, result_dir_name)
+        # if not opt.no_val:
+        #     val_epoch(i, val_loader, model, criterion, opt, val_logger)
+        if image_show_flag == 1:
+            if opt.image_show_train:
+                image_show_epoch(i, train_loader, model, opt)
+            if opt.image_show_validation:
+                image_show_epoch(i, val_loader, model, opt)
+        else:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,
                         train_logger, result_dir_name)
-        if not opt.no_val:
             val_epoch(i, val_loader, model, criterion, opt, val_logger)
-        if not opt.image_show_train:
-            image_show_epoch(i, train_loader, model, opt)
-        if not opt.image_show_validation:
-            image_show_epoch(i, val_loader, model, opt)
     if opt.test:
         spatial_transform = Compose([
             Scale(int(opt.sample_size / opt.scale_in_test)),
@@ -201,11 +224,12 @@ if __name__ == '__main__':
         temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = VideoID()
 
-        test_data = datasets[opt.dataset](paths, opt.annotation.path, 'test', 0,
-                                          sapatial_transform=spatial_transform,
-                                          temporal_transform=temporal_transform,
-                                          target_transform=target_transform,
-                                          )
+        test_data = datasets[opt.dataset](
+            paths, opt.annotation.path, 'test', 0,
+            sapatial_transform=spatial_transform,
+            temporal_transform=temporal_transform,
+            target_transform=target_transform,
+        )
 
         test_loader = torch.utils.data.DataLoader(
             test_data,

@@ -36,7 +36,7 @@ class Compose(object):
     def __call__(self, img):
         show_img = 0
         for i in range(len(self.transforms)):
-            if i == 2:
+            if i == 0:
                 img = self.transforms[i](img)
                 if self.flag == 1:
                     show_img = copy.copy(img)
@@ -72,10 +72,10 @@ class ToTensor(object):
             return img.float().div(self.norm_value)
 
         if acc_image is not None and isinstance(pic, acc_image.Image):
-            nppic = np.zeros(
+            np_pic = np.zeros(
                 [pic.channels, pic.height, pic.width], dtype=np.float32)
-            pic.copyto(nppic)
-            return torch.from_numpy(nppic)
+            pic.copyto(np_pic)
+            return torch.from_numpy(np_pic)
 
         # handle PIL Image
         if pic.mode == 'I':

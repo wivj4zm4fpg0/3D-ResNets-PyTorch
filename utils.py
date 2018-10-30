@@ -1,5 +1,5 @@
-import os
 import csv
+import os
 
 
 class AverageMeter(object):
@@ -54,10 +54,10 @@ def calculate_accuracy(outputs, targets):
     # _, prediction = outputs.topk(5, 1, True)
     # prediction = prediction.t()
     # correct = prediction.eq(targets.view(1, -1))
-    # n_correct_elems1 = correct[0].float().sum().item()
-    # n_correct_elems5 = correct.float().sum().item()
+    # n_correct_elms_1 = correct[0].float().sum().item()
+    # n_correct_elms_5 = correct.float().sum().item()
     #
-    # return n_correct_elems1 / batch_size, n_correct_elems5 / batch_size
+    # return n_correct_elms_1 / batch_size, n_correct_elms_5 / batch_size
 
     _, prediction = outputs.topk(1, 1, True)
     prediction = prediction.t()
@@ -67,12 +67,9 @@ def calculate_accuracy(outputs, targets):
     return n_correct_elem / batch_size
 
 
-def image_show_calculate_accuracy(outputs, targets, targets_name, show_image):
-    batch_size = targets.size(0)
-
+def image_show_calculate_accuracy(outputs, targets, targets_name):
     _, prediction = outputs.topk(1, 1, True)
     prediction = prediction.t()
     correct = prediction.eq(targets.view(1, -1))
-    n_correct_elem = correct.sum().item()
-
-    return n_correct_elem / batch_size
+    for i in range(len(correct[0])):
+        print('{}, {}'.format(targets_name[i], correct[0][i].item()))
