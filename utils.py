@@ -65,11 +65,3 @@ def calculate_accuracy(outputs, targets):
     n_correct_elem = correct.sum().item()
 
     return n_correct_elem / batch_size
-
-
-def image_show_calculate_accuracy(outputs, targets, targets_name):
-    _, prediction = outputs.topk(1, 1, True)
-    prediction = prediction.t()
-    correct = prediction.eq(targets.view(1, -1))
-    for i in range(len(correct[0])):
-        print('{}, {}'.format(targets_name[i], correct[0][i].item()))

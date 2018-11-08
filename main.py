@@ -31,10 +31,7 @@ if __name__ == '__main__':
     # コマンドラインオプションを取得
     opt = parse_opts()
 
-    if opt.image_show_validation or opt.image_show_train:
-        image_show_flag = 1
-    else:
-        image_show_flag = 0
+    image_show_flag = 1 if opt.image_show_validation or opt.image_show_train else 0
 
     # チャンネル数を取得
     opt.n_channel = 3
@@ -44,12 +41,14 @@ if __name__ == '__main__':
         opt.n_channel += len(opt.add_RGB_image_paths) * 3
 
     # 結果の出力ディレクトリの名前を自動で決める
-    result_dir_name = '{}-{}-{}-{}ch-{}frame'.format(
+    result_dir_name = '{}-{}-{}-{}ch-{}frame-{}'.format(
         opt.dataset,
         opt.model,
         opt.model_depth,
         opt.n_channel,
-        opt.sample_duration)
+        opt.sample_duration,
+        opt.batch_size
+    )
     if opt.transfer_learning:
         result_dir_name = result_dir_name + '-transfer_learning'
     elif opt.n_finetune_classes:
@@ -136,21 +135,20 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True,
             worker_init_fn=worker_init_fn)
-        train_logger = Logger(
-            os.path.join(result_dir_name, 'train.log'),
-            [
-                'epoch',
-                'loss',
-                'acc-top1',
-                'lr', 'batch',
-                'batch-time',
-                'epoch-time'
-            ])
+        if image_show_flag == 0:
+            train_logger = Logger(
+                os.path.join(result_dir_name, 'train.log'),
+                [
+                    'epoch',
+                    'loss',
+                    'acc-top1',
+                    'lr', 'batch',
+                    'batch-time',
+                    'epoch-time'
+                ]
+            )
 
-        if opt.nesterov:
-            dampening = 0
-        else:
-            dampening = opt.dampening
+        dampening = 0 if opt.nesterov else opt.dampening
         optimizer = optim.SGD(
             model.parameters(),
             lr=opt.learning_rate,
@@ -183,9 +181,10 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True,
             worker_init_fn=worker_init_fn)
-        val_logger = Logger(
-            os.path.join(result_dir_name, 'val.log'),
-            ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time'])
+        if image_show_flag == 0:
+            val_logger = Logger(
+                os.path.join(result_dir_name, 'val.log'),
+                ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time'])
 
     if opt.resume_path:
         opt.resume_path = os.path.join(result_dir_name, opt.resume_path)
@@ -208,9 +207,10 @@ if __name__ == '__main__':
         #     val_epoch(i, val_loader, model, criterion, opt, val_logger)
         if image_show_flag == 1:
             if opt.image_show_train:
-                image_show_epoch(i, train_loader, model, opt)
+                image_show_epoch(i, train_loader, model, opt, 'train')
             if opt.image_show_validation:
-                image_show_epoch(i, val_loader, model, opt)
+                image_show_epoch(i, val_loader, model, opt, 'validation')
+            break
         else:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,
                         train_logger, result_dir_name)
