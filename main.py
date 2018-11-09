@@ -178,10 +178,13 @@ if __name__ == '__main__':
                 os.path.join(result_dir_name, 'val.log'),
                 ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time'])
 
-    if opt.resume_path:
-        opt.resume_path = os.path.join(result_dir_name, opt.resume_path)
-        print('loading checkpoint {}'.format(opt.resume_path))
-        checkpoint = torch.load(opt.resume_path)
+    if opt.resume_path or opt.show_answer_resume_path:
+        if opt.resume_path:
+            path = os.path.join(result_dir_name, opt.resume_path)
+        else:
+            path = opt.show_answer_resume_path
+        print('loading checkpoint {}'.format(path))
+        checkpoint = torch.load(path)
         assert opt.arch == checkpoint['arch']
 
         opt.begin_epoch = checkpoint['epoch']
