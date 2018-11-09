@@ -174,7 +174,7 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True,
             worker_init_fn=worker_init_fn)
-        if show_answer_flag:
+        if not show_answer_flag:
             val_logger = Logger(
                 os.path.join(result_dir_name, 'val.log'),
                 ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time'])
