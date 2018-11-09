@@ -10,7 +10,7 @@ from torch import optim
 from dataset import data_set
 from model import generate_model
 from opts import parse_opts
-from show_answer import image_show_epoch
+from show_answer import show_answer_epoch
 from spatial_transforms import (
     Compose, Normalize, Scale, CenterCrop, MultiScaleCornerCrop,
     MultiScaleRandomCrop, RandomHorizontalFlip, ToTensor)
@@ -29,7 +29,7 @@ if __name__ == '__main__':
     # コマンドラインオプションを取得
     opt = parse_opts()
 
-    image_show_flag = opt.image_show_validation or opt.image_show_train
+    show_answer_flag = opt.show_answer_validation or opt.show_answer_train
 
     # チャンネル数を取得
     opt.n_channel = 3
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     if opt.suffix:
         result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
     result_dir_name = os.path.join(opt.result_path, result_dir_name)
-    if image_show_flag:
+    if show_answer_flag:
         os.makedirs(result_dir_name, exist_ok=True)  # 出力ディレクトリを作成
 
     opt.scales = [opt.initial_scale]
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         opt.scales.append(opt.scales[-1] * opt.scale_step)
     opt.arch = '{}-{}'.format(opt.model, opt.model_depth)
     print(opt)
-    if image_show_flag:
+    if show_answer_flag:
         with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
             json.dump(vars(opt), opt_file)
 
@@ -110,9 +110,9 @@ if __name__ == '__main__':
             RandomHorizontalFlip(),
             ToTensor(opt.norm_value),
             norm_method
-        ], image_show_flag)
+        ], show_answer_flag)
         temporal_transform = TemporalRandomCrop(opt.sample_duration)
-        target_transform = ClassLabel(image_show_flag)
+        target_transform = ClassLabel(show_answer_flag)
         training_data = data_set[opt.dataset](
             paths, opt.annotation_path,
             'training',
@@ -127,7 +127,7 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True,
             worker_init_fn=worker_init_fn)
-        if image_show_flag:
+        if show_answer_flag:
             train_logger = Logger(
                 os.path.join(result_dir_name, 'train.log'),
                 [
@@ -155,9 +155,9 @@ if __name__ == '__main__':
             CenterCrop(opt.sample_size),
             ToTensor(opt.norm_value),
             norm_method
-        ], image_show_flag)
+        ], show_answer_flag)
         temporal_transform = LoopPadding(opt.sample_duration)
-        target_transform = ClassLabel(image_show_flag)
+        target_transform = ClassLabel(show_answer_flag)
         validation_data = data_set[opt.dataset](
             paths, opt.annotation_path,
             'validation',
@@ -173,7 +173,7 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True,
             worker_init_fn=worker_init_fn)
-        if image_show_flag:
+        if show_answer_flag:
             val_logger = Logger(
                 os.path.join(result_dir_name, 'val.log'),
                 ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time'])
@@ -197,11 +197,11 @@ if __name__ == '__main__':
         #                 train_logger, result_dir_name)
         # if not opt.no_val:
         #     val_epoch(i, val_loader, model, criterion, opt, val_logger)
-        if image_show_flag:
+        if show_answer_flag:
             if opt.image_show_train:
-                image_show_epoch(i, train_loader, model, opt, 'train')
+                show_answer_epoch(i, train_loader, model, opt, 'train')
             if opt.image_show_validation:
-                image_show_epoch(i, val_loader, model, opt, 'validation')
+                show_answer_epoch(i, val_loader, model, opt, 'validation')
             break
         else:
             train_epoch(i, train_loader, model, criterion, optimizer, opt,

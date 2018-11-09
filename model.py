@@ -163,83 +163,72 @@ def generate_model(opt):
                 sample_size=opt.sample_size,
                 sample_duration=opt.sample_duration)
 
-    if not opt.no_cuda:
-        # Heの初期値で初期化
-        if not opt.resume_path:
-            for module in model.modules():
-                if hasattr(module, 'weight'):
-                    if not ('Norm' in module.__class__.__name__):
-                        init.kaiming_uniform_(module.weight, mode='fan_out')
-                    else:
-                        init.constant_(module.weight, 1)
-                if hasattr(module, 'bias'):
-                    if module.bias is not None:
-                        init.constant_(module.bias, 0)
+    # Heの初期値で初期化
+    if not opt.resume_path:
+        for module in model.modules():
+            if hasattr(module, 'weight'):
+                if not ('Norm' in module.__class__.__name__):
+                    init.kaiming_uniform_(module.weight, mode='fan_out')
+                else:
+                    init.constant_(module.weight, 1)
+            if hasattr(module, 'bias'):
+                if module.bias is not None:
+                    init.constant_(module.bias, 0)
 
+    if not opt.no_cuda:
         model = model.cuda()
         model = nn.DataParallel(model)
 
-        if opt.pretrain_path:
-            print('loading pretrained model {}'.format(opt.pretrain_path))
-            pre_train = torch.load(opt.pretrain_path)
+    if opt.pre_train_path or opt.show_answer_pre_train_model_path:
+        if opt.pre_train_path:
+            path = opt.pre_train_path
+        else:
+            path = opt.show_answer_pre_train_model_path
+        print('loading pre-trained model {}'.format(path))
+        pre_train = torch.load(path)
 
-            # RGB画像のみで学習済みのモデルを転用するとき4チャンネル以降をRGBの平均にする（最初のCNN層のみ）
-            temp = copy.copy(pre_train['state_dict']['module.conv1.weight'])
-            pre_train['state_dict']['module.conv1.weight'] = nn.Conv3d(
-                opt.n_channel,
-                64,
-                kernel_size=7,
-                stride=(1, 2, 2),
-                padding=(3, 3, 3),
-                bias=False
-            ).weight
-            temp_len = len(temp.data[0])
-            pre_data = temp.data
-            out_len = len(pre_data[0])
-            sub_len = out_len - temp_len
-            for i in range(len(temp.data)):
-                for j in range(temp_len):
-                    pre_data[i][j] = temp.data[i][j]
-                avg = torch.sum(temp.data[i], 0) / 3
-                for j in range(sub_len):
-                    pre_data[i][temp_len + j] = avg
+        # RGB画像のみで学習済みのモデルを転用するとき4チャンネル以降をRGBの平均にする（最初のCNN層のみ）
+        temp = copy.copy(pre_train['state_dict']['module.conv1.weight'])
+        pre_train['state_dict']['module.conv1.weight'] = nn.Conv3d(
+            opt.n_channel,
+            64,
+            kernel_size=7,
+            stride=(1, 2, 2),
+            padding=(3, 3, 3),
+            bias=False
+        ).weight
+        temp_len = len(temp.data[0])
+        pre_data = temp.data
+        out_len = len(pre_data[0])
+        sub_len = out_len - temp_len
+        for i in range(len(temp.data)):
+            for j in range(temp_len):
+                pre_data[i][j] = temp.data[i][j]
+            avg = torch.sum(temp.data[i], 0) / 3
+            for j in range(sub_len):
+                pre_data[i][temp_len + j] = avg
 
-            model.load_state_dict(pre_train['state_dict'])
+        model.load_state_dict(pre_train['state_dict'])
 
-            if opt.model == 'densenet':
-                model.module.classifier = nn.Linear(
-                    model.module.classifier.in_features, opt.n_finetune_classes)
+        if opt.model == 'densenet':
+            model.module.classifier = nn.Linear(
+                model.module.classifier.in_features, opt.n_finetune_classes)
+            if not opt.no_cuda:
                 model.module.classifier = model.module.classifier.cuda()
-            else:
-                # 転移学習をするときは全結合層以外のパラメータを更新しないようにする
-                if opt.transfer_learning:
-                    for p in model.parameters():
-                        p.requires_grad = False
+        else:
+            # 転移学習をするときは全結合層以外のパラメータを更新しないようにする
+            if opt.transfer_learning:
+                for p in model.parameters():
+                    p.requires_grad = False
 
-                model.module.fc = nn.Linear(model.module.fc.in_features, opt.n_finetune_classes)
+            model.module.fc = nn.Linear(model.module.fc.in_features, opt.n_finetune_classes)
+            if not opt.no_cuda:
                 model.module.fc = model.module.fc.cuda()
 
-            if opt.transfer_learning:
-                parameters = model.module.fc.parameters()
-            else:
-                parameters = get_fine_tuning_parameters(model, opt.ft_begin_index)
-            return model, parameters
-    else:
-        if opt.pretrain_path:
-            print('loading pretrained model {}'.format(opt.pretrain_path))
-            pre_train = torch.load(opt.pretrain_path)
-            assert opt.arch == pre_train['arch']
-
-            model.load_state_dict(pre_train['state_dict'])
-
-            if opt.model == 'densenet':
-                model.classifier = nn.Linear(
-                    model.classifier.in_features, opt.n_finetune_classes)
-            else:
-                model.fc = nn.Linear(model.fc.in_features,
-                                     opt.n_finetune_classes)
-
+        if opt.transfer_learning:
+            parameters = model.module.fc.parameters()
+        else:
             parameters = get_fine_tuning_parameters(model, opt.ft_begin_index)
-            return model, parameters
+        return model, parameters
 
     return model, model.parameters()
