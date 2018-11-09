@@ -19,21 +19,20 @@ def parse_opts():
         type=str,
         help='Result directory path')
     parser.add_argument(
-        '--dataset',
+        '--data_set',
         default=None,
         type=str,
-        choices=['activitynet', 'kinetics', 'ucf101', 'hmdb51', 'ssv1', 'ssv2', 'ssv2flow', 'ucf101flow',
-                 'shoplifting'],
-        help='Used dataset (activitynet | kinetics | ucf101 | hmdb51 | something-something-v1 | something-something-v2)'
+        choices=['ucf101', 'shoplifting'],
+        help='Used data_set (ucf101 | shoplifting)'
     )
     parser.add_argument(
         '--n_classes',
         default=None,
         type=int,
-        help='Number of classes (activitynet: 200, kinetics: 400, ucf101: 101, hmdb51: 51, ssv1-2: 174)'
+        help='Number of classes (ucf101: 101, shoplifting: 2)'
     )
     parser.add_argument(
-        '--n_finetune_classes',
+        '--n_fine_tune_classes',
         default=None,
         type=int,
         help='Number of classes for fine-tuning. n_classes is set to the number when pretraining.'
@@ -52,17 +51,17 @@ def parse_opts():
         '--initial_scale',
         default=1.0,
         type=float,
-        help='Initial scale for multiscale cropping')
+        help='Initial scale for multi-scale cropping')
     parser.add_argument(
         '--n_scales',
         default=5,
         type=int,
-        help='Number of scales for multiscale cropping')
+        help='Number of scales for multi-scale cropping')
     parser.add_argument(
         '--scale_step',
         default=0.84089641525,
         type=float,
-        help='Scale step for multiscale cropping')
+        help='Scale step for multi-scale cropping')
     parser.add_argument(
         '--train_crop',
         default='corner',
@@ -77,7 +76,7 @@ def parse_opts():
         type=float,
         help='Initial learning rate (divided by 10 while training by lr scheduler)')
     parser.add_argument(
-        '--lr_rate_schedule', default=None, type=dict,
+        '--learning_rate_schedule', default=None, type=dict,
         help='setting learning rate per epoch. example:{1:0.001, 15:0.0001} ({epoch number:learning rate})'
     )  # TODO implement
     parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
@@ -85,22 +84,6 @@ def parse_opts():
         '--dampening', default=0.9, type=float, help='dampening of SGD')
     parser.add_argument(
         '--weight_decay', default=1e-3, type=float, help='Weight Decay')
-    parser.add_argument(
-        '--mean_dataset',
-        default=None,
-        type=str,
-        choices=['activitynet', 'kinetics'],
-        help='dataset for mean values of mean subtraction (activitynet | kinetics)')
-    parser.add_argument(
-        '--no_mean_norm',
-        action='store_true',
-        help='If true, inputs are not normalized by mean.')
-    parser.set_defaults(no_mean_norm=True)
-    parser.add_argument(
-        '--std_norm',
-        action='store_true',
-        help='If true, inputs are normalized by standard deviation.')
-    parser.set_defaults(std_norm=False)
     parser.add_argument(
         '--nesterov', action='store_true', help='Nesterov momentum')
     parser.set_defaults(nesterov=False)
@@ -139,7 +122,7 @@ def parse_opts():
         type=str,
         help='Save data (.pth) of previous training')
     parser.add_argument(
-        '--pretrain_path', default=None, type=str, help='Pretrained model (.pth)')
+        '--pre_train_path', default=None, type=str, help='Pre-trained model (.pth)')
     parser.add_argument(
         '--ft_begin_index',
         default=0,
@@ -156,31 +139,6 @@ def parse_opts():
         help='If true, validation is not performed.')
     parser.set_defaults(no_val=False)
     parser.add_argument(
-        '--test', action='store_true', help='If true, test is performed.')
-    parser.set_defaults(test=False)
-    parser.add_argument(
-        '--test_subset',
-        default='val',
-        type=str,
-        choices=['val', 'test'],
-        help='Used subset in test (val | test)')
-    parser.add_argument(
-        '--scale_in_test',
-        default=1.0,
-        type=float,
-        help='Spatial scale in test')
-    parser.add_argument(
-        '--crop_position_in_test',
-        default='c',
-        type=str,
-        choices=['c', 'tl', 'tr', 'bl', 'br'],
-        help='Cropping method (c | tl | tr | bl | br) in test')
-    parser.add_argument(
-        '--no_softmax_in_test',
-        action='store_true',
-        help='If true, output for each clip is not normalized using softmax.')
-    parser.set_defaults(no_softmax_in_test=False)
-    parser.add_argument(
         '--no_cuda', action='store_true', help='If true, cuda is not used.')
     parser.set_defaults(no_cuda=False)
     parser.add_argument(
@@ -194,9 +152,9 @@ def parse_opts():
         type=int,
         help='Trained model is saved at every this epochs.')
     parser.add_argument(
-        '--no_hflip',
+        '--no_horizontal_flip',
         action='store_true',
-        help='If true holizontal flipping is not performed.')
+        help='If true horizontal flipping is not performed.')
     parser.set_defaults(no_hflip=False)
     parser.add_argument(
         '--norm_value',
@@ -238,19 +196,25 @@ def parse_opts():
         '--suffix', default=None, type=str, help='suffix in made output directly'
     )
     parser.add_argument(
-        '--add_image_paths', default=None, nargs='*', help='channel image to add to RGB image'
+        '--add_gray_image_paths', default=None, nargs='*', help='channel image to add to RGB image'
     )
     parser.add_argument(
         '--add_RGB_image_paths', default=None, nargs='*', help='channel RGB image to add to RGB image'
     )
     parser.add_argument(
-        '--image_show_train', action='store_true'
+        '--show_answer_train', action='store_true'
     )
     parser.set_defaults(image_show_train=False)
     parser.add_argument(
-        '--image_show_validation', action='store_true'
+        '--show_answer_validation', action='store_true'
     )
     parser.set_defaults(image_show_validation=False)
+    parser.add_argument(
+        '--show_answer_result_path', default='result_path', type=str
+    )
+    parser.add_argument(
+        '--show_answer_pre_train_model_path', default=None, type=str
+    )
 
     args = parser.parse_args()
 
