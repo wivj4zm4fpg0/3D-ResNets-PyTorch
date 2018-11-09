@@ -33,39 +33,40 @@ if __name__ == '__main__':
 
     # チャンネル数を取得
     opt.n_channel = 3
-    if opt.add_image_paths:
-        opt.n_channel += len(opt.add_image_paths)
+    if opt.add_gray_image_paths:
+        opt.n_channel += len(opt.add_gray_image_paths)
     if opt.add_RGB_image_paths:
         opt.n_channel += len(opt.add_RGB_image_paths) * 3
-
-    # 結果の出力ディレクトリの名前を自動で決める
-    result_dir_name = '{}-{}-{}-{}ch-{}frame-{}batch-{}size'.format(
-        opt.dataset,
-        opt.model,
-        opt.model_depth,
-        opt.n_channel,
-        opt.sample_duration,
-        opt.batch_size,
-        opt.sample_size
-    )
-    if opt.transfer_learning:
-        result_dir_name = result_dir_name + '-transfer_learning'
-    elif opt.n_finetune_classes:
-        result_dir_name = result_dir_name + '-fine_tune_pre_train'
-    else:
-        result_dir_name = result_dir_name + '-no_pre_train'
-    if opt.suffix:
-        result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
-    result_dir_name = os.path.join(opt.result_path, result_dir_name)
-    if show_answer_flag:
-        os.makedirs(result_dir_name, exist_ok=True)  # 出力ディレクトリを作成
 
     opt.scales = [opt.initial_scale]
     for i in range(1, opt.n_scales):
         opt.scales.append(opt.scales[-1] * opt.scale_step)
     opt.arch = '{}-{}'.format(opt.model, opt.model_depth)
     print(opt)
-    if show_answer_flag:
+
+    result_dir_name = ''
+    if not show_answer_flag:
+        # 結果の出力ディレクトリの名前を自動で決める
+        result_dir_name = '{}-{}-{}-{}ch-{}frame-{}batch-{}size'.format(
+            opt.data_set,
+            opt.model,
+            opt.model_depth,
+            opt.n_channel,
+            opt.sample_duration,
+            opt.batch_size,
+            opt.sample_size
+        )
+        if opt.transfer_learning:
+            result_dir_name = result_dir_name + '-transfer_learning'
+        elif opt.n_fine_tune_classes:
+            result_dir_name = result_dir_name + '-fine_tune_pre_train'
+        else:
+            result_dir_name = result_dir_name + '-no_pre_train'
+        if opt.suffix:
+            result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
+        result_dir_name = os.path.join(opt.result_path, result_dir_name)
+        os.makedirs(result_dir_name, exist_ok=True)  # 出力ディレクトリを作成
+
         with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
             json.dump(vars(opt), opt_file)
 
@@ -89,14 +90,14 @@ if __name__ == '__main__':
 
     # 画像郡のパスとそのチャンネル数をそれぞれ辞書に登録
     paths = {opt.video_path: '3ch'}
-    if opt.add_image_paths:
-        for one_ch in opt.add_image_paths:
+    if opt.add_gray_image_paths:
+        for one_ch in opt.add_gray_image_paths:
             paths[one_ch] = '1ch'
     if opt.add_RGB_image_paths:
         for three_ch in opt.add_RGB_image_paths:
             paths[three_ch] = '3ch'
 
-    if not opt.no_train:
+    if not opt.no_train or show_answer_flag:
         crop_method = None
         if opt.train_crop == 'random':
             crop_method = MultiScaleRandomCrop(opt.scales, opt.sample_size)
@@ -113,7 +114,7 @@ if __name__ == '__main__':
         ], show_answer_flag)
         temporal_transform = TemporalRandomCrop(opt.sample_duration)
         target_transform = ClassLabel(show_answer_flag)
-        training_data = data_set[opt.dataset](
+        training_data = data_set[opt.data_set](
             paths, opt.annotation_path,
             'training',
             spatial_transform=spatial_transform,
@@ -127,7 +128,7 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True,
             worker_init_fn=worker_init_fn)
-        if show_answer_flag:
+        if not show_answer_flag:
             train_logger = Logger(
                 os.path.join(result_dir_name, 'train.log'),
                 [
@@ -149,7 +150,7 @@ if __name__ == '__main__':
             weight_decay=opt.weight_decay,
             nesterov=opt.nesterov)
 
-    if not opt.no_val:
+    if not opt.no_val or show_answer_flag:
         spatial_transform = Compose([
             Scale(opt.sample_size),
             CenterCrop(opt.sample_size),
@@ -158,7 +159,7 @@ if __name__ == '__main__':
         ], show_answer_flag)
         temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = ClassLabel(show_answer_flag)
-        validation_data = data_set[opt.dataset](
+        validation_data = data_set[opt.data_set](
             paths, opt.annotation_path,
             'validation',
             opt.n_val_samples,
@@ -195,11 +196,6 @@ if __name__ == '__main__':
 
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
-        # if not opt.no_train:
-        #     train_epoch(i, train_loader, model, criterion, optimizer, opt,
-        #                 train_logger, result_dir_name)
-        # if not opt.no_val:
-        #     val_epoch(i, val_loader, model, criterion, opt, val_logger)
         if show_answer_flag:
             if opt.image_show_train:
                 show_answer_epoch(i, train_loader, model, opt, 'train')
@@ -207,6 +203,8 @@ if __name__ == '__main__':
                 show_answer_epoch(i, val_loader, model, opt, 'validation')
             break
         else:
-            train_epoch(i, train_loader, model, criterion, optimizer, opt,
-                        train_logger, result_dir_name)
-            val_epoch(i, val_loader, model, criterion, opt, val_logger)
+            if not opt.no_train:
+                train_epoch(i, train_loader, model, criterion, optimizer, opt,
+                            train_logger, result_dir_name)
+            if not opt.no_val:
+                val_epoch(i, val_loader, model, criterion, opt, val_logger)

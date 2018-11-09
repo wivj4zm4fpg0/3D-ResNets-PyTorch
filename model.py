@@ -212,7 +212,7 @@ def generate_model(opt):
 
         if opt.model == 'densenet':
             model.module.classifier = nn.Linear(
-                model.module.classifier.in_features, opt.n_finetune_classes)
+                model.module.classifier.in_features, opt.n_fine_tune_classes)
             if not opt.no_cuda:
                 model.module.classifier = model.module.classifier.cuda()
         else:
@@ -221,7 +221,7 @@ def generate_model(opt):
                 for p in model.parameters():
                     p.requires_grad = False
 
-            model.module.fc = nn.Linear(model.module.fc.in_features, opt.n_finetune_classes)
+            model.module.fc = nn.Linear(model.module.fc.in_features, opt.n_fine_tune_classes)
             if not opt.no_cuda:
                 model.module.fc = model.module.fc.cuda()
 

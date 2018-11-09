@@ -12,7 +12,7 @@ class Compose(object):
 
 class ClassLabel(object):
 
-    def __init__(self, flag=0):
+    def __init__(self, flag=False):
         self.flag = flag
 
     def __call__(self, target):

@@ -1,5 +1,5 @@
 import collections
-import copy
+# import copy
 import numbers
 import random
 
@@ -25,24 +25,25 @@ class Compose(object):
         >>> ])
     """
 
-    def __init__(self, input_transforms, flag=0):
+    def __init__(self, input_transforms, show_answer_flag=False):
         self.transforms = input_transforms
-        self.flag = flag
+        self.flag = show_answer_flag
+
+    def __call__(self, img):
+        for t in self.transforms:
+            img = t(img)
+        return img
 
     # def __call__(self, img):
-    #     for t in self.transforms:
-    #         img = t(img)
-    #     return img
-    def __call__(self, img):
-        show_img = 0
-        for i in range(len(self.transforms)):
-            if i == 0:
-                img = self.transforms[i](img)
-                if self.flag == 1:
-                    show_img = copy.copy(img)
-            else:
-                img = self.transforms[i](img)
-        return img, show_img
+    #     show_img = 0
+    #     for i in range(len(self.transforms)):
+    #         if i == 0:
+    #             img = self.transforms[i](img)
+    #             if self.flag:
+    #                 show_img = copy.copy(img)
+    #         else:
+    #             img = self.transforms[i](img)
+    #     return img, show_img
 
     def randomize_parameters(self):
         for t in self.transforms:

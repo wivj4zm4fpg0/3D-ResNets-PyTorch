@@ -166,9 +166,9 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
         clip = self.loader(paths, frame_indices, self.image_format)
         if self.spatial_transform is not None:
             self.spatial_transform.randomize_parameters()
-            # clip = [self.spatial_transform(img) for img in clip]
-            temp = [self.spatial_transform(img) for img in clip]
-            clip = [i[0] for i in temp]
+            clip = [self.spatial_transform(img) for img in clip]
+            # temp = [self.spatial_transform(img) for img in clip]
+            # clip = [i[0] for i in temp]
             # if show_images.show_images is not None:
             #     show_images.show_images.append([i[1] for i in temp])
 
