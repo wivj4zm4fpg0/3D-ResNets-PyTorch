@@ -203,6 +203,8 @@ if __name__ == '__main__':
             optimizer.load_state_dict(checkpoint['optimizer'])
             optimizer.param_groups[0]['lr'] = opt.learning_rate
 
+    with open(opt.show_answer_result_path, 'w') as f:
+        f.write('video_name model_answer true_answer answer subset\n')
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:

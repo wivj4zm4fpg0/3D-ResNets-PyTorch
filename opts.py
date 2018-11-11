@@ -213,9 +213,6 @@ def parse_opts():
         '--show_answer_result_path', default='result_path', type=str
     )
     parser.add_argument(
-        '--show_answer_pre_train_model_path', default=None, type=str
-    )
-    parser.add_argument(
         '--show_answer_resume_path', default=None, type=str
     )
     parser.add_argument(

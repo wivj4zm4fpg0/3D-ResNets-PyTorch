@@ -123,29 +123,28 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
                     data_set.append(sample_j)
         return data_set, idx_to_class
 
-    def __init__(self,
-                 paths,
-                 annotation_path,
-                 subset,
-                 n_samples_for_each_video=1,
-                 spatial_transform=None,
-                 temporal_transform=None,
-                 target_transform=None,
-                 sample_duration=16,
-                 get_loader=None,
-                 image_format='image_{0:05d}.jpg'):
-        if get_loader is None:
-            get_loader = video_loader
+    def __init__(
+            self,
+            paths,
+            annotation_path,
+            subset,
+            n_samples_for_each_video=1,
+            spatial_transform=None,
+            temporal_transform=None,
+            target_transform=None,
+            sample_duration=16,
+            image_format='image_{0:05d}.jpg'
+    ):
         self.data, self.class_names = self.make_data_set(
             paths,
             annotation_path,
             subset, n_samples_for_each_video,
-            sample_duration)
+            sample_duration
+        )
 
         self.spatial_transform = spatial_transform
         self.temporal_transform = temporal_transform
         self.target_transform = target_transform
-        self.loader = get_loader
 
         self.image_format = image_format
         self.n_image = len(paths)
@@ -163,7 +162,7 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
         if self.temporal_transform is not None:
             frame_indices = self.temporal_transform(frame_indices)
 
-        clip = self.loader(paths, frame_indices, self.image_format)
+        clip = video_loader(paths, frame_indices, self.image_format)
         if self.spatial_transform is not None:
             self.spatial_transform.randomize_parameters()
             clip = [self.spatial_transform(img) for img in clip]
@@ -179,7 +178,7 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
 
         target = self.data[index]
         if self.target_transform is not None:
-            if self.target_transform.flag == 1:
+            if self.target_transform.flag:
                 target, target_name = self.target_transform(target)
                 return clip, target, target_name
             else:

@@ -180,12 +180,8 @@ def generate_model(opt):
         model = nn.DataParallel(model)
 
     if opt.pre_train_path or opt.show_answer_pre_train_model_path:
-        if opt.pre_train_path:
-            path = opt.pre_train_path
-        else:
-            path = opt.show_answer_pre_train_model_path
-        print('loading pre-trained model {}'.format(path))
-        pre_train = torch.load(path)
+        print('loading pre-trained model {}'.format(opt.pre_train_path))
+        pre_train = torch.load(opt.pre_train_path)
 
         # RGB画像のみで学習済みのモデルを転用するとき4チャンネル以降をRGBの平均にする（最初のCNN層のみ）
         temp = copy.copy(pre_train['state_dict']['module.conv1.weight'])

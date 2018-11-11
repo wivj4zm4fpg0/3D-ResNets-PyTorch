@@ -8,16 +8,12 @@ import torch
 from PIL import Image
 from torchvision.transforms import transforms
 
-try:
-    import acc_image
-except ImportError:
-    acc_image = None
-
 
 class Compose(object):
     """Composes several transforms together.
     Args:
-        input_transforms (list of ``Transform`` objects): list of transforms to compose.
+        input_transforms (list of ``Transform`` objects):
+        list of transforms to compose.
     Example:
         >>> transforms.Compose([
         >>>     transforms.CenterCrop(10),
@@ -62,22 +58,10 @@ class ToTensor(object):
     def __call__(self, pic):
         """
         Args:
-            pic (PIL.Image or numpy.ndarray): Image to be converted to tensor.
+            pic (PIL.Image.Image or numpy.ndarray): Image to be converted to tensor.
         Returns:
             Tensor: Converted image.
         """
-        if isinstance(pic, np.ndarray):
-            # handle numpy array
-            img = torch.from_numpy(pic.transpose((2, 0, 1)))
-            # backward compatibility
-            return img.float().div(self.norm_value)
-
-        if acc_image is not None and isinstance(pic, acc_image.Image):
-            np_pic = np.zeros(
-                [pic.channels, pic.height, pic.width], dtype=np.float32)
-            pic.copyto(np_pic)
-            return torch.from_numpy(np_pic)
-
         # handle PIL Image
         if pic.mode == 'I':
             img = torch.from_numpy(np.array(pic, np.int32, copy=False))
@@ -94,7 +78,7 @@ class ToTensor(object):
             n_channel = len(pic.mode)
         img = img.view(pic.size[1], pic.size[0], n_channel)
         # put it from HWC to CHW format
-        # yikes, this transpose takes 80% of the loading time/CPU
+        # likes, this transpose takes 80% of the loading time/CPU
         img = img.transpose(0, 1).transpose(0, 2).contiguous()
         if isinstance(img, torch.ByteTensor):
             return img.float().div(self.norm_value)
@@ -299,7 +283,6 @@ class MultiScaleCornerCrop(object):
 
     def __init__(self,
                  scales,
-                 # opt.scales = [1.0, 0.84089641525, 0.7071067811803005, 0.5946035574934808, 0.4999999999911653]
                  size,  # opt.sample_size = 112
                  interpolation=Image.BILINEAR,
                  crop_positions=None):

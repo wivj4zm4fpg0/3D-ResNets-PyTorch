@@ -1,0 +1,31 @@
+{
+  "cross_validation_1": {
+    "input": "main.py",
+    "args": {
+      "--video_path": "/home/satoru/icl-shoplifting/dense_flow/64frames/images",
+      "--annotation_path": "/home/satoru/1tb/shoplifting-dataset/csv_files/cross_validation_1.csv",
+      "--result_path": "/home/satoru/1tb/deep-learning-log",
+      "--data_set": "shoplifting",
+      "--n_classes": "400",
+      "--model": "resnet",
+      "--model_depth": "18",
+      "--resnet_shortcut": "A",
+      "--batch_size": "2",
+      "--n_threads": "4",
+      "--checkpoint": "5",
+      "--learning_rate": "0.001",
+      "--n_epochs": "100",
+      "--sample_size": "300",
+      "--sample_duration": "64",
+      "--n_fine_tune_classes": "2",
+      "--pre_train_path": "/home/satoru/6tb/works/3D-ResNets-PyTorch/pretrain_models/resnet-18-kinetics.pth",
+      "--n_scales": "1",
+      "--train_crop": "center",
+      "--add_gray_image_paths": [
+        "/home/satoru/icl-shoplifting/dense_flow/64frames/flow/farn/flow_x",
+        "/home/satoru/icl-shoplifting/dense_flow/64frames/flow/farn/flow_y"
+      ],
+      "--suffix": "cross_validation_1_farn"
+    }
+  }
+}

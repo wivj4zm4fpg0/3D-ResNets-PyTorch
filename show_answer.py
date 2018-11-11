@@ -27,8 +27,7 @@ def show_answer_calculate_accuracy(outputs, targets, targets_name, opt, subset):
     prediction = prediction.t()
     targets = targets.view(1, -1)
     correct = prediction.eq(targets)
-    with open(opt.show_answer_result_path, 'w') as f:
-        f.write('video_name model_answer true_answer answer subset\n')
+    with open(opt.show_answer_result_path, 'a') as f:
         for i in range(len(correct[0])):
             model_answer = 'no_action' if prediction[0][i].item() == 0 else 'action'
             true_answer = 'no_action' if targets[0][i].item() == 0 else 'action'
