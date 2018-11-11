@@ -221,7 +221,8 @@ def generate_model(opt):
                 for p in model.parameters():
                     p.requires_grad = False
 
-            model.module.fc = nn.Linear(model.module.fc.in_features, opt.n_fine_tune_classes)
+            model.module.fc = nn.Linear(model.module.fc.in_features,
+                                        opt.n_fine_tune_classes)
             if not opt.no_cuda:
                 model.module.fc = model.module.fc.cuda()
 

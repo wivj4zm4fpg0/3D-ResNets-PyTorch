@@ -2,7 +2,8 @@ import argparse
 
 
 def parse_opts():
-    parser = argparse.ArgumentParser(description='this is train and test program by 3D-CNN model')
+    parser = argparse.ArgumentParser(
+        description='this is train and test program by 3D-CNN model')
     parser.add_argument(
         '--video_path',
         default=None,
@@ -35,7 +36,8 @@ def parse_opts():
         '--n_fine_tune_classes',
         default=None,
         type=int,
-        help='Number of classes for fine-tuning. n_classes is set to the number when pretraining.'
+        help='Number of classes for fine-tuning.'
+             ' n_classes is set to the number when pre-training.'
     )
     parser.add_argument(
         '--sample_size',
@@ -67,7 +69,8 @@ def parse_opts():
         default='corner',
         type=str,
         choices=['random', 'corner', 'center'],
-        help='Spatial cropping method in training. random is uniform. corner is selection from 4 corners and 1 center. '
+        help='Spatial cropping method in training. random is uniform.\
+         corner is selection from 4 corners and 1 center. '
              ' (random | corner | center)'
     )
     parser.add_argument(
@@ -77,7 +80,8 @@ def parse_opts():
         help='Initial learning rate (divided by 10 while training by lr scheduler)')
     parser.add_argument(
         '--learning_rate_schedule', default=None, type=dict,
-        help='setting learning rate per epoch. example:{1:0.001, 15:0.0001} ({epoch number:learning rate})'
+        help='setting learning rate per epoch. example:{1:0.001, 15:0.0001}\
+         ({epoch number:learning rate})'
     )  # TODO implement
     parser.add_argument('--momentum', default=0.9, type=float, help='Momentum')
     parser.add_argument(
@@ -109,7 +113,8 @@ def parse_opts():
         '--begin_epoch',
         default=1,
         type=int,
-        help='Training begins at this epoch. Previous trained model indicated by resume_path is loaded.'
+        help='Training begins at this epoch. Previous trained model \
+         indicated by resume_path is loaded.'
     )
     parser.add_argument(
         '--n_val_samples',
@@ -189,26 +194,21 @@ def parse_opts():
     parser.add_argument(
         '--manual_seed', default=1, type=int, help='Manually set random seed')
     parser.add_argument(
-        '--transfer_learning', action='store_true', help='transfer learning by something-something'
+        '--transfer_learning', action='store_true',
+        help='transfer learning by something-something'
     )
     parser.set_defaults(transfer_learning=False)
     parser.add_argument(
         '--suffix', default=None, type=str, help='suffix in made output directly'
     )
     parser.add_argument(
-        '--add_gray_image_paths', default=None, nargs='*', help='channel image to add to RGB image'
+        '--add_gray_image_paths', default=None, nargs='*',
+        help='channel image to add to RGB image'
     )
     parser.add_argument(
-        '--add_RGB_image_paths', default=None, nargs='*', help='channel RGB image to add to RGB image'
+        '--add_RGB_image_paths', default=None, nargs='*',
+        help='channel RGB image to add to RGB image'
     )
-    parser.add_argument(
-        '--show_answer_train', action='store_true'
-    )
-    parser.set_defaults(image_show_train=False)
-    parser.add_argument(
-        '--show_answer_validation', action='store_true'
-    )
-    parser.set_defaults(image_show_validation=False)
     parser.add_argument(
         '--show_answer_result_path', default='result_path', type=str
     )
@@ -218,6 +218,10 @@ def parse_opts():
     parser.add_argument(
         '--show_answer_resume_path', default=None, type=str
     )
+    parser.add_argument(
+        '--show_top5', action='store_true'
+    )
+    parser.set_defaults(show_top5=False)
 
     args = parser.parse_args()
 

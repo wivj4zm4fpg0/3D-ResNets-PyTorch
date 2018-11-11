@@ -10,7 +10,6 @@ from torch import optim
 from dataset import data_set
 from model import generate_model
 from opts import parse_opts
-from show_answer import show_answer_epoch
 from spatial_transforms import (
     Compose, Normalize, Scale, CenterCrop, MultiScaleCornerCrop,
     MultiScaleRandomCrop, RandomHorizontalFlip, ToTensor)
@@ -29,8 +28,6 @@ if __name__ == '__main__':
     # コマンドラインオプションを取得
     opt = parse_opts()
 
-    show_answer_flag = opt.show_answer_validation or opt.show_answer_train
-
     # チャンネル数を取得
     opt.n_channel = 3
     if opt.add_gray_image_paths:
@@ -44,31 +41,29 @@ if __name__ == '__main__':
     opt.arch = '{}-{}'.format(opt.model, opt.model_depth)
     print(opt)
 
-    result_dir_name = ''
-    if not show_answer_flag:
-        # 結果の出力ディレクトリの名前を自動で決める
-        result_dir_name = '{}-{}-{}-{}ch-{}frame-{}batch-{}size'.format(
-            opt.data_set,
-            opt.model,
-            opt.model_depth,
-            opt.n_channel,
-            opt.sample_duration,
-            opt.batch_size,
-            opt.sample_size
-        )
-        if opt.transfer_learning:
-            result_dir_name = result_dir_name + '-transfer_learning'
-        elif opt.n_fine_tune_classes:
-            result_dir_name = result_dir_name + '-fine_tune_pre_train'
-        else:
-            result_dir_name = result_dir_name + '-no_pre_train'
-        if opt.suffix:
-            result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
-        result_dir_name = os.path.join(opt.result_path, result_dir_name)
-        os.makedirs(result_dir_name, exist_ok=True)  # 出力ディレクトリを作成
+    # 結果の出力ディレクトリの名前を自動で決める
+    result_dir_name = '{}-{}-{}-{}ch-{}frame-{}batch-{}size'.format(
+        opt.data_set,
+        opt.model,
+        opt.model_depth,
+        opt.n_channel,
+        opt.sample_duration,
+        opt.batch_size,
+        opt.sample_size
+    )
+    if opt.transfer_learning:
+        result_dir_name = result_dir_name + '-transfer_learning'
+    elif opt.n_fine_tune_classes:
+        result_dir_name = result_dir_name + '-fine_tune_pre_train'
+    else:
+        result_dir_name = result_dir_name + '-no_pre_train'
+    if opt.suffix:
+        result_dir_name = result_dir_name + '-{}'.format(opt.suffix)
+    result_dir_name = os.path.join(opt.result_path, result_dir_name)
+    os.makedirs(result_dir_name, exist_ok=True)  # 出力ディレクトリを作成
 
-        with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
-            json.dump(vars(opt), opt_file)
+    with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
+        json.dump(vars(opt), opt_file)
 
     random.seed(opt.manual_seed)
     torch.manual_seed(opt.manual_seed)
@@ -97,7 +92,7 @@ if __name__ == '__main__':
         for three_ch in opt.add_RGB_image_paths:
             paths[three_ch] = '3ch'
 
-    if not opt.no_train or show_answer_flag:
+    if not opt.no_train:
         crop_method = None
         if opt.train_crop == 'random':
             crop_method = MultiScaleRandomCrop(opt.scales, opt.sample_size)
@@ -111,9 +106,9 @@ if __name__ == '__main__':
             RandomHorizontalFlip(),
             ToTensor(opt.norm_value),
             norm_method
-        ], show_answer_flag)
+        ])
         temporal_transform = TemporalRandomCrop(opt.sample_duration)
-        target_transform = ClassLabel(show_answer_flag)
+        target_transform = ClassLabel()
         training_data = data_set[opt.data_set](
             paths, opt.annotation_path,
             'training',
@@ -128,7 +123,20 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True,
             worker_init_fn=worker_init_fn)
-        if not show_answer_flag:
+        if opt.show_top5:
+            train_logger = Logger(
+                os.path.join(result_dir_name, 'train.log'),
+                [
+                    'epoch',
+                    'loss',
+                    'acc-top1',
+                    'acc-top5',
+                    'lr', 'batch',
+                    'batch-time',
+                    'epoch-time'
+                ]
+            )
+        else:
             train_logger = Logger(
                 os.path.join(result_dir_name, 'train.log'),
                 [
@@ -150,15 +158,15 @@ if __name__ == '__main__':
             weight_decay=opt.weight_decay,
             nesterov=opt.nesterov)
 
-    if not opt.no_val or show_answer_flag:
+    if not opt.no_val:
         spatial_transform = Compose([
             Scale(opt.sample_size),
             CenterCrop(opt.sample_size),
             ToTensor(opt.norm_value),
             norm_method
-        ], show_answer_flag)
+        ])
         temporal_transform = LoopPadding(opt.sample_duration)
-        target_transform = ClassLabel(show_answer_flag)
+        target_transform = ClassLabel()
         validation_data = data_set[opt.data_set](
             paths, opt.annotation_path,
             'validation',
@@ -174,16 +182,17 @@ if __name__ == '__main__':
             num_workers=opt.n_threads,
             pin_memory=True,
             worker_init_fn=worker_init_fn)
-        if not show_answer_flag:
+        if opt.show_top5:
+            val_logger = Logger(
+                os.path.join(result_dir_name, 'val.log'),
+                ['epoch', 'loss', 'acc-top1', 'acc-top5', 'batch-time', 'epoch-time'])
+        else:
             val_logger = Logger(
                 os.path.join(result_dir_name, 'val.log'),
                 ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time'])
 
-    if opt.resume_path or opt.show_answer_resume_path:
-        if opt.resume_path:
-            path = os.path.join(result_dir_name, opt.resume_path)
-        else:
-            path = opt.show_answer_resume_path
+    if opt.resume_path:
+        path = os.path.join(result_dir_name, opt.resume_path)
         print('loading checkpoint {}'.format(path))
         checkpoint = torch.load(path)
         assert opt.arch == checkpoint['arch']
@@ -196,15 +205,8 @@ if __name__ == '__main__':
 
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
-        if show_answer_flag:
-            if opt.image_show_train:
-                show_answer_epoch(i, train_loader, model, opt, 'train')
-            if opt.image_show_validation:
-                show_answer_epoch(i, val_loader, model, opt, 'validation')
-            break
-        else:
-            if not opt.no_train:
-                train_epoch(i, train_loader, model, criterion, optimizer, opt,
-                            train_logger, result_dir_name)
-            if not opt.no_val:
-                val_epoch(i, val_loader, model, criterion, opt, val_logger)
+        if not opt.no_train:
+            train_epoch(i, train_loader, model, criterion, optimizer, opt,
+                        train_logger, result_dir_name)
+        if not opt.no_val:
+            val_epoch(i, val_loader, model, criterion, opt, val_logger)

@@ -5,8 +5,7 @@ import torch
 from utils import AverageMeter
 
 
-def show_answer_epoch(epoch, data_loader, model, opt, subset):
-    print('image show at epoch {}'.format(epoch))
+def show_answer_epoch(data_loader, model, opt, subset):
 
     model.eval()
 
