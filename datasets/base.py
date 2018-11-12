@@ -1,10 +1,8 @@
-import copy
-import math
 import os
 from abc import ABCMeta, abstractmethod
 
 import torch
-import torch.utils.data as data
+from torch.utils import data
 from PIL import Image
 
 from utils import load_value_file
@@ -65,89 +63,72 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
             self,
             paths,
             annotation_path,
-            subset,
-            n_samples_for_each_video,
-            sample_duration):
+            subset
+    ):
 
+        # アノテーションファイルからjsonやcsvオブジェクトを取得する
         entry = self.load_annotation_data(annotation_path)
-        video_names, annotations = \
-            self.get_video_names_and_annotations(entry, subset)
+        # 動画の名前とその属するクラスのそれぞれのリストを取得
+        video_names, annotations = self.get_video_names_and_annotations(entry, subset)
+        # クラスをidへ割り振る
         class_to_idx = self.get_class_labels(entry)
+        # idからクラスがわかるようにする
         idx_to_class = {}
         for name, label in class_to_idx.items():
             idx_to_class[label] = name
-        data_set = []
+
+        video_information = []
+
         for i in range(len(video_names)):
+
+            # 1000毎に経過報告をする
             if i % 1000 == 0:
                 print('data_set loading [{}/{}]'.format(i, len(video_names)))
+
             full_paths = {}
             n_frames = 0
+
             for path in paths:
                 full_path = os.path.join(path, video_names[i])
-                assert os.path.exists(full_path), \
-                    'No such file :{}'.format(full_path)
+                assert os.path.exists(full_path), 'No such file :{}'.format(full_path)
                 full_paths[full_path] = paths[path]
                 n_frames_file_path = os.path.join(full_path, 'n_frames')
                 if os.path.exists(n_frames_file_path):
                     n_frames = int(load_value_file(n_frames_file_path))
             assert n_frames > 0
 
-            begin_t = 1
-            end_t = n_frames
-            sample = {
+            video_info = {
                 'paths': full_paths,
-                'segment': [begin_t, end_t],
                 'n_frames': n_frames,
-                'video_id': video_names[i].split('/')[1]
+                'video_id': video_names[i].split('/')[1],
+                'label': class_to_idx[annotations[i]['label']],
+                'frame_indices': list(range(1, n_frames + 1))
             }
-            if len(annotations) != 0:
-                sample['label'] = class_to_idx[annotations[i]['label']]
-            else:
-                sample['label'] = -1
 
-            if n_samples_for_each_video == 1:
-                sample['frame_indices'] = list(range(1, n_frames + 1))
-                data_set.append(sample)
-            else:
-                if n_samples_for_each_video > 1:
-                    step = max(1,
-                               math.ceil((n_frames - 1 - sample_duration)
-                                         / (n_samples_for_each_video - 1)))
-                else:
-                    step = sample_duration
-                for path in range(1, n_frames, step):
-                    sample_j = copy.deepcopy(sample)
-                    sample_j['frame_indices'] = list(range(
-                        path,
-                        min(n_frames + 1, path + sample_duration)))
-                    data_set.append(sample_j)
-        return data_set, idx_to_class
+            video_information.append(video_info)
+
+        return video_information, idx_to_class
 
     def __init__(
             self,
             paths,
             annotation_path,
             subset,
-            n_samples_for_each_video=1,
             spatial_transform=None,
-            temporal_transform=None,
             target_transform=None,
-            sample_duration=16,
             image_format='image_{0:05d}.jpg'
     ):
         self.data, self.class_names = self.make_data_set(
             paths,
             annotation_path,
-            subset, n_samples_for_each_video,
-            sample_duration
+            subset
         )
 
         self.spatial_transform = spatial_transform
-        self.temporal_transform = temporal_transform
         self.target_transform = target_transform
 
         self.image_format = image_format
-        self.n_image = len(paths)
+        self.image_number = len(paths)
 
     def __getitem__(self, index):
         """
@@ -157,22 +138,12 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
             tuple: (image, target) where target is class_index of the target class.
         """
         paths = self.data[index]['paths']
-        frame_indices = self.data[index]['frame_indices']
+        clip = video_loader(paths, self.data[index]['frame_indices'],
+                            self.image_format)
+        clip = [self.spatial_transform(img) for img in clip]
 
-        if self.temporal_transform is not None:
-            frame_indices = self.temporal_transform(frame_indices)
-
-        clip = video_loader(paths, frame_indices, self.image_format)
-        if self.spatial_transform is not None:
-            self.spatial_transform.randomize_parameters()
-            clip = [self.spatial_transform(img) for img in clip]
-            # temp = [self.spatial_transform(img) for img in clip]
-            # clip = [i[0] for i in temp]
-            # if show_images.show_images is not None:
-            #     show_images.show_images.append([i[1] for i in temp])
-
-        if self.n_image > 1:
-            clip = channels_coupling(clip, self.n_image)
+        if self.image_number > 1:
+            clip = channels_coupling(clip, self.image_number)
 
         clip = torch.stack(clip, 0).permute(1, 0, 2, 3)
 

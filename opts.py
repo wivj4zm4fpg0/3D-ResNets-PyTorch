@@ -40,39 +40,10 @@ def parse_opts():
              ' n_classes is set to the number when pre-training.'
     )
     parser.add_argument(
-        '--sample_size',
-        default=112,
-        type=int,
-        help='Height and width of inputs')
-    parser.add_argument(
         '--sample_duration',
         default=16,
         type=int,
         help='Temporal duration of inputs')
-    parser.add_argument(
-        '--initial_scale',
-        default=1.0,
-        type=float,
-        help='Initial scale for multi-scale cropping')
-    parser.add_argument(
-        '--n_scales',
-        default=5,
-        type=int,
-        help='Number of scales for multi-scale cropping')
-    parser.add_argument(
-        '--scale_step',
-        default=0.84089641525,
-        type=float,
-        help='Scale step for multi-scale cropping')
-    parser.add_argument(
-        '--train_crop',
-        default='corner',
-        type=str,
-        choices=['random', 'corner', 'center'],
-        help='Spatial cropping method in training. random is uniform.\
-         corner is selection from 4 corners and 1 center. '
-             ' (random | corner | center)'
-    )
     parser.add_argument(
         '--learning_rate',
         default=0.1,

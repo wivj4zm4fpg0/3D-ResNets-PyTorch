@@ -1,19 +1,16 @@
 import random
 
-import torch
-import torch.backends.cudnn as cudnn
+import torch.utils.data
 from torch import nn
 from torch import optim
+from torch.backends import cudnn
+from torchvision import transforms
 
 from dataset import data_set
 from model import generate_model
 from opts import parse_opts
 from show_answer import show_answer_epoch
-from spatial_transforms import (Compose, Normalize, Scale, CenterCrop,
-                                MultiScaleCornerCrop, MultiScaleRandomCrop,
-                                RandomHorizontalFlip, ToTensor)
 from target_transforms import ClassLabel
-from temporal_transforms import LoopPadding, TemporalRandomCrop
 
 
 def worker_init_fn(worker_id):
@@ -39,15 +36,15 @@ if __name__ == '__main__':
 
     random.seed(opt.manual_seed)
     torch.manual_seed(opt.manual_seed)
-    cudnn.deterministic = True
+    if not opt.no_cuda:
+        cudnn.benchmark = True
+        cudnn.deterministic = True
 
     model, parameters = generate_model(opt)
     print(model)
     criterion = nn.CrossEntropyLoss()
     if not opt.no_cuda:
         criterion = criterion.cuda()
-
-    norm_method = Normalize([0, 0, 0], [1, 1, 1])
 
     optimizer = None
     train_loader = None
@@ -62,27 +59,15 @@ if __name__ == '__main__':
         for three_ch in opt.add_RGB_image_paths:
             paths[three_ch] = '3ch'
 
-    crop_method = None
-    if opt.train_crop == 'random':
-        crop_method = MultiScaleRandomCrop(opt.scales, opt.sample_size)
-    elif opt.train_crop == 'corner':
-        crop_method = MultiScaleCornerCrop(opt.scales, opt.sample_size)
-    elif opt.train_crop == 'center':
-        crop_method = MultiScaleCornerCrop(opt.scales, opt.sample_size,
-                                           crop_positions=['c'])
-    spatial_transform = Compose([
-        crop_method,
-        RandomHorizontalFlip(),
-        ToTensor(opt.norm_value),
-        norm_method
-    ], True)
-    temporal_transform = TemporalRandomCrop(opt.sample_duration)
+    spatial_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize([0, 0, 0], [1, 1, 1])
+    ])
     target_transform = ClassLabel(True)
     training_data = data_set[opt.data_set](
         paths, opt.annotation_path,
         'training',
         spatial_transform=spatial_transform,
-        temporal_transform=temporal_transform,
         target_transform=target_transform,
     )
     train_loader = torch.utils.data.DataLoader(
@@ -101,21 +86,16 @@ if __name__ == '__main__':
         dampening=dampening,
         weight_decay=opt.weight_decay,
         nesterov=opt.nesterov)
-
-    spatial_transform = Compose([
-        Scale(opt.sample_size),
-        CenterCrop(opt.sample_size),
-        ToTensor(opt.norm_value),
-        norm_method
-    ], True)
-    temporal_transform = LoopPadding(opt.sample_duration)
+    spatial_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize([0, 0, 0], [1, 1, 1])
+    ])
     target_transform = ClassLabel(True)
     validation_data = data_set[opt.data_set](
         paths, opt.annotation_path,
         'validation',
         opt.n_val_samples,
         spatial_transform=spatial_transform,
-        temporal_transform=temporal_transform,
         target_transform=target_transform,
     )
     val_loader = torch.utils.data.DataLoader(
@@ -137,6 +117,8 @@ if __name__ == '__main__':
             optimizer.load_state_dict(checkpoint['optimizer'])
             optimizer.param_groups[0]['lr'] = opt.learning_rate
 
+    with open(opt.show_answer_result_path, 'w') as f:
+        f.write('video_name model_answer true_answer answer subset\n')
     print('run')
     show_answer_epoch(train_loader, model, opt, 'training')
     show_answer_epoch(val_loader, model, opt, 'validation')

@@ -32,21 +32,15 @@ class UCF101(datasets.base.BaseLoader):
             paths,
             annotation_path,
             subset,
-            n_samples_for_each_video=1,
             spatial_transform=None,
-            temporal_transform=None,
             target_transform=None,
-            sample_duration=16,
             image_format='image_{0:05d}.jpg'
     ):
         super().__init__(
             paths,
             annotation_path,
             subset,
-            n_samples_for_each_video,
             spatial_transform,
-            temporal_transform,
             target_transform,
-            sample_duration,
             image_format
         )

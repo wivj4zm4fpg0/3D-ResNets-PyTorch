@@ -18,12 +18,15 @@ class Shoplifting(datasets.base.BaseLoader):
             this_subset = data['subset'][i]
             if this_subset == subset:
                 label = data['class'][i]
-                if data['class'][i] == 0:
+                if label == 0:
                     dir_name = 'no_action'
-                else:
+                elif label == 1:
                     dir_name = 'action'
+                else:
+                    raise Exception("invalid value -> data['class'][i]")
                 video_names.append('{}/{}'.format(dir_name, data['video_name'][i]))
                 annotations.append({'label': label})
+
         return video_names, annotations
 
     def __init__(
@@ -31,21 +34,15 @@ class Shoplifting(datasets.base.BaseLoader):
             paths,
             annotation_path,
             subset,
-            n_samples_for_each_video=1,
             spatial_transform=None,
-            temporal_transform=None,
             target_transform=None,
-            sample_duration=32,
             image_format='image_{0:05d}.jpg'
     ):
         super().__init__(
             paths,
             annotation_path,
             subset,
-            n_samples_for_each_video,
             spatial_transform,
-            temporal_transform,
             target_transform,
-            sample_duration,
             image_format,
         )

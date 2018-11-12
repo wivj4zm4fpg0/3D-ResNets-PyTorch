@@ -2,19 +2,15 @@ import json
 import os
 import random
 
-import torch
-import torch.backends.cudnn as cudnn
-from torch import nn
-from torch import optim
+import torch.utils.data
+from torch import nn, optim
+from torch.backends import cudnn
+from torchvision import transforms
 
 from dataset import data_set
 from model import generate_model
 from opts import parse_opts
-from spatial_transforms import (
-    Compose, Normalize, Scale, CenterCrop, MultiScaleCornerCrop,
-    MultiScaleRandomCrop, RandomHorizontalFlip, ToTensor)
 from target_transforms import ClassLabel
-from temporal_transforms import LoopPadding, TemporalRandomCrop
 from train import train_epoch
 from utils import Logger
 from validation import val_epoch
@@ -25,6 +21,7 @@ def worker_init_fn(worker_id):
 
 
 if __name__ == '__main__':
+
     # コマンドラインオプションを取得
     opt = parse_opts()
 
@@ -35,10 +32,9 @@ if __name__ == '__main__':
     if opt.add_RGB_image_paths:
         opt.n_channel += len(opt.add_RGB_image_paths) * 3
 
-    opt.scales = [opt.initial_scale]
-    for i in range(1, opt.n_scales):
-        opt.scales.append(opt.scales[-1] * opt.scale_step)
+    # ニューラルネットワークのアーキテクチャを取得
     opt.arch = '{}-{}'.format(opt.model, opt.model_depth)
+    # コマンドライン引数を表示
     print(opt)
 
     # 結果の出力ディレクトリの名前を自動で決める
@@ -62,20 +58,29 @@ if __name__ == '__main__':
     result_dir_name = os.path.join(opt.result_path, result_dir_name)
     os.makedirs(result_dir_name, exist_ok=True)  # 出力ディレクトリを作成
 
+    # コマンドライン引数を保存する
     with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
         json.dump(vars(opt), opt_file)
 
+    # 乱数の初期化
     random.seed(opt.manual_seed)
     torch.manual_seed(opt.manual_seed)
-    cudnn.deterministic = True
+    # CUDAが使えるなら使う
+    if not opt.no_cuda:
+        # この命令はモデルへの入力サイズが同じ時にプログラムを最適化できる
+        cudnn.benchmark = True
+        # CUDAの乱数を決定する?
+        cudnn.deterministic = True
 
+    # モデルとモデルのパラメータを取得
     model, parameters = generate_model(opt)
+    # モデルのアーキテクチャを出力
     print(model)
+    # 損失関数をクロスエントロピーにする
     criterion = nn.CrossEntropyLoss()
+    # CUDAが使えるなら使う
     if not opt.no_cuda:
         criterion = criterion.cuda()
-
-    norm_method = Normalize([0, 0, 0], [1, 1, 1])
 
     optimizer = None
     train_loader = None
@@ -93,27 +98,16 @@ if __name__ == '__main__':
             paths[three_ch] = '3ch'
 
     if not opt.no_train:
-        crop_method = None
-        if opt.train_crop == 'random':
-            crop_method = MultiScaleRandomCrop(opt.scales, opt.sample_size)
-        elif opt.train_crop == 'corner':
-            crop_method = MultiScaleCornerCrop(opt.scales, opt.sample_size)
-        elif opt.train_crop == 'center':
-            crop_method = MultiScaleCornerCrop(
-                opt.scales, opt.sample_size, crop_positions=['c'])
-        spatial_transform = Compose([
-            crop_method,
-            RandomHorizontalFlip(),
-            ToTensor(opt.norm_value),
-            norm_method
+        spatial_transform = transforms.Compose([
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize([0, 0, 0], [1, 1, 1])
         ])
-        temporal_transform = TemporalRandomCrop(opt.sample_duration)
         target_transform = ClassLabel()
         training_data = data_set[opt.data_set](
             paths, opt.annotation_path,
             'training',
             spatial_transform=spatial_transform,
-            temporal_transform=temporal_transform,
             target_transform=target_transform,
         )
         train_loader = torch.utils.data.DataLoader(
@@ -159,20 +153,16 @@ if __name__ == '__main__':
             nesterov=opt.nesterov)
 
     if not opt.no_val:
-        spatial_transform = Compose([
-            Scale(opt.sample_size),
-            CenterCrop(opt.sample_size),
-            ToTensor(opt.norm_value),
-            norm_method
+        spatial_transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize([0, 0, 0], [1, 1, 1])
         ])
-        temporal_transform = LoopPadding(opt.sample_duration)
         target_transform = ClassLabel()
         validation_data = data_set[opt.data_set](
             paths, opt.annotation_path,
             'validation',
             opt.n_val_samples,
             spatial_transform=spatial_transform,
-            temporal_transform=temporal_transform,
             target_transform=target_transform,
         )
         val_loader = torch.utils.data.DataLoader(
@@ -191,20 +181,21 @@ if __name__ == '__main__':
                 os.path.join(result_dir_name, 'val.log'),
                 ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time'])
 
+    # 重みを保存したファイルがあるなら読み込む
     if opt.resume_path:
         path = os.path.join(result_dir_name, opt.resume_path)
         print('loading checkpoint {}'.format(path))
         checkpoint = torch.load(path)
+        # アーキテクチャが同じかどうかチェック
         assert opt.arch == checkpoint['arch']
-
+        # 前回のエポック数を取得
         opt.begin_epoch = checkpoint['epoch']
+        # パラメータを読み込む
         model.load_state_dict(checkpoint['state_dict'])
         if not opt.no_train:
             optimizer.load_state_dict(checkpoint['optimizer'])
             optimizer.param_groups[0]['lr'] = opt.learning_rate
 
-    with open(opt.show_answer_result_path, 'w') as f:
-        f.write('video_name model_answer true_answer answer subset\n')
     print('run')
     for i in range(opt.begin_epoch, opt.n_epochs + 1):
         if not opt.no_train:
