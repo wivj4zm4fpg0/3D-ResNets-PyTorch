@@ -161,7 +161,6 @@ if __name__ == '__main__':
         validation_data = data_set[opt.data_set](
             paths, opt.annotation_path,
             'validation',
-            opt.n_val_samples,
             spatial_transform=spatial_transform,
             target_transform=target_transform,
         )

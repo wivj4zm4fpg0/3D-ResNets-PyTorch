@@ -8,12 +8,10 @@ from models import resnet, pre_act_resnet, wide_resnet, resnext, densenet
 
 
 def generate_model(opt):
-    global get_fine_tuning_parameters, model
+    global model
 
     if opt.model == 'resnet':
         assert opt.model_depth in [10, 18, 34, 50, 101, 152, 200]
-
-        from models.resnet import get_fine_tuning_parameters
 
         if opt.model_depth == 10:
             model = resnet.resnet10(
@@ -61,8 +59,6 @@ def generate_model(opt):
     elif opt.model == 'wideresnet':
         assert opt.model_depth in [50]
 
-        from models.wide_resnet import get_fine_tuning_parameters
-
         if opt.model_depth == 50:
             model = wide_resnet.resnet50(
                 num_classes=opt.n_classes,
@@ -72,8 +68,6 @@ def generate_model(opt):
                 sample_duration=opt.sample_duration)
     elif opt.model == 'resnext':
         assert opt.model_depth in [50, 101, 152]
-
-        from models.resnext import get_fine_tuning_parameters
 
         if opt.model_depth == 50:
             model = resnext.resnet50(
@@ -98,8 +92,6 @@ def generate_model(opt):
                 sample_duration=opt.sample_duration)
     elif opt.model == 'preresnet':
         assert opt.model_depth in [18, 34, 50, 101, 152, 200]
-
-        from models.pre_act_resnet import get_fine_tuning_parameters
 
         if opt.model_depth == 18:
             model = pre_act_resnet.resnet18(
@@ -139,8 +131,6 @@ def generate_model(opt):
                 sample_duration=opt.sample_duration)
     elif opt.model == 'densenet':
         assert opt.model_depth in [121, 169, 201, 264]
-
-        from models.densenet import get_fine_tuning_parameters
 
         if opt.model_depth == 121:
             model = densenet.densenet121(
@@ -225,7 +215,7 @@ def generate_model(opt):
         if opt.transfer_learning:
             parameters = model.module.fc.parameters()
         else:
-            parameters = get_fine_tuning_parameters(model, opt.ft_begin_index)
+            parameters = model.parameters()
         return model, parameters
 
     return model, model.parameters()

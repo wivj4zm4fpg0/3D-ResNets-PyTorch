@@ -15,12 +15,10 @@
       "--checkpoint": "5",
       "--learning_rate": "0.001",
       "--n_epochs": "100",
-      "--sample_size": "300x300",
+      "--sample_size": "300",
       "--sample_duration": "64",
       "--n_fine_tune_classes": "2",
       "--pre_train_path": "/home/satoru/6tb/works/3D-ResNets-PyTorch/pretrain_models/resnet-18-kinetics.pth",
-      "--n_scales": "1",
-      "--train_crop": "center",
       "--add_gray_image_paths": [
         "/home/satoru/icl-shoplifting/dense_flow/64frames/flow/farn/flow_x",
         "/home/satoru/icl-shoplifting/dense_flow/64frames/flow/farn/flow_y"

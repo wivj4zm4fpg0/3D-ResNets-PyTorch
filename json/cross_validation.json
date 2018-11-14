@@ -2,7 +2,7 @@
   "cross_validation_1": {
     "input": "main.py",
     "args": {
-      "--video_path": "/home/satoru/icl-shoplifting/64frame",
+      "--video_path": "/home/satoru/icl-shoplifting/dense_flow_new/64frames/images",
       "--annotation_path": "/home/satoru/1tb/shoplifting-dataset/csv_files/cross_validation_1.csv",
       "--result_path": "/home/satoru/1tb/deep-learning-log",
       "--data_set": "shoplifting",
@@ -14,20 +14,18 @@
       "--n_threads": "4",
       "--checkpoint": "5",
       "--learning_rate": "0.001",
-      "--n_epochs": "100",
+      "--n_epochs": "150",
       "--sample_size": "300",
       "--sample_duration": "64",
       "--n_fine_tune_classes": "2",
       "--pre_train_path": "/home/satoru/6tb/works/3D-ResNets-PyTorch/pretrain_models/resnet-18-kinetics.pth",
-      "--n_scales": "1",
-      "--train_crop": "center",
-      "--suffix": "cross_validation_1"
+      "--suffix": "cross_validation_1_new"
     }
   },
   "cross_validation_2": {
     "input": "main.py",
     "args": {
-      "--video_path": "/home/satoru/icl-shoplifting/64frame",
+      "--video_path": "/home/satoru/icl-shoplifting/dense_flow_new/64frames/images",
       "--annotation_path": "/home/satoru/1tb/shoplifting-dataset/csv_files/cross_validation_2.csv",
       "--result_path": "/home/satoru/1tb/deep-learning-log",
       "--data_set": "shoplifting",
@@ -39,20 +37,18 @@
       "--n_threads": "4",
       "--checkpoint": "5",
       "--learning_rate": "0.001",
-      "--n_epochs": "100",
+      "--n_epochs": "150",
       "--sample_size": "300",
       "--sample_duration": "64",
       "--n_fine_tune_classes": "2",
       "--pre_train_path": "/home/satoru/6tb/works/3D-ResNets-PyTorch/pretrain_models/resnet-18-kinetics.pth",
-      "--n_scales": "1",
-      "--train_crop": "center",
-      "--suffix": "cross_validation_2"
+      "--suffix": "cross_validation_2_new"
     }
   },
   "cross_validation_3": {
     "input": "main.py",
     "args": {
-      "--video_path": "/home/satoru/icl-shoplifting/64frame",
+      "--video_path": "/home/satoru/icl-shoplifting/dense_flow_new/64frames/images",
       "--annotation_path": "/home/satoru/1tb/shoplifting-dataset/csv_files/cross_validation_3.csv",
       "--result_path": "/home/satoru/1tb/deep-learning-log",
       "--data_set": "shoplifting",
@@ -64,20 +60,18 @@
       "--n_threads": "4",
       "--checkpoint": "5",
       "--learning_rate": "0.001",
-      "--n_epochs": "100",
+      "--n_epochs": "150",
       "--sample_size": "300",
       "--sample_duration": "64",
       "--n_fine_tune_classes": "2",
       "--pre_train_path": "/home/satoru/6tb/works/3D-ResNets-PyTorch/pretrain_models/resnet-18-kinetics.pth",
-      "--n_scales": "1",
-      "--train_crop": "center",
-      "--suffix": "cross_validation_3"
+      "--suffix": "cross_validation_3_new"
     }
   },
   "cross_validation_4": {
     "input": "main.py",
     "args": {
-      "--video_path": "/home/satoru/icl-shoplifting/64frame",
+      "--video_path": "/home/satoru/icl-shoplifting/dense_flow_new/64frames/images",
       "--annotation_path": "/home/satoru/1tb/shoplifting-dataset/csv_files/cross_validation_4.csv",
       "--result_path": "/home/satoru/1tb/deep-learning-log",
       "--data_set": "shoplifting",
@@ -89,20 +83,18 @@
       "--n_threads": "4",
       "--checkpoint": "5",
       "--learning_rate": "0.001",
-      "--n_epochs": "100",
+      "--n_epochs": "150",
       "--sample_size": "300",
       "--sample_duration": "64",
       "--n_fine_tune_classes": "2",
       "--pre_train_path": "/home/satoru/6tb/works/3D-ResNets-PyTorch/pretrain_models/resnet-18-kinetics.pth",
-      "--n_scales": "1",
-      "--train_crop": "center",
-      "--suffix": "cross_validation_4"
+      "--suffix": "cross_validation_4_new"
     }
   },
   "cross_validation_5": {
     "input": "main.py",
     "args": {
-      "--video_path": "/home/satoru/icl-shoplifting/64frame",
+      "--video_path": "/home/satoru/icl-shoplifting/dense_flow_new/64frames/images",
       "--annotation_path": "/home/satoru/1tb/shoplifting-dataset/csv_files/cross_validation_5.csv",
       "--result_path": "/home/satoru/1tb/deep-learning-log",
       "--data_set": "shoplifting",
@@ -114,14 +106,12 @@
       "--n_threads": "4",
       "--checkpoint": "5",
       "--learning_rate": "0.001",
-      "--n_epochs": "100",
+      "--n_epochs": "150",
       "--sample_size": "300",
       "--sample_duration": "64",
       "--n_fine_tune_classes": "2",
       "--pre_train_path": "/home/satoru/6tb/works/3D-ResNets-PyTorch/pretrain_models/resnet-18-kinetics.pth",
-      "--n_scales": "1",
-      "--train_crop": "center",
-      "--suffix": "cross_validation_5"
+      "--suffix": "cross_validation_5_new"
     }
   }
 }

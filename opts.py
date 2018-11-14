@@ -76,6 +76,9 @@ def parse_opts():
     parser.add_argument(
         '--batch_size', default=128, type=int, help='Batch Size')
     parser.add_argument(
+        '--sample_size', default=None, type=int
+    )
+    parser.add_argument(
         '--n_epochs',
         default=200,
         type=int,
