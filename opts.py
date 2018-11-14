@@ -5,11 +5,6 @@ def parse_opts():
     parser = argparse.ArgumentParser(
         description='this is train and test program by 3D-CNN model')
     parser.add_argument(
-        '--video_path',
-        default=None,
-        type=str,
-        help='Directory path of Videos')
-    parser.add_argument(
         '--annotation_path',
         default=None,
         type=str,

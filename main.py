@@ -25,8 +25,17 @@ if __name__ == '__main__':
     # コマンドラインオプションを取得
     opt = parse_opts()
 
+    # 画像郡のパスとそのチャンネル数をそれぞれ辞書に登録
+    paths = {}
+    if opt.add_gray_image_paths:
+        for one_ch in opt.add_gray_image_paths:
+            paths[one_ch] = '1ch'
+    if opt.add_RGB_image_paths:
+        for three_ch in opt.add_RGB_image_paths:
+            paths[three_ch] = '3ch'
+
     # チャンネル数を取得
-    opt.n_channel = 3
+    opt.n_channel = 0
     if opt.add_gray_image_paths:
         opt.n_channel += len(opt.add_gray_image_paths)
     if opt.add_RGB_image_paths:
@@ -87,15 +96,6 @@ if __name__ == '__main__':
     train_logger = None
     val_loader = None
     val_logger = None
-
-    # 画像郡のパスとそのチャンネル数をそれぞれ辞書に登録
-    paths = {opt.video_path: '3ch'}
-    if opt.add_gray_image_paths:
-        for one_ch in opt.add_gray_image_paths:
-            paths[one_ch] = '1ch'
-    if opt.add_RGB_image_paths:
-        for three_ch in opt.add_RGB_image_paths:
-            paths[three_ch] = '3ch'
 
     if not opt.no_train:
         spatial_transform = transforms.Compose([
