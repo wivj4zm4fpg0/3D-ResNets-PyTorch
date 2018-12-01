@@ -1,6 +1,6 @@
 import csv
 import os
-import torch
+from torch import tensor
 
 
 class AverageMeter(object):
@@ -12,7 +12,7 @@ class AverageMeter(object):
         self.avg = 0
         self.val = 0
 
-    def update(self, val: float, n=1):
+    def update(self, val: float, n: int = 1):
         self.val = val
         self.sum += val * n
         self.count += n
@@ -49,7 +49,7 @@ def load_value_file(file_path: str) -> float:
     return value
 
 
-def calculate_accuracy(outputs: torch.tensor, targets: torch.tensor) -> float:
+def calculate_accuracy(outputs: tensor, targets: tensor) -> float:
     batch_size = targets.size(0)
     _, prediction = outputs.topk(1, 1, True)
     prediction = prediction.t()
@@ -59,7 +59,7 @@ def calculate_accuracy(outputs: torch.tensor, targets: torch.tensor) -> float:
     return n_correct_elem / batch_size
 
 
-def calculate_accuracy_1_5(outputs: torch.tensor, targets: torch.tensor) -> tuple:
+def calculate_accuracy_1_5(outputs: tensor, targets: tensor) -> tuple:
     batch_size = targets.size(0)
     _, prediction = outputs.topk(5, 1, True)
     prediction = prediction.t()

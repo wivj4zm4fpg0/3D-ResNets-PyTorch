@@ -115,7 +115,8 @@ if not opt.no_train:
         shuffle=True,
         num_workers=opt.n_threads,
         pin_memory=True,
-        worker_init_fn=worker_init_fn)
+        worker_init_fn=worker_init_fn
+    )
     if opt.show_top5:
         train_logger = Logger(
             os.path.join(result_dir_name, 'train.log'),
@@ -149,7 +150,8 @@ if not opt.no_train:
         momentum=opt.momentum,
         dampening=dampening,
         weight_decay=opt.weight_decay,
-        nesterov=opt.nesterov)
+        nesterov=opt.nesterov
+    )
 
 if not opt.no_val:
     spatial_transform = transforms.Compose([
@@ -170,7 +172,8 @@ if not opt.no_val:
         shuffle=False,
         num_workers=opt.n_threads,
         pin_memory=True,
-        worker_init_fn=worker_init_fn)
+        worker_init_fn=worker_init_fn
+    )
     if opt.show_top5:
         val_logger = Logger(
             os.path.join(result_dir_name, 'val.log'),

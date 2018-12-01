@@ -1,5 +1,5 @@
-import argparse
 import time
+from argparse import Namespace
 
 import torch
 from torch.utils.data import DataLoader
@@ -13,7 +13,7 @@ def val_epoch(
         data_loader: DataLoader,
         model: torch.nn.Module,
         criterion: CrossEntropyLoss,
-        opt: argparse.Namespace,
+        opt: Namespace,
         epoch_logger: Logger
 ):
     print(f'validation at epoch {epoch}')

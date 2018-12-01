@@ -3,8 +3,10 @@ from abc import ABCMeta, abstractmethod
 
 import torch
 from torch.utils import data
+from torchvision import transforms
 from PIL import Image
 
+from target_transforms import ClassLabel
 from utils import load_value_file
 
 
@@ -62,9 +64,9 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
 
     def make_data_set(
             self,
-            paths,
-            annotation_path,
-            subset
+            paths: dict,
+            annotation_path: str,
+            subset: str
     ):
 
         # アノテーションファイルからjsonやcsvオブジェクトを取得する
@@ -112,12 +114,12 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
 
     def __init__(
             self,
-            paths,
-            annotation_path,
-            subset,
-            spatial_transform=None,
-            target_transform=None,
-            image_format='image_{0:05d}.jpg'
+            paths: dict,
+            annotation_path: str,
+            subset: str,
+            spatial_transform: transforms = None,
+            target_transform: ClassLabel = None,
+            image_format: str = 'image_{0:05d}.jpg'
     ):
         self.data, self.class_names = self.make_data_set(
             paths,
