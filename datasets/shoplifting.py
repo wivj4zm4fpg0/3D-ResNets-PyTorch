@@ -1,7 +1,9 @@
 import pandas as pd
 from pandas.core.frame import DataFrame
+from torchvision import transforms
 
 import datasets.base
+from target_transforms import ClassLabel
 
 
 class Shoplifting(datasets.base.BaseLoader):
@@ -35,9 +37,9 @@ class Shoplifting(datasets.base.BaseLoader):
             paths: dict,
             annotation_path: str,
             subset: str,
-            spatial_transform=None,
-            target_transform=None,
-            image_format='image_{0:05d}.jpg'
+            spatial_transform: transforms = None,
+            target_transform: ClassLabel = None,
+            image_format: str = 'image_{0:05d}.jpg'
     ):
         super().__init__(
             paths,

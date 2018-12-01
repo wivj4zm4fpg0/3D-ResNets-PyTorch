@@ -1,5 +1,8 @@
 import datasets.base
 import json
+from torchvision import transforms
+
+from target_transforms import ClassLabel
 
 
 class UCF101(datasets.base.BaseLoader):
@@ -29,11 +32,11 @@ class UCF101(datasets.base.BaseLoader):
 
     def __init__(
             self,
-            paths,
-            annotation_path,
-            subset,
-            spatial_transform=None,
-            target_transform=None,
+            paths: dict,
+            annotation_path: str,
+            subset: str,
+            spatial_transform: transforms = None,
+            target_transform: ClassLabel = None,
             image_format='image_{0:05d}.jpg'
     ):
         super().__init__(
