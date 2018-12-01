@@ -189,6 +189,4 @@ def parse_opts():
     )
     parser.set_defaults(show_top5=False)
 
-    args = parser.parse_args()
-
-    return args
+    return parser.parse_args()

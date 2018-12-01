@@ -2,7 +2,6 @@
   "cross_validation_1": {
     "input": "main.py",
     "args": {
-      "--video_path": "/home/satoru/icl-shoplifting/dense_flow/64frames/images",
       "--annotation_path": "/home/satoru/1tb/shoplifting-dataset/csv_files/cross_validation_1.csv",
       "--result_path": "/home/satoru/1tb/deep-learning-log",
       "--data_set": "shoplifting",
@@ -19,11 +18,10 @@
       "--sample_duration": "64",
       "--n_fine_tune_classes": "2",
       "--pre_train_path": "/home/satoru/6tb/works/3D-ResNets-PyTorch/pretrain_models/resnet-18-kinetics.pth",
-      "--add_gray_image_paths": [
-        "/home/satoru/icl-shoplifting/dense_flow/64frames/flow/farn/flow_x",
-        "/home/satoru/icl-shoplifting/dense_flow/64frames/flow/farn/flow_y"
+      "--add_RGB_image_paths": [
+        "/home/satoru/icl-shoplifting/dense_flow/64frames/images"
       ],
-      "--suffix": "cross_validation_1_farn"
+      "--suffix": "cross_validation_1_RGB"
     }
   }
 }

@@ -173,26 +173,39 @@ def generate_model(opt):
         print('loading pre-trained model {}'.format(opt.pre_train_path))
         pre_train = torch.load(opt.pre_train_path)
 
-        # RGB画像のみで学習済みのモデルを転用するとき4チャンネル以降をRGBの平均にする（最初のCNN層のみ）
-        temp = copy.copy(pre_train['state_dict']['module.conv1.weight'])
-        pre_train['state_dict']['module.conv1.weight'] = nn.Conv3d(
-            opt.n_channel,
-            64,
-            kernel_size=7,
-            stride=(1, 2, 2),
-            padding=(3, 3, 3),
-            bias=False
-        ).weight
-        temp_len = len(temp.data[0])
-        pre_data = temp.data
-        out_len = len(pre_data[0])
-        sub_len = out_len - temp_len
-        for i in range(len(temp.data)):
-            for j in range(temp_len):
-                pre_data[i][j] = temp.data[i][j]
-            avg = torch.sum(temp.data[i], 0) / 3
-            for j in range(sub_len):
-                pre_data[i][temp_len + j] = avg
+        if opt.n_channel != 3:
+            # RGB画像のみで学習済みのモデルを転用するとき4チャンネル以降をRGBの平均にする（最初のCNN層のみ）
+            temp = copy.copy(pre_train['state_dict']['module.conv1.weight'])
+
+            pre_train['state_dict']['module.conv1.weight'] = nn.Conv3d(
+                opt.n_channel,
+                64,
+                kernel_size=7,
+                stride=(1, 2, 2),
+                padding=(3, 3, 3),
+                bias=False
+            ).weight
+            new_conv = pre_train['state_dict']['module.conv1.weight'].data
+
+            temp_input_channel_length = len(temp.data[0])
+            new_conv_input_channel_length = len(new_conv[0])
+            subtraction_len = new_conv_input_channel_length - temp_input_channel_length
+            output_channel_length = len(temp.data)
+
+            # チャンネル数が3より大きい場合は4以降を3チャンネルの平均にする
+            if opt.n_channel > 3:
+                for i in range(output_channel_length):
+                    for j in range(temp_input_channel_length):
+                        new_conv[i][j] = temp.data[i][j]
+                    avg = torch.sum(temp.data[i], 0) / 3
+                    for j in range(subtraction_len):
+                        new_conv[i][temp_input_channel_length + j] = avg
+            # チャンネル数が3より小さい場合は全部3チャンネルの平均にする
+            elif opt.n_channel < 3:
+                for i in range(output_channel_length):
+                    avg = torch.sum(temp.data[i], 0) / 3
+                    for j in range(new_conv_input_channel_length):
+                        new_conv[i][j] = avg
 
         model.load_state_dict(pre_train['state_dict'])
 
