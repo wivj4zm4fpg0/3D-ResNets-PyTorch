@@ -16,7 +16,7 @@ from utils import Logger
 from validation import val_epoch
 
 
-def worker_init_fn(worker_id):
+def worker_init_fn(worker_id: int):
     random.seed(worker_id)
 
 
@@ -103,7 +103,8 @@ if not opt.no_train:
     ])
     target_transform = ClassLabel()
     training_data = data_set[opt.data_set](
-        paths, opt.annotation_path,
+        paths,
+        opt.annotation_path,
         'training',
         spatial_transform=spatial_transform,
         target_transform=target_transform,
@@ -157,7 +158,8 @@ if not opt.no_val:
     ])
     target_transform = ClassLabel()
     validation_data = data_set[opt.data_set](
-        paths, opt.annotation_path,
+        paths,
+        opt.annotation_path,
         'validation',
         spatial_transform=spatial_transform,
         target_transform=target_transform,
@@ -172,11 +174,13 @@ if not opt.no_val:
     if opt.show_top5:
         val_logger = Logger(
             os.path.join(result_dir_name, 'val.log'),
-            ['epoch', 'loss', 'acc-top1', 'acc-top5', 'batch-time', 'epoch-time'])
+            ['epoch', 'loss', 'acc-top1', 'acc-top5', 'batch-time', 'epoch-time']
+        )
     else:
         val_logger = Logger(
             os.path.join(result_dir_name, 'val.log'),
-            ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time'])
+            ['epoch', 'loss', 'acc-top1', 'batch-time', 'epoch-time']
+        )
 
 # 重みを保存したファイルがあるなら読み込む
 if opt.resume_path:

@@ -3,11 +3,11 @@ import json
 
 
 class UCF101(datasets.base.BaseLoader):
-    def load_annotation_data(self, data_file_path):
+    def load_annotation_data(self, data_file_path: str) -> dict:
         with open(data_file_path, 'r') as data_file:
             return json.load(data_file)
 
-    def get_class_labels(self, data):
+    def get_class_labels(self, data: dict) -> dict:
         class_labels_map = {}
         index = 0
         for class_label in data['labels']:
@@ -15,7 +15,7 @@ class UCF101(datasets.base.BaseLoader):
             index += 1
         return class_labels_map
 
-    def get_video_names_and_annotations(self, data, subset):
+    def get_video_names_and_annotations(self, data: dict, subset: str) -> tuple:
         video_names = []
         annotations = []
 

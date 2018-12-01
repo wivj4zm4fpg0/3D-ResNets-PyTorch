@@ -1,15 +1,27 @@
 import os
 import time
+from argparse import Namespace
 
 import torch
 from torch.autograd import Variable
+from torch.nn.modules.loss import CrossEntropyLoss
+from torch.optim import optimizer as torch_optimizer
+from torch.utils.data import DataLoader
 
-from utils import AverageMeter, calculate_accuracy, calculate_accuracy_1_5
+from utils import AverageMeter, calculate_accuracy, calculate_accuracy_1_5, Logger
 
 
-def train_epoch(epoch, data_loader, model, criterion, optimizer, opt, epoch_logger,
-                result_dir_name):
-    print('train at epoch {}'.format(epoch))
+def train_epoch(
+        epoch: int,
+        data_loader: DataLoader,
+        model: torch.nn.Module,
+        criterion: CrossEntropyLoss,
+        optimizer: torch_optimizer,
+        opt: Namespace,
+        epoch_logger: Logger,
+        result_dir_name: str
+):
+    print(f'train at epoch {epoch}')
 
     model.train()
 

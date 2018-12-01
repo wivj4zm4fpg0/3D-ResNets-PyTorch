@@ -1,16 +1,17 @@
 import pandas as pd
+from pandas.core.frame import DataFrame
 
 import datasets.base
 
 
 class Shoplifting(datasets.base.BaseLoader):
-    def load_annotation_data(self, data_file_path):
+    def load_annotation_data(self, data_file_path: str) -> DataFrame:
         return pd.read_csv(data_file_path, sep=' ')
 
-    def get_class_labels(self, data):
+    def get_class_labels(self, data: DataFrame) -> dict:
         return {0: 0, 1: 1}
 
-    def get_video_names_and_annotations(self, data, subset):
+    def get_video_names_and_annotations(self, data: DataFrame, subset: str) -> tuple:
         video_names = []
         annotations = []
 
@@ -31,9 +32,9 @@ class Shoplifting(datasets.base.BaseLoader):
 
     def __init__(
             self,
-            paths,
-            annotation_path,
-            subset,
+            paths: dict,
+            annotation_path: str,
+            subset: str,
             spatial_transform=None,
             target_transform=None,
             image_format='image_{0:05d}.jpg'

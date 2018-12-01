@@ -1,7 +1,7 @@
 import argparse
 
 
-def parse_opts():
+def parse_opts() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description='this is train and test program by 3D-CNN model')
     parser.add_argument(

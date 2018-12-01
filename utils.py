@@ -1,5 +1,6 @@
 import csv
 import os
+import torch
 
 
 class AverageMeter(object):
@@ -11,7 +12,7 @@ class AverageMeter(object):
         self.avg = 0
         self.val = 0
 
-    def update(self, val, n=1):
+    def update(self, val: float, n=1):
         self.val = val
         self.sum += val * n
         self.count += n
@@ -20,7 +21,7 @@ class AverageMeter(object):
 
 class Logger(object):
 
-    def __init__(self, path, header):
+    def __init__(self, path: str, header: list):
         self.log_file = open(path, 'a')
         self.logger = csv.writer(self.log_file, delimiter='\t')
 
@@ -31,7 +32,7 @@ class Logger(object):
     def __del(self):
         self.log_file.close()
 
-    def log(self, values):
+    def log(self, values: dict):
         write_values = []
         for col in self.header:
             assert col in values
@@ -41,14 +42,14 @@ class Logger(object):
         self.log_file.flush()
 
 
-def load_value_file(file_path):
+def load_value_file(file_path: str) -> float:
     with open(file_path, 'r') as input_file:
         value = float(input_file.read().rstrip('\n\r'))
 
     return value
 
 
-def calculate_accuracy(outputs, targets):
+def calculate_accuracy(outputs: torch.tensor, targets: torch.tensor) -> float:
     batch_size = targets.size(0)
     _, prediction = outputs.topk(1, 1, True)
     prediction = prediction.t()
@@ -58,7 +59,7 @@ def calculate_accuracy(outputs, targets):
     return n_correct_elem / batch_size
 
 
-def calculate_accuracy_1_5(outputs, targets):
+def calculate_accuracy_1_5(outputs: torch.tensor, targets: torch.tensor) -> tuple:
     batch_size = targets.size(0)
     _, prediction = outputs.topk(5, 1, True)
     prediction = prediction.t()

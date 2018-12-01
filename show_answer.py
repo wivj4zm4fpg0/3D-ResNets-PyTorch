@@ -1,19 +1,25 @@
 import time
+from argparse import Namespace
 
 import torch
+from torch.utils.data import DataLoader
 
 from utils import AverageMeter
 
 
-def show_answer_epoch(data_loader, model, opt, subset):
-
+def show_answer_epoch(
+        data_loader: DataLoader,
+        model: torch.nn.Module,
+        opt: Namespace,
+        subset: str
+):
     model.eval()
 
     data_time = AverageMeter()
 
     end_time = time.time()
     with torch.no_grad():
-        for i, (inputs, targets, targets_name) in enumerate(data_loader):
+        for inputs, targets, targets_name in data_loader:
             data_time.update(time.time() - end_time)
 
             if not opt.no_cuda:
@@ -22,7 +28,13 @@ def show_answer_epoch(data_loader, model, opt, subset):
             show_answer_calculate_accuracy(outputs, targets, targets_name, opt, subset)
 
 
-def show_answer_calculate_accuracy(outputs, targets, targets_name, opt, subset):
+def show_answer_calculate_accuracy(
+        outputs: torch.tensor,
+        targets: torch.tensor,
+        targets_name: torch.tensor,
+        opt: Namespace,
+        subset: str
+):
     _, prediction = outputs.topk(1, 1, True)
     prediction = prediction.t()
     targets = targets.view(1, -1)

@@ -1,12 +1,22 @@
+import argparse
 import time
 
 import torch
+from torch.utils.data import DataLoader
+from torch.nn.modules.loss import CrossEntropyLoss
 
-from utils import AverageMeter, calculate_accuracy, calculate_accuracy_1_5
+from utils import AverageMeter, calculate_accuracy, calculate_accuracy_1_5, Logger
 
 
-def val_epoch(epoch, data_loader, model, criterion, opt, epoch_logger):
-    print('validation at epoch {}'.format(epoch))
+def val_epoch(
+        epoch: int,
+        data_loader: DataLoader,
+        model: torch.nn.Module,
+        criterion: CrossEntropyLoss,
+        opt: argparse.Namespace,
+        epoch_logger: Logger
+):
+    print(f'validation at epoch {epoch}')
 
     model.eval()
 
@@ -90,5 +100,3 @@ def val_epoch(epoch, data_loader, model, criterion, opt, epoch_logger):
             'batch-time': batch_time.avg,
             'epoch-time': epoch_time
         })
-
-    return losses.avg

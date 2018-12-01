@@ -6,8 +6,14 @@ import math
 from functools import partial
 
 __all__ = [
-    'ResNet', 'resnet10', 'resnet18', 'resnet34', 'resnet50', 'resnet101',
-    'resnet152', 'resnet200'
+    'ResNet',
+    'resnet10',
+    'resnet18',
+    'resnet34',
+    'resnet50',
+    'resnet101',
+    'resnet152',
+    'resnet200'
 ]
 
 
@@ -77,7 +83,8 @@ class Bottleneck(nn.Module):
         self.conv1 = nn.Conv3d(inplanes, planes, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm3d(planes)
         # self.bn1 = nn.GroupNorm(int(planes / 2), planes)
-        self.conv2 = nn.Conv3d(planes, planes, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.conv2 = nn.Conv3d(planes, planes, kernel_size=3, stride=stride, padding=1,
+                               bias=False)
         self.bn2 = nn.BatchNorm3d(planes)
         # self.bn2 = nn.GroupNorm(int(planes / 2), planes)
         self.conv3 = nn.Conv3d(planes, planes * 4, kernel_size=1, bias=False)

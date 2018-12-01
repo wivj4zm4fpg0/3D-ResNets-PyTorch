@@ -8,7 +8,7 @@ from PIL import Image
 from utils import load_value_file
 
 
-def images_loader(paths):
+def images_loader(paths: dict) -> list:
     images = []
     for path in paths:
         with open(path, 'rb') as f:
@@ -20,7 +20,8 @@ def images_loader(paths):
     return images
 
 
-def video_loader(video_dir_paths, frame_indices, image_format):
+def video_loader(video_dir_paths: dict, frame_indices: list,
+                 image_format: str) -> list:
     video = []
     for i in frame_indices:
         images_paths = {}
@@ -35,11 +36,11 @@ def video_loader(video_dir_paths, frame_indices, image_format):
 
 # 複数の画像をチャンネル結合して一つの画像にする
 # example :RGB, Gray, Gray, RGB, Gray, Gray, RGB, Gray... -> 5ch, 5ch...
-def channels_coupling(clip, n_image):
+def channels_coupling(clip: list, image_number: int) -> list:
     new_clip = []
-    for i in range(0, len(clip), n_image):
+    for i in range(0, len(clip), image_number):
         temp = []
-        for j in range(n_image):
+        for j in range(image_number):
             temp.append(clip[i + j])
         new_clip.append(torch.cat(temp, 0))
     return new_clip
@@ -48,7 +49,7 @@ def channels_coupling(clip, n_image):
 class BaseLoader(data.Dataset, metaclass=ABCMeta):
 
     @abstractmethod
-    def load_annotation_data(self, data_file_path):
+    def load_annotation_data(self, data_file_path: str):
         pass
 
     @abstractmethod
@@ -56,7 +57,7 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def get_video_names_and_annotations(self, entry, subset):
+    def get_video_names_and_annotations(self, entry, subset: str) -> tuple:
         pass
 
     def make_data_set(
@@ -130,13 +131,7 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
         self.image_format = image_format
         self.image_number = len(paths)
 
-    def __getitem__(self, index):
-        """
-        Args:
-            index (int): Index
-        Returns:
-            tuple: (image, target) where target is class_index of the target class.
-        """
+    def __getitem__(self, index: int) -> tuple:
         paths = self.data[index]['paths']
         clip = video_loader(paths, self.data[index]['frame_indices'],
                             self.image_format)
@@ -157,5 +152,5 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
 
         return clip, target
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.data)
