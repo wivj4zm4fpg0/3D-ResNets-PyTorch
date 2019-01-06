@@ -169,7 +169,7 @@ def generate_model(opt):
         model = model.cuda()
         model = nn.DataParallel(model)
 
-    if opt.pre_train_path or opt.show_answer_pre_train_model_path:
+    if opt.pre_train_path:
         print('loading pre-trained model {}'.format(opt.pre_train_path))
         pre_train = torch.load(opt.pre_train_path)
 
