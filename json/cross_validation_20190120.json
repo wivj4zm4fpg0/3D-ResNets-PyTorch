@@ -1,0 +1,86 @@
+{
+  "cross_validation_1_RGB": {
+    "input": "main.py",
+    "args": {
+      "--add_RGB_image_paths": "/home/satoru/icl-shoplifting/dense_flow_20181213/64frames/images",
+      "--annotation_path": "/home/satoru/1tb/Mega/shoplifting-dataset/201901090601/sort_20190108_annotation_1.csv",
+      "--result_path": "/home/satoru/1tb/deep-learning-log",
+      "--data_set": "shoplifting",
+      "--n_classes": "2",
+      "--model": "resnet",
+      "--model_depth": "18",
+      "--resnet_shortcut": "A",
+      "--batch_size": "2",
+      "--n_threads": "4",
+      "--checkpoint": "5",
+      "--learning_rate": "0.001",
+      "--n_epochs": "100",
+      "--sample_size": "300",
+      "--sample_duration": "64",
+      "--suffix": "cross_validation_1_20190120"
+    }
+  },
+  "cross_validation_2_RGB": {
+    "input": "main.py",
+    "args": {
+      "--add_RGB_image_paths": "/home/satoru/icl-shoplifting/dense_flow_20181213/64frames/images",
+      "--annotation_path": "/home/satoru/1tb/Mega/shoplifting-dataset/201901090601/sort_20190108_annotation_2.csv",
+      "--result_path": "/home/satoru/1tb/deep-learning-log",
+      "--data_set": "shoplifting",
+      "--n_classes": "2",
+      "--model": "resnet",
+      "--model_depth": "18",
+      "--resnet_shortcut": "A",
+      "--batch_size": "2",
+      "--n_threads": "4",
+      "--checkpoint": "5",
+      "--learning_rate": "0.001",
+      "--n_epochs": "100",
+      "--sample_size": "300",
+      "--sample_duration": "64",
+      "--suffix": "cross_validation_2_20190120"
+    }
+  },
+  "cross_validation_3_RGB": {
+    "input": "main.py",
+    "args": {
+      "--add_RGB_image_paths": "/home/satoru/icl-shoplifting/dense_flow_20181213/64frames/images",
+      "--annotation_path": "/home/satoru/1tb/Mega/shoplifting-dataset/201901090601/sort_20190108_annotation_3.csv",
+      "--result_path": "/home/satoru/1tb/deep-learning-log",
+      "--data_set": "shoplifting",
+      "--n_classes": "2",
+      "--model": "resnet",
+      "--model_depth": "18",
+      "--resnet_shortcut": "A",
+      "--batch_size": "2",
+      "--n_threads": "4",
+      "--checkpoint": "5",
+      "--learning_rate": "0.001",
+      "--n_epochs": "100",
+      "--sample_size": "300",
+      "--sample_duration": "64",
+      "--suffix": "cross_validation_3_20190120"
+    }
+  },
+  "cross_validation_4_RGB": {
+    "input": "main.py",
+    "args": {
+      "--add_RGB_image_paths": "/home/satoru/icl-shoplifting/dense_flow_20181213/64frames/images",
+      "--annotation_path": "/home/satoru/1tb/Mega/shoplifting-dataset/201901090601/sort_20190108_annotation_4.csv",
+      "--result_path": "/home/satoru/1tb/deep-learning-log",
+      "--data_set": "shoplifting",
+      "--n_classes": "2",
+      "--model": "resnet",
+      "--model_depth": "18",
+      "--resnet_shortcut": "A",
+      "--batch_size": "2",
+      "--n_threads": "4",
+      "--checkpoint": "5",
+      "--learning_rate": "0.001",
+      "--n_epochs": "100",
+      "--sample_size": "300",
+      "--sample_duration": "64",
+      "--suffix": "cross_validation_4_20190120"
+    }
+  }
+}
