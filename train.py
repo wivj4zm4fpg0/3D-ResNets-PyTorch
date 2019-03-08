@@ -19,7 +19,8 @@ def train_epoch(
         optimizer: torch_optimizer,
         opt: Namespace,
         epoch_logger: Logger,
-        result_dir_name: str
+        result_dir_name: str,
+        device: torch.device
 ):
     print(f'train at epoch {epoch}')
 
@@ -39,8 +40,7 @@ def train_epoch(
     for i, (inputs, targets) in enumerate(data_loader):
         data_time.update(time.time() - end_time)
 
-        if not opt.no_cuda:
-            targets = targets.cuda(async=True)
+        targets = targets.to(device, non_blocking=True)
         inputs = Variable(inputs)
         targets = Variable(targets)
         outputs = model(inputs)

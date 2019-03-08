@@ -20,6 +20,8 @@ def worker_init_fn(worker_id: int):
 # コマンドラインオプションを取得
 opt = parse_opts()
 
+device = torch.device('cpu' if opt.no_cuda else 'cuda')
+
 # チャンネル数を取得
 opt.n_channel = 3
 if opt.add_gray_image_paths:
@@ -124,5 +126,5 @@ if opt.show_answer_resume_path:
 with open(opt.show_answer_result_path, 'w') as f:
     f.write('video_name model_answer true_answer answer subset\n')
 print('run')
-show_answer_epoch(train_loader, model, opt, 'training')
-show_answer_epoch(val_loader, model, opt, 'validation')
+show_answer_epoch(train_loader, model, opt, 'training', device)
+show_answer_epoch(val_loader, model, opt, 'validation', device)

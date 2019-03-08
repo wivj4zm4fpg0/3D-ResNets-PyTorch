@@ -2,6 +2,7 @@ import json
 import os
 import random
 
+import numpy as np
 import torch.utils.data
 from torch import nn, optim
 from torch.backends import cudnn
@@ -22,6 +23,8 @@ def worker_init_fn(worker_id: int):
 
 # コマンドラインオプションを取得
 opt = parse_opts()
+
+device = torch.device('cpu' if opt.no_cuda else 'cuda')
 
 # 画像郡のパスとそのチャンネル数をそれぞれ辞書に登録
 paths = {}
@@ -71,6 +74,7 @@ with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
 
 # 乱数の初期化
 random.seed(opt.manual_seed)
+np.random.seed(opt.manual_seed)
 torch.manual_seed(opt.manual_seed)
 # CUDAが使えるなら使う
 if not opt.no_cuda:
@@ -204,6 +208,6 @@ print('run')
 for i in range(opt.begin_epoch, opt.n_epochs + 1):
     if not opt.no_train:
         train_epoch(i, train_loader, model, criterion, optimizer, opt,
-                    train_logger, result_dir_name)
+                    train_logger, result_dir_name, device)
     if not opt.no_val:
-        val_epoch(i, val_loader, model, criterion, opt, val_logger)
+        val_epoch(i, val_loader, model, criterion, opt, val_logger, device)

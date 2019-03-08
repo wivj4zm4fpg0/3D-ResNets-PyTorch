@@ -14,7 +14,8 @@ def val_epoch(
         model: torch.nn.Module,
         criterion: CrossEntropyLoss,
         opt: Namespace,
-        epoch_logger: Logger
+        epoch_logger: Logger,
+        device: torch.device
 ):
     print(f'validation at epoch {epoch}')
 
@@ -35,8 +36,7 @@ def val_epoch(
         for i, (inputs, targets) in enumerate(data_loader):
             data_time.update(time.time() - end_time)
 
-            if not opt.no_cuda:
-                targets = targets.cuda(async=True)
+            targets = targets.to(device, non_blocking=True)
             outputs = model(inputs)
             loss = criterion(outputs, targets)
             losses.update(loss.item(), inputs.size(0))
