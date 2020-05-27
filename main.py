@@ -21,8 +21,7 @@ def worker_init_fn(worker_id: int):
     random.seed(worker_id)
 
 
-# コマンドラインオプションを取得
-opt = parse_opts()
+opt = parse_opts()  # コマンドラインオプションを取得
 
 device = torch.device('cpu' if opt.no_cuda else 'cuda')
 
@@ -44,8 +43,7 @@ if opt.add_RGB_image_paths:
 
 # ニューラルネットワークのアーキテクチャを取得
 opt.arch = '{}-{}'.format(opt.model, opt.model_depth)
-# コマンドライン引数を表示
-print(opt)
+print(opt)  # コマンドライン引数を表示
 
 # 結果の出力ディレクトリの名前を自動で決める
 result_dir_name = '{}-{}-{}-{}ch-{}frame-{}batch-{}size'.format(
@@ -76,21 +74,16 @@ with open(os.path.join(result_dir_name, 'opts.json'), 'w') as opt_file:
 random.seed(opt.manual_seed)
 np.random.seed(opt.manual_seed)
 torch.manual_seed(opt.manual_seed)
-# CUDAが使えるなら使う
-if not opt.no_cuda:
-    # この命令はモデルへの入力サイズが同じ時にプログラムを最適化できる
-    cudnn.benchmark = True
-    # CUDAの乱数を決定する?
-    cudnn.deterministic = True
 
-# モデルとモデルのパラメータを取得
-model, parameters = generate_model(opt)
-# モデルのアーキテクチャを出力
-print(model)
-# 損失関数をクロスエントロピーにする
-criterion = nn.CrossEntropyLoss()
-# CUDAが使えるなら使う
-if not opt.no_cuda:
+if not opt.no_cuda:  # CUDAが使えるなら使う
+    cudnn.benchmark = True  # この命令はモデルへの入力サイズが同じ時にプログラムを最適化できる
+    cudnn.deterministic = True  # CUDAの乱数を決定する?
+
+model, parameters = generate_model(opt)  # モデルとモデルのパラメータを取得
+
+print(model)  # モデルのアーキテクチャを出力
+criterion = nn.CrossEntropyLoss()  # 損失関数をクロスエントロピーにする
+if not opt.no_cuda:  # CUDAが使えるなら使う
     criterion = criterion.cuda()
 
 optimizer = None
@@ -100,10 +93,10 @@ val_loader = None
 val_logger = None
 
 if not opt.no_train:
-    spatial_transform = transforms.Compose([
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize([0, 0, 0], [1, 1, 1])
+    spatial_transform = transforms.Compose([  # 空間的前処理を定義する
+        transforms.RandomHorizontalFlip(),  # ランダムで左右回転させる
+        transforms.ToTensor(),  # Tensor型に変換
+        transforms.Normalize([0, 0, 0], [1, 1, 1])  # 画素値を0と1の間に正規化する
     ])
     target_transform = ClassLabel()
     training_data = data_set[opt.data_set](

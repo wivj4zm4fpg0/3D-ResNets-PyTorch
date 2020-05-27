@@ -2,9 +2,9 @@ import os
 from abc import ABCMeta, abstractmethod
 
 import torch
+from PIL import Image
 from torch.utils import data
 from torchvision import transforms
-from PIL import Image
 
 from target_transforms import ClassLabel
 from utils import load_value_file
@@ -13,7 +13,7 @@ from utils import load_value_file
 def images_loader(paths: dict) -> list:
     images = []
     for path in paths:
-        with open(path, 'rb') as f:
+        with open(path, 'rb') as f:  # rb->読み込み専用・バイナリ
             with Image.open(f) as img:
                 if paths[path] == '3ch':
                     images.append(img.convert('RGB'))
@@ -22,8 +22,7 @@ def images_loader(paths: dict) -> list:
     return images
 
 
-def video_loader(video_dir_paths: dict, frame_indices: list,
-                 image_format: str) -> list:
+def video_loader(video_dir_paths: dict, frame_indices: list, image_format: str) -> list:
     video = []
     for i in frame_indices:
         images_paths = {}
@@ -133,10 +132,9 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
         self.image_format = image_format
         self.image_number = len(paths)
 
-    def __getitem__(self, index: int) -> tuple:
+    def __getitem__(self, index: int) -> tuple:  # イテレートするときに呼び出される
         paths = self.data[index]['paths']
-        clip = video_loader(paths, self.data[index]['frame_indices'],
-                            self.image_format)
+        clip = video_loader(paths, self.data[index]['frame_indices'], self.image_format)
         clip = [self.spatial_transform(img) for img in clip]
 
         if self.image_number > 1:
@@ -154,5 +152,5 @@ class BaseLoader(data.Dataset, metaclass=ABCMeta):
 
         return clip, target
 
-    def __len__(self) -> int:
+    def __len__(self) -> int:  # データの総数を定義．どこかで使われるらしい
         return len(self.data)
